@@ -1,15 +1,25 @@
-import React from 'react';
-import { View, ScrollView, Text } from 'react-native';
-import generateWeek from '../../../../functions/generateWeek';
+import React from "react";
+import { View, ScrollView, Text, TouchableWithoutFeedback } from "react-native";
+import colors from "../../../../config/colors";
+import generateWeek from "../../../../functions/generateWeek";
 
-const PickupDate = (props) => {
+const PickupDate = ({
+  pickupDate,
+  setPickupDate,
+  method,
+  setPickupDateError,
+}) => {
   const availableWeek = generateWeek.getAvailableDateWeek();
 
   return (
-    <View className="">
+    <View
+      className={`${
+        method.value === "deliverOnly" ? "opacity-30" : "opactiy-100"
+      } py-2`}
+    >
       <Text
         style={{
-          fontFamily: 'Alexandria-SemiBold',
+          fontFamily: "Alexandria-SemiBold",
           fontSize: 16,
         }}
       >
@@ -24,33 +34,56 @@ const PickupDate = (props) => {
       >
         <View className="flex-row">
           {availableWeek.map((item) => (
-            <View
+            <TouchableWithoutFeedback
               key={item.dayWeek}
-              className="bg-gray-100 items-center justify-between rounded-lg mr-2 py-1"
-              style={{
-                height: 75,
-                width: 60,
-                borderWidth: 1,
-                borderColor: 'transparent',
+              onPress={() => {
+                setPickupDate(
+                  pickupDate === item.dayWeek
+                    ? ""
+                    : method.value === "deliverOnly"
+                    ? ""
+                    : item.dayWeek
+                );
+                setPickupDateError("");
               }}
             >
-              <Text
+              <View
+                className={`${
+                  pickupDate === item.dayWeek
+                    ? `bg-[${colors.primary}]`
+                    : "bg-gray-100"
+                } items-center justify-between rounded-lg mr-2 py-1`}
                 style={{
-                  fontFamily: 'Alexandria-Regular',
-                  // fontSize: 15,
+                  height: 75,
+                  width: 60,
+                  borderWidth: 1,
+                  borderColor: "transparent",
                 }}
               >
-                {item.dayWeek.slice(0, 3)}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'Alexandria-Regular',
-                  fontSize: 15,
-                }}
-              >
-                {item.dayNumber}
-              </Text>
-            </View>
+                <Text
+                  className={`${
+                    pickupDate === item.dayWeek ? "text-white" : "text-black"
+                  }`}
+                  style={{
+                    fontFamily: "Alexandria-Regular",
+                    // fontSize: 15,
+                  }}
+                >
+                  {item.dayWeek.slice(0, 3)}
+                </Text>
+                <Text
+                  className={`${
+                    pickupDate === item.dayWeek ? "text-white" : "text-black"
+                  }`}
+                  style={{
+                    fontFamily: "Alexandria-Regular",
+                    fontSize: 15,
+                  }}
+                >
+                  {item.dayNumber}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           ))}
         </View>
       </ScrollView>

@@ -1,39 +1,44 @@
-import React from 'react';
-import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import React from "react";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
 
 function Method({
   setMethod,
   method,
-  setSelectedDlivery,
-  setSelectedPickupDay,
-  setSelectedPickupTime,
+  setPickupDate,
+  setPickupTime,
+  setDeliveryDate,
+  setPickupDateError,
+  setPickupTimeError,
+  setDeliveryDateError,
 }) {
   const methodItems = [
-    { id: 1, label: 'Pickup & Deliver', value: 'pickup&deliver' },
-    { id: 2, label: 'Pickup Only', value: 'pickupOnly' },
-    { id: 3, label: 'Deliver Only', value: 'deliverOnly' },
+    { id: 1, label: "Pickup & Deliver", value: "pickup&deliver" },
+    { id: 2, label: "Pickup Only", value: "pickupOnly" },
+    { id: 3, label: "Deliver Only", value: "deliverOnly" },
   ];
   return (
     <>
-      <View className="flex-1">
+      <View className="pt-2">
         <Text
           className=""
           style={{
-            fontFamily: 'Alexandria-SemiBold',
+            fontFamily: "Alexandria-SemiBold",
             fontSize: 16,
           }}
         >
           Method
         </Text>
         <View className="flex-row flex-wrap">
-          {methodItems.map((item) => (
+          {methodItems.map((item, index) => (
             <TouchableWithoutFeedback
               onPress={() => {
-                // if (item.value === 'pickupOnly') setSelectedDlivery('none');
-                // else if (item.value === 'deliverOnly') {
-                //   setSelectedPickupDay('none');
-                //   setSelectedPickupTime('none');
-                // }
+                if (item.value === "pickupOnly") {
+                  return setMethod({ value: item.value, label: item.label });
+                }
+
+                setPickupDateError("");
+                setPickupTimeError("");
+                setDeliveryDateError("");
                 setMethod({ value: item.value, label: item.label });
               }}
               key={item.id}
@@ -43,8 +48,8 @@ function Method({
                   <View
                     className={`h-[22px] w-[22px] absolute rounded-full bg-black ${
                       method.value === item.value
-                        ? 'border-[4px] border-white'
-                        : 'bg-white'
+                        ? "border-[4px] border-white"
+                        : "bg-white"
                     } mr-2`}
                   ></View>
                 </View>

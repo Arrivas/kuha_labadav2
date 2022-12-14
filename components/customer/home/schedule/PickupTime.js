@@ -1,12 +1,23 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React from "react";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
+import colors from "../../../../config/colors";
 
-const PickupTime = ({ availablePickupTimes }) => {
+const PickupTime = ({
+  method,
+  pickupTime,
+  setPickupTime,
+  setPickupTimeError,
+  availablePickupTimes,
+}) => {
   return (
-    <View className="">
+    <View
+      className={`p-2 ${
+        method.value === "deliverOnly" ? "opacity-30" : "opactiy-100"
+      }`}
+    >
       <Text
         style={{
-          fontFamily: 'Alexandria-SemiBold',
+          fontFamily: "Alexandria-SemiBold",
           fontSize: 16,
         }}
       >
@@ -14,16 +25,39 @@ const PickupTime = ({ availablePickupTimes }) => {
       </Text>
       <View className="flex-row flex-wrap w-full justify-between items-center">
         {availablePickupTimes.map((item, index) => (
-          <View
-            className="p-4 mt-2 rounded-md bg-gray-100 items-center justify-center"
-            style={{
-              width: '32.5%',
-              // flex: 1,
-            }}
+          <TouchableWithoutFeedback
             key={index}
+            onPress={() => {
+              setPickupTime(
+                pickupTime === item.time
+                  ? ""
+                  : method.value === "deliverOnly"
+                  ? ""
+                  : item.time
+              );
+              setPickupTimeError("");
+            }}
           >
-            <Text>{item.time.toLowerCase()}</Text>
-          </View>
+            <View
+              className={`${
+                pickupTime === item.time
+                  ? `bg-[${colors.primary}]`
+                  : "bg-gray-100"
+              } p-4 mt-2 rounded-md items-center justify-center`}
+              style={{
+                width: "32.5%",
+                // flex: 1,
+              }}
+            >
+              <Text
+                className={`${
+                  pickupTime === item.time ? "text-white" : "text-black"
+                }`}
+              >
+                {item.time.toLowerCase()}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
         ))}
       </View>
     </View>
