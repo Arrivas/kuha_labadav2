@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useRef } from "react";
+import { useEffect } from "react";
 import { View, ScrollView, Text, TouchableWithoutFeedback } from "react-native";
 import colors from "../../../../config/colors";
 import generateWeek from "../../../../functions/generateWeek";
 
 const PickupDate = ({
+  method,
   pickupDate,
   setPickupDate,
-  method,
   setPickupDateError,
 }) => {
+  const scrollViewRef = useRef();
   const availableWeek = generateWeek.getAvailableDateWeek();
+
+  const slowlyScrollDown = () => {
+    if (availableWeek.filter((item) => item.available).length <= 4)
+      scrollViewRef.current.scrollTo({ x: 200, y: 0, animated: true });
+  };
+
+  useEffect(() => {
+    slowlyScrollDown();
+  }, []);
 
   return (
     <View
@@ -26,6 +37,7 @@ const PickupDate = ({
         Pickup Date
       </Text>
       <ScrollView
+        ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -38,18 +50,20 @@ const PickupDate = ({
               key={item.dayWeek}
               onPress={() => {
                 setPickupDate(
-                  pickupDate === item.dayWeek
+                  pickupDate.dayWeek === item.dayWeek
                     ? ""
                     : method.value === "deliverOnly"
                     ? ""
-                    : item.dayWeek
+                    : item.available
+                    ? item
+                    : ""
                 );
                 setPickupDateError("");
               }}
             >
               <View
                 className={`${
-                  pickupDate === item.dayWeek
+                  pickupDate.dayWeek === item.dayWeek
                     ? `bg-[${colors.primary}]`
                     : "bg-gray-100"
                 } items-center justify-between rounded-lg mr-2 py-1`}
@@ -62,7 +76,11 @@ const PickupDate = ({
               >
                 <Text
                   className={`${
-                    pickupDate === item.dayWeek ? "text-white" : "text-black"
+                    pickupDate.dayWeek === item.dayWeek
+                      ? "text-white"
+                      : item.available
+                      ? "text-black"
+                      : "text-gray-200"
                   }`}
                   style={{
                     fontFamily: "Alexandria-Regular",
@@ -73,7 +91,11 @@ const PickupDate = ({
                 </Text>
                 <Text
                   className={`${
-                    pickupDate === item.dayWeek ? "text-white" : "text-black"
+                    pickupDate.dayWeek === item.dayWeek
+                      ? "text-white"
+                      : item.available
+                      ? "text-black"
+                      : "text-gray-200"
                   }`}
                   style={{
                     fontFamily: "Alexandria-Regular",

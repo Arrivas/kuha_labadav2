@@ -1,20 +1,43 @@
-import { useEffect, useState, useContext } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import AuthStack from './navigation/auth/AuthStack.js';
-import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/auth';
-import '@react-native-firebase/firestore';
-import secureStore from './auth/storage';
-import { AppContext } from './context/AppContext';
-import useAuth from './auth/useAuth.js';
-import WelcomeScreen from './components/welcomeScreen/WelcomeScreen.js';
+import { useEffect, useState, useContext } from "react";
+import { StatusBar } from "expo-status-bar";
+import { PermissionsAndroid } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import AuthStack from "./navigation/auth/AuthStack.js";
+import CustomerRootScreen from "./navigation/customer/CustomerRootScreen";
+import firebase from "@react-native-firebase/app";
+import "@react-native-firebase/auth";
+import "@react-native-firebase/firestore";
+import secureStore from "./auth/storage";
+import { AppContext } from "./context/AppContext";
+import useAuth from "./auth/useAuth.js";
+import WelcomeScreen from "./components/welcomeScreen/WelcomeScreen.js";
+import * as Location from "expo-location";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
+  const [userCurrentLocation, setUserCurrentLocation] = useState("");
   const { logIn, logOut } = useAuth();
+
+  const getLocationRequest = async () => {
+    const res = await Location.requestForegroundPermissionsAsync();
+    if (!res.granted)
+      return ToastAndroid.show(
+        "please enable location to use the app properly.",
+        ToastAndroid.SHORT
+      );
+    const hasPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+    );
+
+    const {
+      coords: { latitude, longitude },
+    } = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+    if (!latitude) return console.log("cannot get location");
+    setUserCurrentLocation({ longitude, latitude });
+  };
 
   const onAuthStateChanged = (user) => {
     if (user) {
@@ -30,8 +53,8 @@ export default function App() {
     if (uid)
       return firebase
         .firestore()
-        .collection('customers')
-        .where('userId', '==', uid)
+        .collection("customers")
+        .where("userId", "==", uid)
         .limit(1)
         .get()
         .then((data) => {
@@ -50,6 +73,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    getLocationRequest();
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     if (firebase.auth().currentUser?.uid) getUserInfo();
     checkFirstUse();
@@ -60,13 +84,13 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <AppContext.Provider value={{ user, setUser }}>
+      <AppContext.Provider value={{ user, setUser, userCurrentLocation }}>
         {isFirstUse ? (
           <WelcomeScreen
             isFirstUse={isFirstUse}
             setIsFirstUse={setIsFirstUse}
           />
-        ) : user?.userType === 'customer' ? (
+        ) : user?.userType === "customer" ? (
           <CustomerRootScreen />
         ) : (
           <AuthStack />

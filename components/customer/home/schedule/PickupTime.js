@@ -9,6 +9,8 @@ const PickupTime = ({
   setPickupTimeError,
   availablePickupTimes,
 }) => {
+  const getDate = (time) =>
+    new Date(`${new Date().toLocaleDateString("en-us")} ${time}`);
   return (
     <View
       className={`p-2 ${
@@ -33,6 +35,8 @@ const PickupTime = ({
                   ? ""
                   : method.value === "deliverOnly"
                   ? ""
+                  : getDate(item.time) < new Date()
+                  ? ""
                   : item.time
               );
               setPickupTimeError("");
@@ -51,7 +55,11 @@ const PickupTime = ({
             >
               <Text
                 className={`${
-                  pickupTime === item.time ? "text-white" : "text-black"
+                  pickupTime === item.time
+                    ? "text-white"
+                    : getDate(item.time) < new Date()
+                    ? "text-gray-200"
+                    : "text-black"
                 }`}
               >
                 {item.time.toLowerCase()}

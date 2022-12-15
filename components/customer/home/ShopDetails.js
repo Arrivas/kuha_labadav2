@@ -105,8 +105,10 @@ const ShopDetails = ({ navigation, route }) => {
             navigation.navigate("SelectSchedule", {
               name,
               pricing,
+              imageUrl,
               laundry_id,
               deliveredByItems,
+              selectedServices,
               availablePickupTimes,
             })
           }

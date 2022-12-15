@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableNativeFeedback } from "react-native";
 import SafeScreenView from "../../../SafeScreenView";
 import PickupDate from "./PickupDate";
@@ -11,10 +11,20 @@ import getDimensions from "../../../../config/getDimensions";
 import firebase from "@react-native-firebase/app";
 import "@react-native-firebase/firestore";
 import ErrorMessage from "../../../forms/ErrorMessage";
+import { AppContext } from "../../../../context/AppContext";
 
 const SelectSchedule = ({ route, navigation }) => {
-  const { laundry_id, name, availablePickupTimes, deliveredByItems, pricing } =
-    route.params;
+  const {
+    name,
+    pricing,
+    imageUrl,
+    laundry_id,
+    availablePickupTimes,
+    deliveredByItems,
+    selectedServices,
+  } = route.params;
+  const { user, userCurrentLocation } = useContext(AppContext);
+
   const [method, setMethod] = useState({
     label: "Pickup & Deliver",
     value: "pickup&deliver",
@@ -26,10 +36,12 @@ const SelectSchedule = ({ route, navigation }) => {
   const [pickUpDateError, setPickupDateError] = useState("");
   const [pickupTimeError, setPickupTimeError] = useState("");
   const [deliveryDateError, setDeliveryDateError] = useState("");
-  const { width, height } = getDimensions();
+  const { height } = getDimensions();
 
   const bookNow = async () => {
-    const laundryProvRef = firebase.firestore().collection("laundryProviders");
+    const availableBookingsRef = firebase
+      .firestore()
+      .collection("availableBookings");
     const currentLaundryProv = [];
 
     // validation
@@ -52,22 +64,41 @@ const SelectSchedule = ({ route, navigation }) => {
     setPickupDateError("");
     setPickupTimeError("");
     setDeliveryDateError("");
-    // await laundryProvRef
-    //   .where("laundry_id", "==", laundry_id)
-    //   .limit(1)
-    //   .get()
-    //   .then((data) =>
-    //     data.forEach((doc) => currentLaundryProv.push(doc.data()))
-    //   )
-    //   .catch((err) => console.log(err));
-    // console.log(currentLaundryProv[0]);
+
+    const newBooking = {
+      userLocation: userCurrentLocation,
+      timeOfBooking: new Date().toISOString(),
+      status: "confirmedBooking",
+      selectedServices,
+      selectedPickupTime: pickupTime,
+      selectedPickupDay: pickupDate.actualDate,
+      selectedDelivery: deliveryDate,
+      priceConfirmed: false,
+      method,
+      laundry_id,
+      laundryServiceName: name,
+      laundryImageUrl: imageUrl,
+      customerImageUrl: user.imageUrl,
+      customerName: user.name,
+      customerMobile: user.mobileNumber,
+      customerDocId: user.docId,
+      customerAddress: user.customerAddress,
+    };
+    await availableBookingsRef
+      .add(newBooking)
+      .then((data) => {
+        data.update({ docId: data.id });
+      })
+      .catch((err) => console.log(err));
 
     // redirect user to success page
-    navigation.navigate("SuccessfullyBooked", {
-      pickupDate,
-      pickupTime,
-      deliveryDate,
-    });
+    // navigation.replace("SuccessfullyBooked", {
+    //   name,
+    //   method,
+    //   pickupDate,
+    //   pickupTime,
+    //   deliveryDate,
+    // });
   };
 
   return (

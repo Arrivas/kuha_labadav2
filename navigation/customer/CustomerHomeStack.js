@@ -23,16 +23,6 @@ const CustomerHomeStack = ({ navigation }) => (
       component={CustomerHomeScreen}
     />
     <Stack.Screen
-      name="ShopDetails"
-      options={{
-        title: "",
-        headerShown: true,
-        headerShadowVisible: false,
-        headerTransparent: true,
-      }}
-      component={ShopDetails}
-    />
-    <Stack.Screen
       name="SelectSchedule"
       component={SelectSchedule}
       options={{
@@ -44,6 +34,16 @@ const CustomerHomeStack = ({ navigation }) => (
           fontFamily: "Alexandria-Regular",
         },
       }}
+    />
+    <Stack.Screen
+      name="ShopDetails"
+      options={{
+        title: "",
+        headerShown: true,
+        headerShadowVisible: false,
+        headerTransparent: true,
+      }}
+      component={ShopDetails}
     />
     <Stack.Screen
       name="SuccessfullyBooked"

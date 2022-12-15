@@ -35,7 +35,9 @@ function Method({
                 if (item.value === "pickupOnly") {
                   return setMethod({ value: item.value, label: item.label });
                 }
-
+                setPickupDate("");
+                setPickupTime("");
+                setDeliveryDate("");
                 setPickupDateError("");
                 setPickupTimeError("");
                 setDeliveryDateError("");
