@@ -1,37 +1,37 @@
-import React from 'react';
-import { View, Text, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import Icon from '../../Icon';
-import colors from '../../../config/colors';
+import React from "react";
+import { View, Text, TouchableWithoutFeedback, ScrollView } from "react-native";
+import Icon from "../../Icon";
+import colors from "../../../config/colors";
 
 const FindServices = ({ selectedService, setSelectedService }) => {
   const findServiceItems = [
     {
       id: 1,
-      label: 'Dry Cleaning',
-      value: 'dry-cleaning',
-      iconName: 'dry-cleaning',
-      iconLibrary: 'MaterialIcons',
+      label: "Dry Cleaning",
+      value: "dry-cleaning",
+      iconName: "dry-cleaning",
+      iconLibrary: "MaterialIcons",
     },
     {
       id: 2,
-      label: 'Wash-Dry-Fold',
-      value: 'wash-dry-fold',
-      iconName: 'local-laundry-service',
-      iconLibrary: 'MaterialIcons',
+      label: "Wash-Dry-Fold",
+      value: "wash-dry-fold",
+      iconName: "local-laundry-service",
+      iconLibrary: "MaterialIcons",
     },
     {
       id: 3,
-      label: 'Comforter/Blankets',
-      value: 'comforter/blankets',
-      iconName: 'ios-layers',
-      iconLibrary: 'IonIcons',
+      label: "Comforter/Blankets",
+      value: "comforter/blankets",
+      iconName: "ios-layers",
+      iconLibrary: "IonIcons",
     },
     {
       id: 4,
-      label: 'Ironing',
-      value: 'ironing',
-      iconName: 'iron-outline',
-      iconLibrary: 'MaterialCommunityIcons',
+      label: "Ironing",
+      value: "ironing",
+      iconName: "iron-outline",
+      iconLibrary: "MaterialCommunityIcons",
     },
   ];
 
@@ -53,9 +53,9 @@ const FindServices = ({ selectedService, setSelectedService }) => {
                 style={{
                   borderWidth: 1,
                   borderColor:
-                    item.value === selectedService ? '#75a1e6' : 'transparent',
-                  backgroundColor: 'white',
-                  shadowColor: 'black',
+                    item.value === selectedService ? "#75a1e6" : "transparent",
+                  backgroundColor: "white",
+                  shadowColor: "black",
                   shadowOpacity: 1,
                   elevation: 2,
                 }}
@@ -63,14 +63,14 @@ const FindServices = ({ selectedService, setSelectedService }) => {
                 {item.value === selectedService ? (
                   <>
                     <View
-                      className="h-2 w-[80px] absolute bottom-0 right-0 self-center rounded-full"
+                      className="h-1 w-[80px] absolute bottom-0 right-0 self-center rounded-full"
                       style={{
                         backgroundColor: colors.primary,
                         opacity: 0.5,
                       }}
                     />
                     <View
-                      className="h-2 w-[80px] absolute top-0 left-0 self-center rounded-full"
+                      className="h-1 w-[80px] absolute top-0 left-0 self-center rounded-full"
                       style={{
                         backgroundColor: colors.primary,
                         opacity: 0.5,
@@ -90,7 +90,7 @@ const FindServices = ({ selectedService, setSelectedService }) => {
                   <Text
                     className="text-start tracking-wide ml-2"
                     style={{
-                      fontFamily: 'Alexandria-SemiBold',
+                      fontFamily: "Alexandria-SemiBold",
                       fontSize: 13,
                       // color: item.value === selectedService ? 'white' : 'black',
                     }}

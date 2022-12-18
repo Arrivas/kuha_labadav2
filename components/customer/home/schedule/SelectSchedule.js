@@ -42,6 +42,7 @@ const SelectSchedule = ({ route, navigation }) => {
     const availableBookingsRef = firebase
       .firestore()
       .collection("availableBookings");
+    const customersRef = firebase.firestore().collection("customers");
     const currentLaundryProv = [];
 
     // validation
@@ -84,6 +85,23 @@ const SelectSchedule = ({ route, navigation }) => {
       customerDocId: user.docId,
       customerAddress: user.customerAddress,
     };
+
+    const currentCustomer = [];
+
+    await customersRef
+      .where("docId", "==", user.docId)
+      .limit(1)
+      .get()
+      .then((data) => {
+        data.forEach((doc) => currentCustomer.push(doc.data()));
+        currentCustomer[0].confirmedBooking.push(newBooking);
+      })
+      .then(async () => {
+        await customersRef.doc(user.docId).update(currentCustomer[0]);
+        console.log("success");
+      })
+      .catch((err) => console.log(err));
+
     await availableBookingsRef
       .add(newBooking)
       .then((data) => {
@@ -92,13 +110,13 @@ const SelectSchedule = ({ route, navigation }) => {
       .catch((err) => console.log(err));
 
     // redirect user to success page
-    // navigation.replace("SuccessfullyBooked", {
-    //   name,
-    //   method,
-    //   pickupDate,
-    //   pickupTime,
-    //   deliveryDate,
-    // });
+    navigation.replace("SuccessfullyBooked", {
+      name,
+      method,
+      pickupDate,
+      pickupTime,
+      deliveryDate,
+    });
   };
 
   return (

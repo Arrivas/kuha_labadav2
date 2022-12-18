@@ -1,21 +1,20 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-} from 'react-native';
-import getDimensions from '../../../config/getDimensions';
-import Icon from '../../Icon';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../../config/metrics';
+} from "react-native";
+import getDimensions from "../../../config/getDimensions";
+import Icon from "../../Icon";
+import { horizontalScale, verticalScale } from "../../../config/metrics";
+import { filterLaundryServices } from "../../../config/filterLaundryServices";
 
-const LaundryServices = ({ navigation, laundryServices }) => {
-  const { width } = getDimensions();
+const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
+  const filteredLaundryServices = selectedService
+    ? filterLaundryServices(laundryServices, selectedService)
+    : laundryServices;
 
   return (
     <View className="pt-5">
@@ -41,9 +40,9 @@ const LaundryServices = ({ navigation, laundryServices }) => {
         }}
         horizontal
       >
-        {laundryServices?.map((item, index) => (
+        {filteredLaundryServices?.map((item, index) => (
           <TouchableWithoutFeedback
-            onPress={() => navigation.navigate('ShopDetails', { item })}
+            onPress={() => navigation.navigate("ShopDetails", { item })}
             key={index}
           >
             <View
@@ -60,7 +59,7 @@ const LaundryServices = ({ navigation, laundryServices }) => {
                 // width >= 500 ? width * 0.25 : width * 0.5
                 style={{
                   height: verticalScale(180),
-                  width: 'auto',
+                  width: "auto",
                   // width: horizontalScale(150),
                 }}
                 source={{
