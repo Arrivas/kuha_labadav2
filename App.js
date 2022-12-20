@@ -1,32 +1,33 @@
-import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { PermissionsAndroid } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/auth";
-import "@react-native-firebase/firestore";
-import secureStore from "./auth/storage";
-import { AppContext } from "./context/AppContext";
-import useAuth from "./auth/useAuth.js";
-import WelcomeScreen from "./components/welcomeScreen/WelcomeScreen.js";
-import * as Location from "expo-location";
+import { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { PermissionsAndroid } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/firestore';
+import secureStore from './auth/storage';
+import { AppContext } from './context/AppContext';
+import useAuth from './auth/useAuth.js';
+import WelcomeScreen from './components/welcomeScreen/WelcomeScreen.js';
+import * as Location from 'expo-location';
 
 // stack screens
-import AuthStack from "./navigation/auth/AuthStack.js";
-import CustomerRootScreen from "./navigation/customer/CustomerRootScreen";
-import DriverRootScreen from "./navigation/driver/DriverRootScreen";
+import AuthStack from './navigation/auth/AuthStack.js';
+import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
+import DriverRootScreen from './navigation/driver/DriverRootScreen';
+import AdminRootScreen from './navigation/admin/AdminRootScreen';
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
-  const [userCurrentLocation, setUserCurrentLocation] = useState("");
+  const [userCurrentLocation, setUserCurrentLocation] = useState('');
   const { logIn, logOut } = useAuth();
 
   const getLocationRequest = async () => {
     const res = await Location.requestForegroundPermissionsAsync();
     if (!res.granted)
       return ToastAndroid.show(
-        "please enable location to use the app properly.",
+        'please enable location to use the app properly.',
         ToastAndroid.SHORT
       );
     const hasPermission = await PermissionsAndroid.request(
@@ -38,7 +39,7 @@ export default function App() {
     } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
-    if (!latitude) return console.log("cannot get location");
+    if (!latitude) return console.log('cannot get location');
     setUserCurrentLocation({ longitude, latitude });
   };
 
@@ -48,7 +49,7 @@ export default function App() {
       getUserInfo();
     }
   };
-
+  // console.log(user);
   const getUserInfo = async () => {
     // retrieve uid if available on secure store
     const uid = await secureStore.getId();
@@ -56,47 +57,67 @@ export default function App() {
     if (uid)
       return firebase
         .firestore()
-        .collection("customers")
-        .where("userId", "==", uid)
+        .collection('customers')
+        .where('userId', '==', uid)
         .limit(1)
         .get()
         .then((data) => {
+          if (data.empty) return;
           const currentUser = [];
           data.forEach((doc) => currentUser.push(doc.data()));
-          if (currentUser[0] !== undefined) return setUser(currentUser[0]);
-          else {
-            firebase
-              .firestore()
-              .collection("drivers")
-              .where("userId", "==", uid)
-              .limit(1)
-              .get()
-              .then((data) => {
-                const currentUser = [];
-                data.forEach((doc) => currentUser.push(doc.data()));
-                if (currentUser[0] !== undefined) return currentUser[0];
-              })
-              .then((currentUser) => {
-                firebase
-                  .firestore()
-                  .collection("availableBookings")
-                  .limit(5)
-                  .get()
-                  .then((data) => {
-                    const avaialbleBookings = [];
-                    data.forEach((doc) => avaialbleBookings.push(doc.data()));
-                    setUser({ driverDetails: currentUser, avaialbleBookings });
-                  });
-              })
-              .catch((error) =>
-                console.log(error, "error getting available bookings")
-              );
-          }
+          setUser(currentUser[0]);
         })
-
+        .then(() =>
+          firebase
+            .firestore()
+            .collection('drivers')
+            .where('userId', '==', uid)
+            .limit(1)
+            .get()
+            .then((data) => {
+              if (data.empty) return;
+              const currentUser = [];
+              data.forEach((doc) => currentUser.push(doc.data()));
+              return firebase
+                .firestore()
+                .collection('availableBookings')
+                .limit(5)
+                .get()
+                .then((data) => {
+                  const avaialbleBookings = [];
+                  data.forEach((doc) => avaialbleBookings.push(doc.data()));
+                  setUser({
+                    driverDetails: currentUser,
+                    avaialbleBookings,
+                  });
+                });
+            })
+            .then(() =>
+              firebase
+                .firestore()
+                .collection('admins')
+                .where('userId', '==', uid)
+                .limit(1)
+                .get()
+                .then((data) => {
+                  if (data.empty) return;
+                  const currentAdmin = [];
+                  data.forEach((doc) => currentAdmin.push(doc.data()));
+                  firebase
+                    .firestore()
+                    .collection('laundryProviders')
+                    .doc(currentAdmin[0]?.laundry_id)
+                    .get()
+                    .then((doc) => {
+                      if (!doc.exists) return;
+                      const admin = doc.data();
+                      setUser(admin);
+                    });
+                })
+            )
+        )
         .catch((error) => console.log(error));
   };
-
   const checkFirstUse = async () => {
     const welcomeState = await secureStore.getWelcome();
     if (welcomeState === undefined || welcomeState === null)
@@ -122,9 +143,11 @@ export default function App() {
             isFirstUse={isFirstUse}
             setIsFirstUse={setIsFirstUse}
           />
-        ) : user?.userType === "customer" ? (
+        ) : user?.userType === 'customer' ? (
           <CustomerRootScreen />
-        ) : user?.driverDetails?.userType === "driver" ? (
+        ) : user?.userType === 'admin' ? (
+          <AdminRootScreen />
+        ) : user?.driverDetail?.userType === 'driver' ? (
           <DriverRootScreen />
         ) : (
           <AuthStack />

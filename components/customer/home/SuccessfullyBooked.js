@@ -7,14 +7,13 @@ import colors from "../../../config/colors";
 import getDimentions from "../../../config/getDimensions";
 import {
   moderateScale,
-  horizontalScale,
-  verticalScale,
+
 } from "../../../config/metrics";
 
 const SuccessfullyBooked = ({ navigation, route }) => {
   const translation = useRef(new Animated.Value(0)).current;
-  const { width, height } = getDimentions();
-  const { pickupDate, pickupTime, deliveryDate, name, method } = route.params;
+  const {  height } = getDimentions();
+  const { pickupDate, pickupTime, deliveryDate, method } = route.params;
 
   const moveImage = () => {
     Animated.loop(

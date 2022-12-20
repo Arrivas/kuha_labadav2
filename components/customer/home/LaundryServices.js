@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native";
-import getDimensions from "../../../config/getDimensions";
 import Icon from "../../Icon";
 import { horizontalScale, verticalScale } from "../../../config/metrics";
 import { filterLaundryServices } from "../../../config/filterLaundryServices";

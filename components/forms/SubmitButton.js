@@ -36,7 +36,7 @@ function SubmitButton({
               defaultStyle
                 ? `${
                     disabled ? 'opacity-70' : 'opacity-100'
-                  } p-3 rounded-full w-[100%] my-1 self-center items-center ${
+                  } p-4 rounded-full w-[100%] my-1 self-center items-center ${
                     loading ? 'flex-row justify-center items-center' : ''
                   }`
                 : className

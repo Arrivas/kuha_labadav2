@@ -1,17 +1,17 @@
-import React, { useContext, useState } from "react";
-import { View, Text, ScrollView, TouchableNativeFeedback } from "react-native";
-import SafeScreenView from "../../../SafeScreenView";
-import PickupDate from "./PickupDate";
-import Method from "./Method";
-import PickupTime from "./PickupTime";
-import DeliveryDate from "./DeliveryDate";
-import PriceDetails from "./PriceDetails";
-import colors from "../../../../config/colors";
-import getDimensions from "../../../../config/getDimensions";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/firestore";
-import ErrorMessage from "../../../forms/ErrorMessage";
-import { AppContext } from "../../../../context/AppContext";
+import React, { useContext, useState } from 'react';
+import { View, Text, ScrollView, TouchableNativeFeedback } from 'react-native';
+import SafeScreenView from '../../../SafeScreenView';
+import PickupDate from './PickupDate';
+import Method from './Method';
+import PickupTime from './PickupTime';
+import DeliveryDate from './DeliveryDate';
+import PriceDetails from './PriceDetails';
+import colors from '../../../../config/colors';
+import getDimensions from '../../../../config/getDimensions';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import ErrorMessage from '../../../forms/ErrorMessage';
+import { AppContext } from '../../../../context/AppContext';
 
 const SelectSchedule = ({ route, navigation }) => {
   const {
@@ -26,50 +26,49 @@ const SelectSchedule = ({ route, navigation }) => {
   const { user, userCurrentLocation } = useContext(AppContext);
 
   const [method, setMethod] = useState({
-    label: "Pickup & Deliver",
-    value: "pickup&deliver",
+    label: 'Pickup & Deliver',
+    value: 'pickup&deliver',
   });
 
-  const [pickupDate, setPickupDate] = useState("");
-  const [pickupTime, setPickupTime] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState("");
-  const [pickUpDateError, setPickupDateError] = useState("");
-  const [pickupTimeError, setPickupTimeError] = useState("");
-  const [deliveryDateError, setDeliveryDateError] = useState("");
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [pickUpDateError, setPickupDateError] = useState('');
+  const [pickupTimeError, setPickupTimeError] = useState('');
+  const [deliveryDateError, setDeliveryDateError] = useState('');
   const { height } = getDimensions();
 
   const bookNow = async () => {
     const availableBookingsRef = firebase
       .firestore()
-      .collection("availableBookings");
-    const customersRef = firebase.firestore().collection("customers");
-    const currentLaundryProv = [];
+      .collection('availableBookings');
+    const customersRef = firebase.firestore().collection('customers');
 
     // validation
     if (
-      (!pickupDate && method.value === "pickup&deliver") ||
-      (!pickupDate && method.value === "pickupOnly")
+      (!pickupDate && method.value === 'pickup&deliver') ||
+      (!pickupDate && method.value === 'pickupOnly')
     )
-      return setPickupDateError("select pickup date");
+      return setPickupDateError('select pickup date');
     else if (
-      (!pickupTime && method.value === "pickup&deliver") ||
-      (!pickupTime && method.value === "pickupOnly")
+      (!pickupTime && method.value === 'pickup&deliver') ||
+      (!pickupTime && method.value === 'pickupOnly')
     )
-      return setPickupTimeError("select pickup time");
+      return setPickupTimeError('select pickup time');
     else if (
-      (!deliveryDate && method.value === "pickup&deliver") ||
-      (!deliveryDate && method.value === "deliverOnly")
+      (!deliveryDate && method.value === 'pickup&deliver') ||
+      (!deliveryDate && method.value === 'deliverOnly')
     )
-      return setDeliveryDateError("select pickup time");
+      return setDeliveryDateError('select pickup time');
 
-    setPickupDateError("");
-    setPickupTimeError("");
-    setDeliveryDateError("");
+    setPickupDateError('');
+    setPickupTimeError('');
+    setDeliveryDateError('');
 
     const newBooking = {
       userLocation: userCurrentLocation,
       timeOfBooking: new Date().toISOString(),
-      status: "confirmedBooking",
+      status: 'confirmedBooking',
       selectedServices,
       selectedPickupTime: pickupTime,
       selectedPickupDay: pickupDate.actualDate,
@@ -89,7 +88,7 @@ const SelectSchedule = ({ route, navigation }) => {
     const currentCustomer = [];
 
     await customersRef
-      .where("docId", "==", user.docId)
+      .where('docId', '==', user.docId)
       .limit(1)
       .get()
       .then((data) => {
@@ -98,7 +97,7 @@ const SelectSchedule = ({ route, navigation }) => {
       })
       .then(async () => {
         await customersRef.doc(user.docId).update(currentCustomer[0]);
-        console.log("success");
+        console.log('success');
       })
       .catch((err) => console.log(err));
 
@@ -110,7 +109,7 @@ const SelectSchedule = ({ route, navigation }) => {
       .catch((err) => console.log(err));
 
     // redirect user to success page
-    navigation.replace("SuccessfullyBooked", {
+    navigation.replace('SuccessfullyBooked', {
       name,
       method,
       pickupDate,
@@ -132,12 +131,12 @@ const SelectSchedule = ({ route, navigation }) => {
         style={{
           paddingHorizontal: 20,
           marginBottom: 5,
-          height: height - 180,
+          height: height - 150,
         }}
       >
         <ScrollView
           contentContainerStyle={{
-            justifyContent: "space-between",
+            justifyContent: 'space-between',
             flexGrow: 1,
           }}
         >
@@ -190,7 +189,6 @@ const SelectSchedule = ({ route, navigation }) => {
             className="self-center w-[90%] py-4 rounded-xl flex-row items-center justify-center px-10"
             style={{
               backgroundColor: colors.primary,
-              // width: width >= 500 ? "40%" : "70%",
             }}
           >
             <Text className="font-bold text-[15px] text-white">Book Now</Text>

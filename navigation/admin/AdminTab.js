@@ -1,13 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DriverHomeStack from './DriverHomeStack';
-import DriverNotificationsStack from './DriverNotificationsStack';
-import DriverSettingsStack from './DriverSettingsStack';
 import Icon from '../../components/Icon';
+import AdminHomeStack from './AdminHomeStack';
+import AdminNotificationStack from './AdminNotificationStack';
+import AdminSettingsStack from './AdminSettingsStack';
 import colors from '../../config/colors';
 
 const Tab = createBottomTabNavigator();
 
-const DriverTab = () => (
+const AdminTab = () => (
   <Tab.Navigator
     screenOptions={{
       tabBarItemStyle: {
@@ -19,6 +19,7 @@ const DriverTab = () => (
     }}
   >
     <Tab.Screen
+      name="HomeStack"
       options={{
         headerShown: false,
         tabBarLabel: '',
@@ -33,10 +34,10 @@ const DriverTab = () => (
           <Icon iconLibrary="Feather" iconName="home" color={color} size={25} />
         ),
       }}
-      name="HomeStack"
-      component={DriverHomeStack}
+      component={AdminHomeStack}
     />
     <Tab.Screen
+      name="NotificationStack"
       options={{
         headerShown: false,
         tabBarLabel: '',
@@ -51,10 +52,10 @@ const DriverTab = () => (
           <Icon iconLibrary="Feather" iconName="bell" color={color} size={25} />
         ),
       }}
-      name="NotificationStack"
-      component={DriverNotificationsStack}
+      component={AdminNotificationStack}
     />
     <Tab.Screen
+      name="SettingsStack"
       options={{
         headerShown: false,
         tabBarLabel: '',
@@ -74,10 +75,9 @@ const DriverTab = () => (
           />
         ),
       }}
-      name="SettingsStack"
-      component={DriverSettingsStack}
+      component={AdminSettingsStack}
     />
   </Tab.Navigator>
 );
 
-export default DriverTab;
+export default AdminTab;
