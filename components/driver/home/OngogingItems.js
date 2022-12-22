@@ -16,85 +16,9 @@ import colors from '../../../config/colors';
 import formattedDate from '../../../functions/formattedDate';
 import properStatus from '../../../functions/properStatus';
 import { AppContext } from '../../../context/AppContext';
+import HandleDriverButtonAtion from './HandleDriverButtonAtion';
 
-const AvailableBookings = () => {
-  const { user } = useContext(AppContext);
-  const [availableBookings, setAvailableBookings] = useState([]);
-
-  const fetchAvailableBookings = async () => {
-    const availableBookingsRef = firebase
-      .firestore()
-      .collection('availableBookings');
-
-    try {
-      await availableBookingsRef
-        .where('waitingForDriver', '==', true)
-        .onSnapshot((data) => {
-          const currentAvailableBookings = [];
-          data.forEach((doc) => currentAvailableBookings.push(doc.data()));
-          setAvailableBookings(currentAvailableBookings);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      fetchAvailableBookings();
-    }
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const handleAccept = async (bookingDetails) => {
-    const driversRef = await firebase.firestore().collection('drivers');
-    const availableBookingsRef = await firebase
-      .firestore()
-      .collection('availableBookings');
-    const laundryProvRef = await firebase
-      .firestore()
-      .collection('laundryProviders');
-
-    // copy and update local state
-    const bookingDetailsCopy = { ...bookingDetails };
-    const driverDetailsCopy = user?.driverDetails;
-    bookingDetailsCopy.driverDetails = {
-      name: user?.driverDetails?.name,
-      docId: user?.driverDetails?.docId,
-      mobileNumber: user?.driverDetails?.mobileNumber,
-    };
-    bookingDetailsCopy.waitingForDriver = false;
-    bookingDetailsCopy.status = 'pick-up';
-
-    driverDetailsCopy.service.ongoing.push(bookingDetailsCopy);
-    // update db
-    laundryProvRef
-      .doc(bookingDetails.laundry_id)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) return;
-        const currentLaundryProv = doc.data();
-        const index = currentLaundryProv?.pendingServices?.ongoing.findIndex(
-          (item) => item.docId === bookingDetails.docId
-        );
-        if (index > -1)
-          currentLaundryProv.pendingServices.ongoing[index] =
-            bookingDetailsCopy;
-        return laundryProvRef
-          .doc(bookingDetails.laundry_id)
-          .update(currentLaundryProv);
-      })
-      .then(() => {
-        driversRef.doc(user?.driverDetails.docId).update(driverDetailsCopy);
-        availableBookingsRef.doc(bookingDetails.docId).delete();
-        return ToastAndroid.show('booking accepted', ToastAndroid.SHORT);
-      })
-      .catch((err) => console.log(err));
-  };
-
+const OngogingItems = ({ ongoingItems }) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -102,7 +26,7 @@ const AvailableBookings = () => {
         paddingHorizontal: verticalScale(15),
       }}
     >
-      {availableBookings.map((item) => (
+      {ongoingItems.map((item) => (
         <View
           className="rounded-xl overflow-hidden"
           style={{
@@ -168,11 +92,11 @@ const AvailableBookings = () => {
               />
             </View>
             {/* button */}
-            <TouchableNativeFeedback onPress={() => handleAccept(item)}>
-              <View className="self-end p-2">
-                <Text>accept</Text>
-              </View>
-            </TouchableNativeFeedback>
+            <HandleDriverButtonAtion
+              method={item.method.value}
+              status={item.status}
+              bookingDetails={item}
+            />
           </View>
         </View>
       ))}
@@ -180,4 +104,4 @@ const AvailableBookings = () => {
   );
 };
 
-export default AvailableBookings;
+export default OngogingItems;

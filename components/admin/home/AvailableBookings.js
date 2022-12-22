@@ -3,10 +3,10 @@ import {
   View,
   Image,
   ScrollView,
-  TouchableNativeFeedback,
   ToastAndroid,
+  TouchableNativeFeedback,
 } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 import CardDetailsLabel from '../home/card/CardDetailsLabel';
@@ -15,29 +15,9 @@ import { verticalScale } from '../../../config/metrics';
 import colors from '../../../config/colors';
 import formattedDate from '../../../functions/formattedDate';
 import properStatus from '../../../functions/properStatus';
-import { AppContext } from '../../../context/AppContext';
 
 const AvailableBookings = () => {
-  const { user } = useContext(AppContext);
   const [availableBookings, setAvailableBookings] = useState([]);
-
-  const fetchAvailableBookings = async () => {
-    const availableBookingsRef = firebase
-      .firestore()
-      .collection('availableBookings');
-
-    try {
-      await availableBookingsRef
-        .where('waitingForDriver', '==', true)
-        .onSnapshot((data) => {
-          const currentAvailableBookings = [];
-          data.forEach((doc) => currentAvailableBookings.push(doc.data()));
-          setAvailableBookings(currentAvailableBookings);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     let mounted = true;
@@ -49,48 +29,56 @@ const AvailableBookings = () => {
     };
   }, []);
 
-  const handleAccept = async (bookingDetails) => {
-    const driversRef = await firebase.firestore().collection('drivers');
+  const fetchAvailableBookings = async () => {
     const availableBookingsRef = await firebase
       .firestore()
       .collection('availableBookings');
+
+    try {
+      availableBookingsRef
+        .where('status', '==', 'confirmedBooking')
+        .onSnapshot((data) => {
+          const currentAvailableBookings = [];
+          data.forEach((doc) => currentAvailableBookings.push(doc.data()));
+          setAvailableBookings(currentAvailableBookings);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAccept = async (selectedItem) => {
     const laundryProvRef = await firebase
       .firestore()
       .collection('laundryProviders');
-
-    // copy and update local state
-    const bookingDetailsCopy = { ...bookingDetails };
-    const driverDetailsCopy = user?.driverDetails;
-    bookingDetailsCopy.driverDetails = {
-      name: user?.driverDetails?.name,
-      docId: user?.driverDetails?.docId,
-      mobileNumber: user?.driverDetails?.mobileNumber,
-    };
-    bookingDetailsCopy.waitingForDriver = false;
-    bookingDetailsCopy.status = 'pick-up';
-
-    driverDetailsCopy.service.ongoing.push(bookingDetailsCopy);
-    // update db
-    laundryProvRef
-      .doc(bookingDetails.laundry_id)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) return;
-        const currentLaundryProv = doc.data();
-        const index = currentLaundryProv?.pendingServices?.ongoing.findIndex(
-          (item) => item.docId === bookingDetails.docId
-        );
-        if (index > -1)
-          currentLaundryProv.pendingServices.ongoing[index] =
-            bookingDetailsCopy;
-        return laundryProvRef
-          .doc(bookingDetails.laundry_id)
-          .update(currentLaundryProv);
+    firebase
+      .firestore()
+      .collection('availableBookings')
+      .doc(selectedItem.docId)
+      .update({
+        waitingForDriver: true,
+        status: 'waiting for a driver',
       })
       .then(() => {
-        driversRef.doc(user?.driverDetails.docId).update(driverDetailsCopy);
-        availableBookingsRef.doc(bookingDetails.docId).delete();
-        return ToastAndroid.show('booking accepted', ToastAndroid.SHORT);
+        const copySelectedItem = { ...selectedItem };
+        copySelectedItem.waitingForDriver = true;
+        copySelectedItem.status = 'waiting for a driver';
+
+        laundryProvRef
+          .doc(selectedItem.laundry_id)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) return;
+            const currentLaundryProv = doc.data();
+            currentLaundryProv?.pendingServices?.ongoing.push(copySelectedItem);
+            return currentLaundryProv;
+          })
+          .then((currentLaundryProv) => {
+            laundryProvRef
+              .doc(selectedItem.laundry_id)
+              .update(currentLaundryProv);
+            ToastAndroid.show('booking accepted', ToastAndroid.SHORT);
+          });
       })
       .catch((err) => console.log(err));
   };

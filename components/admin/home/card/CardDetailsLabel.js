@@ -6,7 +6,15 @@ const CardDetailsLabel = ({ label = '', value, textColor = '#000' }) => {
   return (
     <>
       <View className="flex-row justify-between w-full my-0.5">
-        <Text>{label}</Text>
+        <Text
+          style={
+            {
+              // fontFamily: 'Alexandria-Regular',
+            }
+          }
+        >
+          {label}
+        </Text>
         <Text
           style={{
             fontFamily: 'Alexandria-Light',

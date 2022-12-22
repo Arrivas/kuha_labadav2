@@ -87,7 +87,7 @@ export default function App() {
                   const avaialbleBookings = [];
                   data.forEach((doc) => avaialbleBookings.push(doc.data()));
                   setUser({
-                    driverDetails: currentUser,
+                    driverDetails: currentUser[0],
                     avaialbleBookings,
                   });
                 });
@@ -147,7 +147,7 @@ export default function App() {
           <CustomerRootScreen />
         ) : user?.userType === 'admin' ? (
           <AdminRootScreen />
-        ) : user?.driverDetail?.userType === 'driver' ? (
+        ) : user?.driverDetails?.userType === 'driver' ? (
           <DriverRootScreen />
         ) : (
           <AuthStack />

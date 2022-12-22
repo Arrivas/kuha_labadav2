@@ -5,7 +5,13 @@ const Stack = createNativeStackNavigator();
 
 const AdminHomeStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Home" component={AdminHomeScreen} />
+    <Stack.Screen
+      name="Home"
+      options={{
+        headerShadowVisible: false,
+      }}
+      component={AdminHomeScreen}
+    />
   </Stack.Navigator>
 );
 
