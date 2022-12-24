@@ -5,20 +5,20 @@ import {
   ScrollView,
   TouchableNativeFeedback,
   ToastAndroid,
-} from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/firestore';
-import CardDetailsLabel from '../home/card/CardDetailsLabel';
-import Moment from 'moment';
-import { verticalScale } from '../../../config/metrics';
-import colors from '../../../config/colors';
-import formattedDate from '../../../functions/formattedDate';
-import properStatus from '../../../functions/properStatus';
-import { AppContext } from '../../../context/AppContext';
-import HandleDriverButtonAtion from './HandleDriverButtonAtion';
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import firebase from "@react-native-firebase/app";
+import "@react-native-firebase/firestore";
+import CardDetailsLabel from "../home/card/CardDetailsLabel";
+import Moment from "moment";
+import { verticalScale } from "../../../config/metrics";
+import colors from "../../../config/colors";
+import formattedDate from "../../../functions/formattedDate";
+import properStatus from "../../../functions/properStatus";
+import { AppContext } from "../../../context/AppContext";
+import HandleDriverButtonAtion from "./HandleDriverButtonAtion";
 
-const OngogingItems = ({ ongoingItems }) => {
+const OngogingItems = ({ ongoingItems, navigation }) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -31,8 +31,8 @@ const OngogingItems = ({ ongoingItems }) => {
           className="rounded-xl overflow-hidden"
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            shadowColor: 'black',
+            backgroundColor: "white",
+            shadowColor: "black",
             shadowOpacity: 1,
             elevation: 2,
             marginBottom: 15,
@@ -57,7 +57,7 @@ const OngogingItems = ({ ongoingItems }) => {
               <View className="mx-2">
                 <Text
                   style={{
-                    fontFamily: 'Alexandria-Regular',
+                    fontFamily: "Alexandria-Regular",
                   }}
                 >
                   Customer Name
@@ -80,8 +80,8 @@ const OngogingItems = ({ ongoingItems }) => {
                       item.selectedPickupTime
                     )
                   ),
-                  'ddd DD-MMM-YYYY, hh:mm A'
-                ).format('lll')}
+                  "ddd DD-MMM-YYYY, hh:mm A"
+                ).format("lll")}
               />
               <CardDetailsLabel label="Address" value={item.customerAddress} />
               <CardDetailsLabel label="Phone#" value={item.customerMobile} />

@@ -1,33 +1,33 @@
-import { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { PermissionsAndroid } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/auth';
-import '@react-native-firebase/firestore';
-import secureStore from './auth/storage';
-import { AppContext } from './context/AppContext';
-import useAuth from './auth/useAuth.js';
-import WelcomeScreen from './components/welcomeScreen/WelcomeScreen.js';
-import * as Location from 'expo-location';
+import { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { PermissionsAndroid } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import firebase from "@react-native-firebase/app";
+import "@react-native-firebase/auth";
+import "@react-native-firebase/firestore";
+import secureStore from "./auth/storage";
+import { AppContext } from "./context/AppContext";
+import useAuth from "./auth/useAuth.js";
+import WelcomeScreen from "./components/welcomeScreen/WelcomeScreen.js";
+import * as Location from "expo-location";
 
 // stack screens
-import AuthStack from './navigation/auth/AuthStack.js';
-import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
-import DriverRootScreen from './navigation/driver/DriverRootScreen';
-import AdminRootScreen from './navigation/admin/AdminRootScreen';
+import AuthStack from "./navigation/auth/AuthStack.js";
+import CustomerRootScreen from "./navigation/customer/CustomerRootScreen";
+import DriverRootScreen from "./navigation/driver/DriverRootScreen";
+import AdminRootScreen from "./navigation/admin/AdminRootScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
-  const [userCurrentLocation, setUserCurrentLocation] = useState('');
+  const [userCurrentLocation, setUserCurrentLocation] = useState("");
   const { logIn, logOut } = useAuth();
 
   const getLocationRequest = async () => {
     const res = await Location.requestForegroundPermissionsAsync();
     if (!res.granted)
       return ToastAndroid.show(
-        'please enable location to use the app properly.',
+        "please enable location to use the app properly.",
         ToastAndroid.SHORT
       );
     const hasPermission = await PermissionsAndroid.request(
@@ -39,7 +39,7 @@ export default function App() {
     } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
-    if (!latitude) return console.log('cannot get location');
+    if (!latitude) return console.log("cannot get location");
     setUserCurrentLocation({ longitude, latitude });
   };
 
@@ -57,8 +57,8 @@ export default function App() {
     if (uid)
       return firebase
         .firestore()
-        .collection('customers')
-        .where('userId', '==', uid)
+        .collection("customers")
+        .where("userId", "==", uid)
         .limit(1)
         .get()
         .then((data) => {
@@ -70,8 +70,8 @@ export default function App() {
         .then(() =>
           firebase
             .firestore()
-            .collection('drivers')
-            .where('userId', '==', uid)
+            .collection("drivers")
+            .where("userId", "==", uid)
             .limit(1)
             .get()
             .then((data) => {
@@ -80,7 +80,7 @@ export default function App() {
               data.forEach((doc) => currentUser.push(doc.data()));
               return firebase
                 .firestore()
-                .collection('availableBookings')
+                .collection("availableBookings")
                 .limit(5)
                 .get()
                 .then((data) => {
@@ -95,8 +95,8 @@ export default function App() {
             .then(() =>
               firebase
                 .firestore()
-                .collection('admins')
-                .where('userId', '==', uid)
+                .collection("admins")
+                .where("userId", "==", uid)
                 .limit(1)
                 .get()
                 .then((data) => {
@@ -105,7 +105,7 @@ export default function App() {
                   data.forEach((doc) => currentAdmin.push(doc.data()));
                   firebase
                     .firestore()
-                    .collection('laundryProviders')
+                    .collection("laundryProviders")
                     .doc(currentAdmin[0]?.laundry_id)
                     .get()
                     .then((doc) => {
@@ -137,17 +137,19 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <AppContext.Provider value={{ user, setUser, userCurrentLocation }}>
+      <AppContext.Provider
+        value={{ user, setUser, userCurrentLocation, setUserCurrentLocation }}
+      >
         {isFirstUse ? (
           <WelcomeScreen
             isFirstUse={isFirstUse}
             setIsFirstUse={setIsFirstUse}
           />
-        ) : user?.userType === 'customer' ? (
+        ) : user?.userType === "customer" ? (
           <CustomerRootScreen />
-        ) : user?.userType === 'admin' ? (
+        ) : user?.userType === "admin" ? (
           <AdminRootScreen />
-        ) : user?.driverDetails?.userType === 'driver' ? (
+        ) : user?.driverDetails?.userType === "driver" ? (
           <DriverRootScreen />
         ) : (
           <AuthStack />
