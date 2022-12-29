@@ -91,20 +91,17 @@ const SelectSchedule = ({ route, navigation }) => {
       .where('docId', '==', user.docId)
       .limit(1)
       .get()
-      .then((data) => {
+      .then(async (data) => {
         data.forEach((doc) => currentCustomer.push(doc.data()));
+        await availableBookingsRef.add(newBooking).then((data) => {
+          data.update({ docId: data.id });
+          newBooking.docId = data.id;
+        });
         currentCustomer[0].confirmedBooking.push(newBooking);
       })
       .then(async () => {
         await customersRef.doc(user.docId).update(currentCustomer[0]);
         console.log('success');
-      })
-      .catch((err) => console.log(err));
-
-    await availableBookingsRef
-      .add(newBooking)
-      .then((data) => {
-        data.update({ docId: data.id });
       })
       .catch((err) => console.log(err));
 

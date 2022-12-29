@@ -1,14 +1,26 @@
-import React from "react";
-import { Text, View, TouchableNativeFeedback } from "react-native";
-import SafeScreenView from "../SafeScreenView";
+import React from 'react';
+import { Text, View, TouchableNativeFeedback } from 'react-native';
+import SafeScreenView from '../SafeScreenView';
+import useAuth from '../../auth/useAuth';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
-import useAuth from "../../auth/useAuth";
 const DriverSettingsScreen = (props) => {
   const { logOut } = useAuth();
+  const navigation = useNavigation();
   return (
     <SafeScreenView>
       <View>
-        <TouchableNativeFeedback onPress={() => logOut()}>
+        <TouchableNativeFeedback
+          onPress={() => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [{ name: 'Logout' }],
+              })
+            );
+            logOut();
+          }}
+        >
           <View className="p-5">
             <Text>logout</Text>
           </View>

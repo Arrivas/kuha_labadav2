@@ -4,7 +4,7 @@ import DriverHomeScreen from '../../components/driver/DriverHomeScreen';
 const Stack = createNativeStackNavigator();
 
 const DriverHomeStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator initialRouteName="Home">
     <Stack.Screen
       name="Home"
       component={DriverHomeScreen}

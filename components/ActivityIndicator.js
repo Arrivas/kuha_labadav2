@@ -1,8 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import Lottie from 'lottie-react-native';
+import getDimensions from '../config/getDimensions';
 
 function ActivityIndicator({ isVisible = false, opacity = 80 }) {
+  const { height } = getDimensions();
   if (!isVisible) return null;
   return (
     <View
@@ -12,6 +14,7 @@ function ActivityIndicator({ isVisible = false, opacity = 80 }) {
         source={require('../assets/animations/loading.json')}
         autoPlay
         loop
+        height={height - 150}
       />
     </View>
   );

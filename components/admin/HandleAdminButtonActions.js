@@ -1,31 +1,25 @@
 import { View, Text, TouchableNativeFeedback } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 
+// buttons
+import ChatCustomer from './home/buttonActions/ChatCustomer';
+
 const HandleAdminBookingActions = ({ method, status, bookingDetails }) => {
-  const notifyDriver = (
-    <TouchableNativeFeedback
-      onPress={() => {
-        // const driversRef = firebase.firestore().collection('drivers');
-      }}
-    >
-      <View className="self-end p-2">
-        <Text>notify driver</Text>
-      </View>
-    </TouchableNativeFeedback>
-  );
+  const navigation = useNavigation();
 
   return (
-    <>
+    <View className="self-end">
       {status === 'waiting for a driver' ? (
         <></>
       ) : method === 'pickup&deliver' && status === 'picked-up' ? (
-        notifyDriver
+        <ChatCustomer navigation={navigation} bookingDetails={bookingDetails} />
       ) : (
         <></>
       )}
-    </>
+    </View>
   );
 };
 

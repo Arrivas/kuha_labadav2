@@ -9,6 +9,7 @@ const Tab = createBottomTabNavigator();
 
 const DriverTab = () => (
   <Tab.Navigator
+    initialRouteName="HomeStack"
     screenOptions={{
       tabBarItemStyle: {
         justifyContent: 'center',

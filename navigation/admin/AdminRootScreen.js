@@ -3,16 +3,20 @@ import AdminTab from './AdminTab';
 
 const Stack = createNativeStackNavigator();
 
-const AdminRootScreen = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      options={{
-        headerShown: false,
-      }}
-      name="AdminTab"
-      component={AdminTab}
-    />
-  </Stack.Navigator>
-);
+const AdminRootScreen = () => {
+  const Logout = () => <></>;
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="AdminTab"
+        component={AdminTab}
+      />
+      <Stack.Screen name="Logout" component={Logout} />
+    </Stack.Navigator>
+  );
+};
 
 export default AdminRootScreen;

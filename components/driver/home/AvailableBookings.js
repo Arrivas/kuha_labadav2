@@ -60,11 +60,11 @@ const AvailableBookings = () => {
 
     // copy and update local state
     const bookingDetailsCopy = { ...bookingDetails };
-    const driverDetailsCopy = user?.driverDetails;
-    bookingDetailsCopy.driverDetails = {
-      name: user?.driverDetails?.name,
-      docId: user?.driverDetails?.docId,
-      mobileNumber: user?.driverDetails?.mobileNumber,
+    const driverDetailsCopy = user;
+    bookingDetailsCop = {
+      name: user?.name,
+      docId: user?.docId,
+      mobileNumber: user?.mobileNumber,
     };
     bookingDetailsCopy.waitingForDriver = false;
     bookingDetailsCopy.status = 'pick-up';
@@ -88,7 +88,7 @@ const AvailableBookings = () => {
           .update(currentLaundryProv);
       })
       .then(() => {
-        driversRef.doc(user?.driverDetails.docId).update(driverDetailsCopy);
+        driversRef.doc(user?.docId).update(driverDetailsCopy);
         availableBookingsRef.doc(bookingDetails.docId).delete();
         return ToastAndroid.show('booking accepted', ToastAndroid.SHORT);
       })

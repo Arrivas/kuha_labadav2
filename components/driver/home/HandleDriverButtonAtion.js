@@ -1,48 +1,35 @@
-import { View, Text, TouchableNativeFeedback, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import { View, Text, TouchableNativeFeedback, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { expoNotificationApi } from '../../../api/sendNotification';
+import React, { useContext } from 'react';
+import { AppContext } from '../../../context/AppContext';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+
+// buttons
+import StartPickup from './buttonActions/StartPickup';
+import PickedUp from './buttonActions/PickedUp';
 
 const HandleDriverButtonAtion = ({ method, status, bookingDetails }) => {
+  const { user } = useContext(AppContext);
   const navigation = useNavigation();
 
-  const startPickup = (
-    <TouchableNativeFeedback
-      onPress={() => {
-        Alert.alert(
-          "Proceed to map screen",
-          "This will notify customer that you are on your way to pick-up.",
-          [
-            {
-              text: "Cancel",
-              onPress: () => {},
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => {
-                // action
-                navigation.navigate("MapScreen", {
-                  userLocation: bookingDetails.userLocation,
-                });
-              },
-            },
-          ]
-        );
-      }}
-    >
-      <View className="self-end p-2">
-        <Text>map screen</Text>
-      </View>
-    </TouchableNativeFeedback>
-  );
   return (
-    <>
-      {method === "pickup&deliver" && status === "pick-up" ? (
-        startPickup
+    <View className="flex-row self-end">
+      {method === 'pickup&deliver' && status === 'pick-up' ? (
+        <StartPickup
+          expoNotificationApi={expoNotificationApi}
+          driverDetails={user}
+          bookingDetails={bookingDetails}
+          navigation={navigation}
+          firebase={firebase}
+        />
+      ) : method === 'pickup&deliver' && status === 'picked-up' ? (
+        <PickedUp navigation={navigation} bookingDetails={bookingDetails} />
       ) : (
         <></>
       )}
-    </>
+    </View>
   );
 };
 

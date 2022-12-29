@@ -3,9 +3,15 @@ import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import {
+  expoTokenCustomer,
+  expoTokenDriver,
+  expoTokenAdmin,
+} from '../api/setExpoToken.js';
 
 export default useAuth = () => {
-  const { setUser } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
 
   const logIn = (uid) => {
     secureStore.storeId(uid);
@@ -19,6 +25,14 @@ export default useAuth = () => {
       .then(() => console.log('user signed out'))
       .catch((err) => console.log(err.code));
     setUser(null);
+
+    // remove expo token
+    if (user?.userType === 'customer')
+      return expoTokenCustomer(user?.docId.trim(), '');
+    else if (user?.userType === 'admin')
+      return expoTokenAdmin(user?.laundry_id.trim(), '');
+    else if (user?.driverDetails?.userType === 'driver')
+      return expoTokenDriver(user?.driverDetails?.docId.trim(), '');
   };
 
   return { logIn, logOut };
