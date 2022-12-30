@@ -33,7 +33,7 @@ const AdminHomeScreen = () => {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      getAdminInfo();
+      // getAdminInfo();
     }
     return () => {
       mounted = false;
