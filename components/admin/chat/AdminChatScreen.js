@@ -115,32 +115,36 @@ const AdminChatScreen = ({ navigation, route }) => {
           behavior="height"
           keyboardVerticalOffset={100}
         >
-          <FlatList
-            style={{
-              // height: height - 1120,
-              flex: 1,
-            }}
-            inverted
-            className="px-3"
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index, separators }) => (
-              <ScrollView style={{ scaleY: -1 }}>
-                <>
-                  {item.data.from === 'admin' ? (
-                    <View
-                      key={index}
-                      className={`bg-[${colors.primary}] self-end p-2 px-3 my-1 max-w-[80%] rounded-l-3xl rounded-t-3xl`}
-                    >
-                      <Text className="text-white">{item.data.message}</Text>
-                    </View>
-                  ) : (
-                    <></>
-                  )}
-                </>
-              </ScrollView>
-            )}
-          />
+          {messages.length !== 0 ? (
+            <FlatList
+              style={{
+                // height: height - 1120,
+                flex: 1,
+              }}
+              inverted
+              className="px-3"
+              data={messages}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item, index, separators }) => (
+                <ScrollView style={{ scaleY: -1 }}>
+                  <>
+                    {item.data.from === 'admin' ? (
+                      <View
+                        key={index}
+                        className={`bg-[${colors.primary}] self-end p-2 px-3 my-1 max-w-[80%] rounded-l-3xl rounded-t-3xl`}
+                      >
+                        <Text className="text-white">{item.data.message}</Text>
+                      </View>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                </ScrollView>
+              )}
+            />
+          ) : (
+            <></>
+          )}
           <View className="px-3 my-2">
             <View className="flex-row items-center justify-between">
               <TextInput

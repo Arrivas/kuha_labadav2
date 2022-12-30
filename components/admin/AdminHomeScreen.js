@@ -16,27 +16,22 @@ const AdminHomeScreen = () => {
   const { user, setUser } = useContext(AppContext);
   const { ongoing } = user?.pendingServices;
 
-  const getAdminInfo = async () => {
-    let currentLaundryProv = {};
-
-    await firebase
-      .firestore()
-      .collection('laundryProviders')
-      .doc(user?.laundry_id)
-      .onSnapshot((doc) => {
-        if (!doc.exists) return;
-        setUser(doc.data());
-      });
-    return currentLaundryProv;
-  };
-
   useEffect(() => {
     let mounted = true;
+    let unsubscribe;
     if (mounted) {
-      // getAdminInfo();
+      unsubscribe = firebase
+        .firestore()
+        .collection('laundryProviders')
+        .doc(user?.laundry_id)
+        .onSnapshot((doc) => {
+          if (!doc.exists) return;
+          setUser(doc.data());
+        });
     }
     return () => {
       mounted = false;
+      unsubscribe();
     };
   }, []);
 
