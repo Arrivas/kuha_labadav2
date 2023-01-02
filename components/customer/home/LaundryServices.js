@@ -96,7 +96,7 @@ const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
                       iconLibrary="SimpleLineIcons"
                       iconName="location-pin"
                     />
-                    <Text>1.4km</Text>
+                    <Text>{item.distance.distanceKM.toFixed(1)} km</Text>
                   </View>
                 </View>
               </View>

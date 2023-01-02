@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,28 +6,28 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
-} from 'react-native';
-import SafeScreenView from '../SafeScreenView';
-import getDimensions from '../../config/getDimensions';
-import FormikField from '../forms/FormikField';
-import AppFormField from '../forms/AppFormField';
-import SubmitButton from '../forms/SubmitButton';
-import GoogleSvg from './GoogleSvg';
-import colors from '../../config/colors';
-import ErrorMessage from '../forms/ErrorMessage';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/auth';
-import ActivityIndicator from '../ActivityIndicator';
+} from "react-native";
+import SafeScreenView from "../SafeScreenView";
+import getDimensions from "../../config/getDimensions";
+import FormikField from "../forms/FormikField";
+import AppFormField from "../forms/AppFormField";
+import SubmitButton from "../forms/SubmitButton";
+import GoogleSvg from "./GoogleSvg";
+import colors from "../../config/colors";
+import ErrorMessage from "../forms/ErrorMessage";
+import firebase from "@react-native-firebase/app";
+import "@react-native-firebase/auth";
+import ActivityIndicator from "../ActivityIndicator";
 
 function LoginScreen({ navigation }) {
   const [showPassword, onShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
   const { width } = getDimensions();
 
   const initialValues = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
 
   const handleSubmit = async (val) => {
@@ -36,15 +36,15 @@ function LoginScreen({ navigation }) {
       const { user } = await firebase
         .auth()
         .signInWithEmailAndPassword(val.email.trim(), val.password.trim());
-      setLoginError('');
+      setLoginError("");
       setLoading(false);
     } catch (error) {
-      if (error.code === 'auth/user-not-found') {
+      if (error.code === "auth/user-not-found") {
         setLoading(false);
-        return setLoginError('email is not registered');
-      } else if (error.code === 'auth/wrong-password') {
+        return setLoginError("email is not registered");
+      } else if (error.code === "auth/wrong-password") {
         setLoading(false);
-        return setLoginError('invalid email or password');
+        return setLoginError("invalid email or password");
       }
       console.log(error.code);
       setLoading(false);
@@ -65,7 +65,7 @@ function LoginScreen({ navigation }) {
           >
             <Image
               className="self-center"
-              source={require('../../assets/logo_1_blue.png')}
+              source={require("../../assets/logo_1_blue.png")}
               style={{
                 width: width <= 360 ? 140 : 180,
                 height: width <= 360 ? 140 : 180,
@@ -76,7 +76,7 @@ function LoginScreen({ navigation }) {
             <Text
               className="self-center py-2 "
               style={{
-                fontFamily: 'Alexandria-Regular',
+                fontFamily: "Alexandria-Regular",
                 // fontSize: width >= 500 ? width * 0.02 : width * 0.025,
               }}
             >
@@ -104,7 +104,7 @@ function LoginScreen({ navigation }) {
               <SubmitButton
                 loading={loading}
                 textStyle={{
-                  color: 'white',
+                  color: "white",
                   fontSize: width >= 500 ? width * 0.025 : width * 0.035,
                 }}
                 textClass="font-bold"
@@ -126,7 +126,7 @@ function LoginScreen({ navigation }) {
                 </View>
               </TouchableNativeFeedback>
               <TouchableNativeFeedback
-                onPress={() => navigation.navigate('CreateAccount')}
+                onPress={() => navigation.navigate("CreateAccount")}
               >
                 <View className="self-start">
                   <Text
