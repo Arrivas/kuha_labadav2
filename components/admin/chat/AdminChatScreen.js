@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   TouchableNativeFeedback,
   ScrollView,
+  Image,
 } from 'react-native';
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { expoNotificationApi } from '../../../api/sendNotification';
@@ -16,10 +17,15 @@ import SafeScreenView from '../../SafeScreenView';
 import Icon from '../../Icon';
 import colors from '../../../config/colors';
 import ActivityIndicator from '../../ActivityIndicator';
+import AddPaymentButton from './AddPaymentButton';
+import CreatePayment from './CreatePayment';
 
 const AdminChatScreen = ({ navigation, route }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [chatDetails, setChatDetails] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const {
     chatId,
     customerDocId,
@@ -27,7 +33,6 @@ const AdminChatScreen = ({ navigation, route }) => {
     customerImageUrl,
     laundryServiceName,
   } = route.params;
-  const [loading, setLoading] = useState(false);
 
   const getCustomerPushToken = () =>
     firebase
@@ -38,7 +43,12 @@ const AdminChatScreen = ({ navigation, route }) => {
       .then((doc) => doc.data().pushToken);
 
   const sendMessage = async (e) => {
-    const messagesRef = await firebase.firestore().collection('chats');
+    const messagesRef = await firebase
+      .firestore()
+      .collection('customers')
+      .doc(customerDocId)
+      .collection('chats');
+
     e.persist();
     if (!inputMessage.trim() || inputMessage.trim().length >= 255) return;
     Keyboard.dismiss();
@@ -58,9 +68,7 @@ const AdminChatScreen = ({ navigation, route }) => {
     );
 
     // send notif if customer is logged in
-
     getCustomerPushToken().then((customerPushToken) => {
-      if (customerPushToken) console.log(customerPushToken);
       expoNotificationApi.post('/', {
         to: customerPushToken,
         title: laundryServiceName,
@@ -73,16 +81,22 @@ const AdminChatScreen = ({ navigation, route }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: customerName || '',
+      headerRight: chatDetails?.estimatedPayment
+        ? null
+        : () => <AddPaymentButton handleAddPayment={handleAddPayment} />,
     });
-  }, []);
+  }, [chatDetails]);
 
   useEffect(() => {
     setLoading(true);
     let mounted = true;
     let unsubscribe;
+    let getChatDetails;
     if (mounted) {
       unsubscribe = firebase
         .firestore()
+        .collection('customers')
+        .doc(customerDocId)
         .collection('chats')
         .doc(chatId)
         .collection('messages')
@@ -98,13 +112,28 @@ const AdminChatScreen = ({ navigation, route }) => {
           setMessages(currentMessages);
           setLoading(false);
         });
+      getChatDetails = firebase
+        .firestore()
+        .collection('customers')
+        .doc(customerDocId)
+        .collection('chats')
+        .onSnapshot((data) => {
+          let currentChatDetails;
+          data.forEach((doc) => {
+            currentChatDetails = doc.data();
+          });
+          setChatDetails(currentChatDetails);
+        });
     }
     setLoading(false);
     return () => {
       unsubscribe();
+      getChatDetails();
       mounted = false;
     };
   }, []);
+
+  const handleAddPayment = () => setIsModalVisible(!isModalVisible);
 
   return (
     <>
@@ -125,32 +154,108 @@ const AdminChatScreen = ({ navigation, route }) => {
               className="px-3"
               data={messages}
               keyExtractor={(item) => item.id}
-              renderItem={({ item, index, separators }) => (
-                <ScrollView style={{ scaleY: -1 }}>
-                  <>
-                    {item.data.from === 'admin' ? (
-                      <View
-                        key={index}
-                        className={`bg-[${colors.primary}] self-end p-2 px-3 my-1 max-w-[80%] rounded-l-3xl rounded-t-3xl`}
-                      >
-                        <Text className="text-white">{item.data.message}</Text>
-                      </View>
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                </ScrollView>
-              )}
+              renderItem={({ item, index }) => {
+                let sum = 0;
+                if (item.data.payment) {
+                  for (
+                    let i = 0;
+                    i < item?.data?.message?.payment.length;
+                    i++
+                  ) {
+                    sum +=
+                      item.data.message.payment[i][
+                        `${Object.keys(item?.data?.message?.payment[i])[0]}`
+                      ];
+                  }
+                }
+                return (
+                  <ScrollView style={{ scaleY: -1 }}>
+                    <>
+                      {item.data.from === 'admin' && !item?.data?.payment ? (
+                        <View
+                          key={index}
+                          className={`bg-[${colors.primary}] self-end p-2 px-3 my-1 max-w-[70%] rounded-l-3xl rounded-t-3xl`}
+                        >
+                          <Text className="text-white">
+                            {item.data.message}
+                          </Text>
+                        </View>
+                      ) : item.data.from === 'customer' &&
+                        !item?.data?.payment ? (
+                        <View className="flex-row items-center">
+                          <Image
+                            className="h-[25px] w-[25px] rounded-full mr-1"
+                            source={{ uri: customerImageUrl }}
+                          />
+                          <View
+                            key={index}
+                            className={`bg-gray-200 self-start p-2 px-3 my-1 max-w-[70%] rounded-full`}
+                          >
+                            <Text>{item.data.message}</Text>
+                          </View>
+                        </View>
+                      ) : (
+                        <>
+                          <View
+                            className="self-end p-2 rounded-t-xl rounded-l-xl max-w-[70%]"
+                            style={{
+                              backgroundColor: colors.primary,
+                            }}
+                          >
+                            <Text className="font-semibold text-white text-lg pb-1">
+                              Payment Notice
+                            </Text>
+                            {item.data.message.payment.map((item, index) => {
+                              const key = Object.keys(item);
+                              return (
+                                <View
+                                  key={index}
+                                  className="flex-row justify-between"
+                                >
+                                  <Text className="text-white max-w-[60%]">
+                                    {key[0]}
+                                  </Text>
+                                  <Text className="text-white max-w-[40%]">
+                                    {item[key[0]]}
+                                  </Text>
+                                </View>
+                              );
+                            })}
+                            <View className="flex-row justify-between">
+                              <Text className="font-semibold text-white">
+                                total
+                              </Text>
+                              <Text className="font-semibold text-white">
+                                {sum}
+                              </Text>
+                            </View>
+                            <Text className="pt-5 text-gray-200">
+                              {chatDetails?.estimatedPayment
+                                ? 'payment confirmed'
+                                : 'waiting for customer to confirm'}
+                            </Text>
+                          </View>
+                        </>
+                      )}
+                    </>
+                  </ScrollView>
+                );
+              }}
             />
           ) : (
-            <></>
+            <View className="flex-1 items-center justify-center">
+              <Text className="text-gray-300">
+                start a conversation with {customerName}
+              </Text>
+            </View>
           )}
           <View className="px-3 my-2">
             <View className="flex-row items-center justify-between">
               <TextInput
+                placeholder="message"
                 name="chat"
                 value={inputMessage}
-                className="h-[40px] bg-gray-100 rounded-full px-2"
+                className="h-[40px] bg-gray-100 rounded-full px-4"
                 style={{
                   width: '90%',
                 }}
@@ -173,6 +278,13 @@ const AdminChatScreen = ({ navigation, route }) => {
           </View>
         </KeyboardAvoidingView>
       </SafeScreenView>
+      <CreatePayment
+        chatId={chatId}
+        customerDocId={customerDocId}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        laundryServiceName={laundryServiceName}
+      />
     </>
   );
 };

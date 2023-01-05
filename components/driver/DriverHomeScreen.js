@@ -12,25 +12,21 @@ const DriverHomeScreen = () => {
   const [activeTab, setActiveTab] = useState('Available');
   const { ongoing, history } = user.service;
 
-  const getDriverInfo = async () => {
-    try {
-      firebase
+  useEffect(() => {
+    let mounted = true;
+    let unsubscribe;
+    if (mounted) {
+      unsubscribe = firebase
         .firestore()
         .collection('drivers')
         .doc(user?.docId)
         .onSnapshot((doc) => {
           setUser(doc.data());
         });
-    } catch (error) {
-      console.log('cannot get driver info', error);
     }
-  };
-
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) getDriverInfo();
     return () => {
       mounted = false;
+      unsubscribe();
     };
   }, []);
 

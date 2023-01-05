@@ -1,11 +1,10 @@
 import { View, Text, TouchableNativeFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/firestore';
 
 // buttons
 import ChatCustomer from './home/buttonActions/ChatCustomer';
+import SendToDriver from './home/buttonActions/SendToDriver';
 
 const HandleAdminBookingActions = ({ method, status, bookingDetails }) => {
   const navigation = useNavigation();
@@ -16,6 +15,8 @@ const HandleAdminBookingActions = ({ method, status, bookingDetails }) => {
         <></>
       ) : method === 'pickup&deliver' && status === 'picked-up' ? (
         <ChatCustomer navigation={navigation} bookingDetails={bookingDetails} />
+      ) : method === 'pickup&deliver' && status === 'estimated payment' ? (
+        <SendToDriver bookingDetails={bookingDetails} />
       ) : (
         <></>
       )}

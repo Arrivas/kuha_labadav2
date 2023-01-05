@@ -39,8 +39,8 @@ const ToShopMapScreen = ({ route }) => {
   };
 
   const destination = {
-    latitude: shopGeoLocation?.lat,
-    longitude: shopGeoLocation?.lng,
+    latitude: Number(shopGeoLocation?.lat),
+    longitude: Number(shopGeoLocation?.lng),
   };
 
   const getLocation = async () => {

@@ -13,6 +13,7 @@ const InputText = ({
   onShowPassword,
   iconColor = '#4c5464',
   setFieldTouched,
+  payment,
   ...rest
 }) => {
   const [applyBorder, setApplyBorder] = useState(false);
@@ -20,7 +21,9 @@ const InputText = ({
 
   return (
     <View
-      className={`items-center flex-row p-2 py-3 rounded-xl mb-3 bg-gray-100 bgred-400`}
+      className={`items-center flex-row p-2 ${
+        payment ? 'py-1 pt-4' : 'py-3'
+      } rounded-xl mb-3 bg-gray-100 bgred-400`}
       style={{
         borderWidth: 1,
         borderColor: applyBorder ? colors.primary : 'transparent',

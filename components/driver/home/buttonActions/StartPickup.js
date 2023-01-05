@@ -1,6 +1,5 @@
 import { View, Text, Alert, TouchableNativeFeedback } from 'react-native';
 import React from 'react';
-import { expoNotificationApi } from '../../../../api/sendNotification';
 
 const StartPickup = ({
   expoNotificationApi,

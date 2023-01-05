@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-} from "react-native";
-import Icon from "../../Icon";
-import { horizontalScale, verticalScale } from "../../../config/metrics";
-import { filterLaundryServices } from "../../../config/filterLaundryServices";
+} from 'react-native';
+import Icon from '../../Icon';
+import { horizontalScale, verticalScale } from '../../../config/metrics';
+import { filterLaundryServices } from '../../../config/filterLaundryServices';
 
 const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
   const filteredLaundryServices = selectedService
@@ -41,7 +41,7 @@ const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
       >
         {filteredLaundryServices?.map((item, index) => (
           <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("ShopDetails", { item })}
+            onPress={() => navigation.navigate('ShopDetails', { item })}
             key={index}
           >
             <View
@@ -58,7 +58,7 @@ const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
                 // width >= 500 ? width * 0.25 : width * 0.5
                 style={{
                   height: verticalScale(180),
-                  width: "auto",
+                  width: 'auto',
                   // width: horizontalScale(150),
                 }}
                 source={{
@@ -96,7 +96,7 @@ const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
                       iconLibrary="SimpleLineIcons"
                       iconName="location-pin"
                     />
-                    <Text>{item.distance.distanceKM.toFixed(1)} km</Text>
+                    <Text>{item?.distance.distanceKM.toFixed(1)} km</Text>
                   </View>
                 </View>
               </View>

@@ -18,6 +18,7 @@ const DriverMapScreen = ({ route }) => {
     latitude: userCurrentLocation?.latitude,
     longitude: userCurrentLocation?.longitude,
   };
+  
   const destination = {
     latitude: customerLocation.latitude,
     longitude: customerLocation.longitude,

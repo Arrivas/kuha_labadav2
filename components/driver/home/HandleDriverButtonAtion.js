@@ -9,6 +9,7 @@ import '@react-native-firebase/firestore';
 // buttons
 import StartPickup from './buttonActions/StartPickup';
 import PickedUp from './buttonActions/PickedUp';
+import Deliver from './buttonActions/Deliver';
 
 const HandleDriverButtonAtion = ({ method, status, bookingDetails }) => {
   const { user } = useContext(AppContext);
@@ -26,6 +27,15 @@ const HandleDriverButtonAtion = ({ method, status, bookingDetails }) => {
         />
       ) : method === 'pickup&deliver' && status === 'picked-up' ? (
         <PickedUp navigation={navigation} bookingDetails={bookingDetails} />
+      ) : (method === 'pickup&deliver' && status === 'estimated payment') ||
+        (method === 'pickup&deliver' && status === 'out for delivery') ? (
+        <Deliver
+          navigation={navigation}
+          bookingDetails={bookingDetails}
+          driverDetails={user}
+          firebase={firebase}
+          expoNotificationApi={expoNotificationApi}
+        />
       ) : (
         <></>
       )}

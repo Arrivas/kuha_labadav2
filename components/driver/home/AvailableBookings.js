@@ -61,7 +61,7 @@ const AvailableBookings = () => {
     // copy and update local state
     const bookingDetailsCopy = { ...bookingDetails };
     const driverDetailsCopy = user;
-    bookingDetailsCop = {
+    bookingDetailsCopy.driverDetails = {
       name: user?.name,
       docId: user?.docId,
       mobileNumber: user?.mobileNumber,

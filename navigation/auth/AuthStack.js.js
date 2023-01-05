@@ -26,25 +26,8 @@ const AuthStack = () => {
         options={{
           title: '',
           headerShown: true,
-          headerShadowVisible: false,
           headerTransparent: true,
-          headerLeft: () => (
-            <View style={{ marginHorizontal: width * 0.02 }}>
-              <TouchableNativeFeedback
-                background={TouchableNativeFeedback.Ripple('#d3d3d3', true)}
-                onPress={() => navigation.navigate('Login')}
-              >
-                <View className="rounded-full">
-                  <Icon
-                    className="rounded-full p-1"
-                    iconName="arrowleft"
-                    iconLibrary="AntDesign"
-                    size={22}
-                  />
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          ),
+          headerShadowVisible: false,
         }}
       />
     </Stack.Navigator>
@@ -52,3 +35,21 @@ const AuthStack = () => {
 };
 
 export default AuthStack;
+
+// headerLeft: () => (
+//   <View style={{ marginHorizontal: width * 0.02 }}>
+//     <TouchableNativeFeedback
+//       background={TouchableNativeFeedback.Ripple('#d3d3d3', true)}
+//       onPress={() => navigation.navigate('Login')}
+//     >
+//       <View className="rounded-full">
+//         <Icon
+//           className="rounded-full p-1"
+//           iconLibrary="AntDesign"
+//           iconName="arrowleft"
+//           size={22}
+//         />
+//       </View>
+//     </TouchableNativeFeedback>
+//   </View>
+// ),

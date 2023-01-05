@@ -47,11 +47,11 @@ export default useNotifications = (navigateTo) => {
         userCopy.pushToken = token;
         setUser(userCopy);
         return expoTokenAdmin(user?.laundry_id.trim(), token);
-      } else if (user?.driverDetails?.userType === 'driver') {
+      } else if (user?.userType === 'driver') {
         const userCopy = { ...user };
-        userCopy.driverDetails.pushToken = token;
+        userCopy.pushToken = token;
         setUser(userCopy);
-        return expoTokenDriver(user?.driverDetails?.docId.trim(), token);
+        return expoTokenDriver(user?.docId.trim(), token);
       }
     } catch (error) {
       console.log('cannot use notification', error);

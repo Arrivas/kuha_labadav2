@@ -10,7 +10,7 @@ import {
   expoTokenAdmin,
 } from '../api/setExpoToken.js';
 
-export default useAuth = () => {
+const useAuth = () => {
   const { user, setUser } = useContext(AppContext);
 
   const logIn = (uid) => {
@@ -31,9 +31,11 @@ export default useAuth = () => {
       return expoTokenCustomer(user?.docId.trim(), '');
     else if (user?.userType === 'admin')
       return expoTokenAdmin(user?.laundry_id.trim(), '');
-    else if (user?.driverDetails?.userType === 'driver')
-      return expoTokenDriver(user?.driverDetails?.docId.trim(), '');
+    else if (user?.userType === 'driver')
+      return expoTokenDriver(user?.docId.trim(), '');
   };
 
   return { logIn, logOut };
 };
+
+export default useAuth;

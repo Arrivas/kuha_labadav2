@@ -6,11 +6,12 @@ import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/firestore';
 import secureStore from './auth/storage';
-import { AppContext } from './context/AppContext';
 import useAuth from './auth/useAuth.js';
 import WelcomeScreen from './components/welcomeScreen/WelcomeScreen.js';
 import * as Location from 'expo-location';
+import { AppContext } from './context/AppContext';
 import { navigationRef } from './navigation/navigationRef';
+import VerifyEmail from './components/loginScreen/verify/VerifyEmail';
 
 // stack screens
 import AuthStack from './navigation/auth/AuthStack.js';
@@ -21,6 +22,7 @@ import AdminRootScreen from './navigation/admin/AdminRootScreen';
 export default function App() {
   const [user, setUser] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [userCurrentLocation, setUserCurrentLocation] = useState('');
   const { logIn, logOut } = useAuth();
 
@@ -39,11 +41,15 @@ export default function App() {
     } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
-    if (!latitude) return console.log('cannot get location');
+
+    if (!latitude || !hasPermission) return console.log('cannot get location');
     setUserCurrentLocation({ longitude, latitude });
   };
 
   const onAuthStateChanged = (user) => {
+    if (!user?.emailVerified) return setIsEmailVerified(false);
+
+    setIsEmailVerified(true);
     if (user) {
       logIn(user?.uid);
       getUserInfo();
@@ -134,6 +140,8 @@ export default function App() {
               isFirstUse={isFirstUse}
               setIsFirstUse={setIsFirstUse}
             />
+          ) : !isEmailVerified ? (
+            <VerifyEmail setIsEmailVerified={setIsEmailVerified} />
           ) : user?.userType === 'customer' ? (
             <CustomerRootScreen />
           ) : user?.userType === 'admin' ? (

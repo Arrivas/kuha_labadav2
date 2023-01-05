@@ -1,56 +1,64 @@
-import React, { useContext, useEffect, useState } from "react";
-import { View, Text, Image } from "react-native";
-import FindServices from "./home/FindServices";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/auth";
-import "@react-native-firebase/firestore";
-import { getPreciseDistance } from "geolib";
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, Image } from 'react-native';
+import FindServices from './home/FindServices';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/firestore';
+import { getPreciseDistance } from 'geolib';
 
 // components
-import SafeScreenView from "../SafeScreenView";
-import LaundryServices from "./home/LaundryServices";
-import { AppContext } from "../../context/AppContext";
-import { moderateScale } from "../../config/metrics";
+import SafeScreenView from '../SafeScreenView';
+import LaundryServices from './home/LaundryServices';
+import { AppContext } from '../../context/AppContext';
+import { moderateScale } from '../../config/metrics';
 
 const CustomerHomeScreen = ({ navigation }) => {
-  const [selectedService, setSelectedService] = useState("");
-  const [laundryServices, setLaundryServices] = useState(null);
+  const [selectedService, setSelectedService] = useState('');
+  const [laundryServices, setLaundryServices] = useState([]);
   const { user, userCurrentLocation } = useContext(AppContext);
 
   const fetchLaundryServices = async () => {
     // const fetchedLaundryServices = [];
     const getNearbyGeo = [];
-
     await firebase
       .firestore()
-      .collection("laundryProviders")
+
+      .collection('laundryProviders')
+
       .get()
+
       .then((data) => {
         data.forEach((doc) => {
           const currentLaundryProv = doc.data();
+          if (!currentLaundryProv) return;
+          const { lat, lng } = currentLaundryProv?.geometryLocation;
 
-          const dis = getPreciseDistance(
-            {
-              latitude: userCurrentLocation?.latitude,
-              longitude: userCurrentLocation?.longitude,
-            },
-            {
-              latitude: currentLaundryProv.geometryLocation.lat,
-              longitude: currentLaundryProv.geometryLocation.lng,
-            }
-          );
-          currentLaundryProv.distance = { distanceKM: dis / 1000 };
+          //   const dis = getPreciseDistance(
+          //     {
+          //       latitude: userCurrentLocation.latitude,
+          //       longitude: userCurrentLocation.longitude,
+          //     },
+          //     {
+          //       latitude: lat,
+          //       longitude: lng,
+          //     }
+          //   );
+          currentLaundryProv.distance = { distanceKM: 1 / 1000 };
           getNearbyGeo.push(currentLaundryProv);
         });
       })
-      .catch((error) => console.log(error));
-    return getNearbyGeo.sort((a, b) => (a.distanceKM > b.distanceKM ? 1 : -1));
+      .catch((error) => console.log(error, 'asd'));
+    return (
+      getNearbyGeo.sort((a, b) => (a.distanceKM > b.distanceKM ? 1 : -1)) || []
+    );
   };
 
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      fetchLaundryServices().then((data) => setLaundryServices(data));
+      fetchLaundryServices().then((data) => {
+        setLaundryServices(data);
+      });
     }
     () => {
       mounted = false;
@@ -71,7 +79,7 @@ const CustomerHomeScreen = ({ navigation }) => {
               // fontSize: width * 0.05,
               // fontSize: 30,
               fontSize: moderateScale(30),
-              fontFamily: "Alexandria-SemiBold",
+              fontFamily: 'Alexandria-SemiBold',
             }}
             className="tracking-widest"
           >

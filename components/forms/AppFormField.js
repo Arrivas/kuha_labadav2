@@ -12,6 +12,7 @@ const AppFormField = ({
   setProgress,
   iconName = '',
   customerError,
+  payment = false,
   ...rest
 }) => {
   const { setFieldTouched, handleChange, errors, touched, values } =
@@ -34,6 +35,7 @@ const AppFormField = ({
         onShowPassword={onShowPassword}
         onShowSelectTime={onShowSelectTime}
         iconName={iconName}
+        payment={payment}
         {...rest}
       />
       {errors[name] && touched[name] && (
