@@ -1,24 +1,24 @@
-import React from 'react';
+import React from "react";
 import {
   TouchableNativeFeedback,
   View,
   Text,
   Keyboard,
   ActivityIndicator,
-} from 'react-native';
-import { useFormikContext } from 'formik';
-import colors from '../../config/colors';
-import Icon from '../Icon';
+} from "react-native";
+import { useFormikContext } from "formik";
+import colors from "../../config/colors";
+import Icon from "../Icon";
 
 function SubmitButton({
-  title = '',
-  className = '',
+  title = "",
+  className = "",
   disabled = false,
   defaultStyle = true,
-  mode = 'default',
+  mode = "default",
   loading = false,
-  textStyle = '',
-  textClass = '',
+  textStyle = "",
+  textClass = "",
 }) {
   const { handleSubmit } = useFormikContext();
   return (
@@ -30,19 +30,19 @@ function SubmitButton({
           return handleSubmit();
         }}
       >
-        {mode === 'default' ? (
+        {mode === "default" ? (
           <View
             className={
               defaultStyle
                 ? `${
-                    disabled ? 'opacity-70' : 'opacity-100'
+                    disabled ? "opacity-70" : "opacity-100"
                   } p-4 rounded-full w-[100%] my-1 self-center items-center ${
-                    loading ? 'flex-row justify-center items-center' : ''
+                    loading ? "flex-row justify-center items-center" : ""
                   }`
                 : className
             }
             style={{
-              backgroundColor: defaultStyle ? colors.primary : 'black',
+              backgroundColor: defaultStyle ? colors.primary : "transparent",
             }}
           >
             <Text className={textClass} style={textStyle}>
@@ -50,7 +50,7 @@ function SubmitButton({
             </Text>
             {loading ? <ActivityIndicator size="small" color="white" /> : <></>}
           </View>
-        ) : mode === 'chevronRight' ? (
+        ) : mode === "chevronRight" ? (
           <View style={`flex-row p-2 self-end`}>
             <Text>{title}</Text>
             <Icon

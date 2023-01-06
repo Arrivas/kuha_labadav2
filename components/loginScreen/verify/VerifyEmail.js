@@ -7,13 +7,13 @@ import {
   ActivityIndicator,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
-} from 'react-native';
-import React, { useState, useEffect } from 'react';
-import useAuth from '../../../auth/useAuth';
-import SafeScreenView from '../../SafeScreenView';
-import Icon from '../../Icon';
-import colors from '../../../config/colors';
-import DisplayMessage from './DisplayMessage';
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import useAuth from "../../../auth/useAuth";
+import SafeScreenView from "../../SafeScreenView";
+import Icon from "../../Icon";
+import colors from "../../../config/colors";
+import DisplayMessage from "./DisplayMessage";
 
 const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -22,25 +22,25 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
   const [loading, setLoading] = useState(false);
   const { logOut } = useAuth();
 
-  const sendEmailVerification = async () => {
+  const sendEmailVerification = () => {
     setTimeLeft(25);
     setIsSecondTime(true);
     if (!userState?.email) return;
     setLoading(true);
-    await userState
+    userState
       .sendEmailVerification()
       .then((data) => {
-        ToastAndroid.show('verification sent', ToastAndroid.SHORT);
+        ToastAndroid.show("verification sent", ToastAndroid.SHORT);
         setDisplayMessage(true);
         setLoading(false);
       })
-      .catch((err) => console.log(err, 'error'));
+      .catch((err) => console.log(err, "error"));
     setLoading(false);
   };
 
   useEffect(() => {
     if (timeLeft === 0) {
-      console.log('TIME LEFT IS 0');
+      console.log("TIME LEFT IS 0");
       setTimeLeft(null);
     }
     // exit early when we reach 0
@@ -63,15 +63,15 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
                 {/* back to log in */}
                 <View className="flex-1 items-center justify-center  ">
                   <Image
-                    className="h-[150px] w-[150px]"
+                    className="h-[100px] w-[100px]"
                     resizeMode="cover"
-                    source={require('../../../assets/verify_email.png')}
+                    source={require("../../../assets/verify_email.png")}
                   />
                   {userState?.email && (
                     <Text>verify your email first before proceeding</Text>
                   )}
                   <Text className="font-bold pb-5">
-                    {userState?.email || 'please refresh the application'}
+                    {userState?.email || "please refresh the application"}
                   </Text>
                   {/* back to log in */}
 
@@ -90,7 +90,7 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
                           }}
                         >
                           <Text className="text-gray-50 font-bold">
-                            {isSecondTime ? 're-send' : 'send'} verification
+                            {isSecondTime ? "re-send" : "send"} verification
                           </Text>
                           {loading ? (
                             <ActivityIndicator className="ml-2" color="white" />
@@ -108,12 +108,12 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
                       <Text className="self-center font-light">{timeLeft}</Text>
                     </View>
                   )}
+                </View>
+                <View className="items-center flex-1">
                   {/* display message */}
                   {displayMessage ? (
                     <DisplayMessage setDisplayMessage={setDisplayMessage} />
                   ) : null}
-                </View>
-                <View className="items-center justify-center flex-1">
                   <View className="p-2">
                     <TouchableNativeFeedback
                       onPress={() => {
@@ -127,7 +127,7 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
                           iconLibrary="AntDesign"
                           iconName="swapleft"
                         />
-                        <Text className="">back to log in</Text>
+                        <Text>back to log in</Text>
                       </View>
                     </TouchableNativeFeedback>
                   </View>

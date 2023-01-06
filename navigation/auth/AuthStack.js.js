@@ -1,10 +1,10 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from '../../components/loginScreen/LoginScreen';
-import CreateAccount from '../../components/loginScreen/CreateAccount';
-import { TouchableNativeFeedback, View } from 'react-native';
-import Icon from '../../components/Icon';
-import { useNavigation } from '@react-navigation/native';
-import getDimensions from '../../config/getDimensions';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LoginScreen from "../../components/loginScreen/LoginScreen";
+import CreateAccount from "../../components/loginScreen/CreateAccount";
+import { TouchableNativeFeedback, View } from "react-native";
+import Icon from "../../components/Icon";
+import { useNavigation } from "@react-navigation/native";
+import getDimensions from "../../config/getDimensions";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +24,7 @@ const AuthStack = () => {
         name="CreateAccount"
         component={CreateAccount}
         options={{
-          title: '',
+          title: "",
           headerShown: true,
           headerTransparent: true,
           headerShadowVisible: false,
