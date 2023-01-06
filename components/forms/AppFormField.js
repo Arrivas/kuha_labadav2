@@ -11,7 +11,7 @@ const AppFormField = ({
   containerStyle = '',
   setProgress,
   iconName = '',
-  customerError,
+  customError,
   payment = false,
   ...rest
 }) => {
@@ -40,11 +40,11 @@ const AppFormField = ({
       />
       {errors[name] && touched[name] && (
         <Text className={`text-red-400 px-5 bottom-2`}>
-          {customerError ? customerError : errors[name]}
+          {customError ? customError : errors[name]}
         </Text>
       )}
-      {customerError && (
-        <Text className={`text-red-400 px-5 bottom-2`}>{errors[name]}</Text>
+      {customError && (
+        <Text className={`text-red-400 px-5 bottom-2`}>{customError}</Text>
       )}
     </View>
   );

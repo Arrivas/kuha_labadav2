@@ -21,6 +21,7 @@ import AdminRootScreen from './navigation/admin/AdminRootScreen';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [userState, setUserState] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [userCurrentLocation, setUserCurrentLocation] = useState('');
@@ -46,16 +47,49 @@ export default function App() {
     setUserCurrentLocation({ longitude, latitude });
   };
 
-  const onAuthStateChanged = (user) => {
-    if (!user?.emailVerified) return setIsEmailVerified(false);
+  const onAuthStateChanged = (authUser) => {
+    setUserState(authUser);
 
-    setIsEmailVerified(true);
-    if (user) {
-      logIn(user?.uid);
+    if (authUser && authUser?.emailVerified === false) {
+      setIsEmailVerified(false);
+      try {
+        const unsubscribeOnUserChanged = firebase
+          .auth()
+          .onUserChanged((response) => {
+            const unsubscribeTimeout = setTimeout(() => {
+              firebase.auth().currentUser?.reload();
+            }, 8000);
+
+            if (response?.emailVerified) {
+              clearTimeout(unsubscribeTimeout);
+              setIsEmailVerified(true);
+              logIn(authUser?.uid);
+              getUserInfo();
+              return unsubscribeOnUserChanged();
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (authUser && authUser?.emailVerified === true) {
+      setIsEmailVerified(true);
+      logIn(authUser?.uid);
       getUserInfo();
     }
+    // console.log(authUser);
+    // setUserState(authUser);
+
+    // if (authUser && authUser?.emailVerified === false)
+    //   return setIsEmailVerified(false);
+
+    // if (authUser) {
+    //   setIsEmailVerified(true);
+    //   logIn(authUser?.uid);
+    //   getUserInfo();
+    // }
   };
-  // console.log(user);
+
   const getUserInfo = async () => {
     // retrieve uid if available on secure store
     const uid = await secureStore.getId();
@@ -124,8 +158,9 @@ export default function App() {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     if (firebase.auth().currentUser?.uid) getUserInfo();
     checkFirstUse();
+
     return () => {
-      subscriber;
+      subscriber();
     };
   }, []);
 
@@ -140,8 +175,12 @@ export default function App() {
               isFirstUse={isFirstUse}
               setIsFirstUse={setIsFirstUse}
             />
-          ) : !isEmailVerified ? (
-            <VerifyEmail setIsEmailVerified={setIsEmailVerified} />
+          ) : !isEmailVerified && userState ? (
+            <VerifyEmail
+              setIsEmailVerified={setIsEmailVerified}
+              isEmailVerified={isEmailVerified}
+              userState={userState}
+            />
           ) : user?.userType === 'customer' ? (
             <CustomerRootScreen />
           ) : user?.userType === 'admin' ? (

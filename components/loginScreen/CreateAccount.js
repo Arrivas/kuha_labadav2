@@ -53,17 +53,19 @@ function CreateAccount(props) {
   const handleSubmit = async (val) => {
     // check if customer exists
     setLoading(true);
-    const user = [];
-    const snapshot = await firebase
+
+    const users = [];
+    await firebase
       .firestore()
       .collection(selectedUserType.value === 'driver' ? 'drivers' : 'customers')
       .where('name', '==', val.name)
-      .get();
-    snapshot.forEach((doc) => user.push(doc.data()));
-    if (user.length !== 0) {
-      setLoading(false);
-      setNameErr('name is already taken');
-    }
+      .get()
+      .then((data) => {
+        setLoading(false);
+        data.forEach((doc) => users.push(doc.data()));
+      });
+    if (users.length !== 0) return setNameErr('name is already taken');
+
     setNameErr('');
     // proceed creating new customer
     const noImg = 'noImage.png';
@@ -84,26 +86,28 @@ function CreateAccount(props) {
       }/o/${noImg}?alt=media`,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
+    let emailHasError = '';
     await firebase
       .auth()
       .createUserWithEmailAndPassword(val.email, val.password)
       .then((userInfo) => (newCustomer.userId = userInfo.user.uid))
       .catch((err) => {
+        console.log(err.code);
         if (err.code === 'auth/email-already-in-use')
-          return setEmailErr('email is already in use');
-        console.log(err);
+          emailHasError = 'email is already in use';
       });
+    if (emailHasError) return setEmailErr(emailHasError);
     setEmailErr('');
     // add user details to db
-    await firebase
-      .firestore()
-      .collection(selectedUserType.value === 'driver' ? 'drivers' : 'customers')
-      .add(newCustomer)
-      .then((data) => {
-        data.update({ docId: data.id });
-        console.log(data.id);
-      })
-      .catch((err) => console.log(err));
+    // await firebase
+    //   .firestore()
+    //   .collection(selectedUserType.value === 'driver' ? 'drivers' : 'customers')
+    //   .add(newCustomer)
+    //   .then((data) => {
+    //     data.update({ docId: data.id });
+    //     console.log(data.id);
+    //   })
+    //   .catch((err) => console.log(err));
     setLoading(false);
   };
 
@@ -149,13 +153,13 @@ function CreateAccount(props) {
               name="name"
               iconName="account"
               placeholder="name"
-              customerError={nameErr}
+              customError={nameErr}
             />
             <AppFormField
               name="email"
               iconName="email"
               placeholder="email"
-              customerError={emailErr}
+              customError={emailErr}
             />
             <AppFormField
               onShowPassword={setShowPassword}
