@@ -12,7 +12,7 @@ import Icon from "../Icon";
 
 function SubmitButton({
   title = "",
-  className = "",
+  containerStyle = "",
   disabled = false,
   defaultStyle = true,
   mode = "default",
@@ -38,11 +38,11 @@ function SubmitButton({
                     disabled ? "opacity-70" : "opacity-100"
                   } p-4 rounded-full w-[100%] my-1 self-center items-center ${
                     loading ? "flex-row justify-center items-center" : ""
-                  }`
-                : className
+                  } ${containerStyle}`
+                : containerStyle
             }
             style={{
-              backgroundColor: defaultStyle ? colors.primary : "transparent",
+              backgroundColor: defaultStyle ? colors.primary : "",
             }}
           >
             <Text className={textClass} style={textStyle}>
@@ -51,13 +51,16 @@ function SubmitButton({
             {loading ? <ActivityIndicator size="small" color="white" /> : <></>}
           </View>
         ) : mode === "chevronRight" ? (
-          <View style={`flex-row p-2 self-end`}>
-            <Text>{title}</Text>
+          <View className="flex-row p-2 self-end items-center">
+            <Text className={textClass} style={textStyle}>
+              {title}
+            </Text>
             <Icon
               iconName="chevron-right"
-              iconColor="black"
-              library="MaterialCommunityIcons"
+              color="black"
+              iconLibrary="MaterialCommunityIcons"
               defaultStyle={false}
+              size={25}
             />
           </View>
         ) : (

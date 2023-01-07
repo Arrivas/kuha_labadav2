@@ -1,18 +1,22 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { useFormikContext } from 'formik';
-import AppTextInput from './AppTextInput';
+import React from "react";
+import { View, Text } from "react-native";
+import { useFormikContext } from "formik";
+import AppTextInput from "./AppTextInput";
 
 const AppFormField = ({
-  name = '',
+  name = "",
   showPassword,
   onShowPassword,
   onShowSelectTime,
-  containerStyle = '',
+  containerStyle = "",
   setProgress,
-  iconName = '',
+  iconName = "",
   customError,
   payment = false,
+  credsAvailable,
+  setCredsAvailable,
+  checkAvailability,
+
   ...rest
 }) => {
   const { setFieldTouched, handleChange, errors, touched, values } =
@@ -36,6 +40,9 @@ const AppFormField = ({
         onShowSelectTime={onShowSelectTime}
         iconName={iconName}
         payment={payment}
+        credsAvailable={credsAvailable}
+        setCredsAvailable={setCredsAvailable}
+        checkAvailability={checkAvailability}
         {...rest}
       />
       {errors[name] && touched[name] && (

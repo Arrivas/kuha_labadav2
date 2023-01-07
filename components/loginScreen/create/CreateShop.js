@@ -1,16 +1,27 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
-import React from "react";
-import FirstStep from "./shop/FirstStep";
-import SafeScreenView from "../../SafeScreenView";
+import {
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ToastAndroid,
+} from "react-native";
+import React, { useState } from "react";
 import CreateShopProgress from "./shop/CreateShopProgress";
 import firebase from "@react-native-firebase/app";
 import "@react-native-firebase/firestore";
 import "@react-native-firebase/auth";
 
+// steps
+import FirstStep from "./shop/FirstStep";
+import SecondStep from "./shop/SecondStep";
+
 const CreateShop = () => {
+  const [progress, setProgress] = useState(2);
+  const [credsAvailable, setCredsAvailable] = useState({});
+  const [firstStepDetails, setFirstStepDetails] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const handleFirstStepSubmit = (val) => {
-    let shopNameErr = "";
-    let shopEmailErr = "";
+    setLoading(true);
     firebase
       .firestore()
       .collection("laundryProviders")
@@ -18,10 +29,20 @@ const CreateShop = () => {
       .limit(1)
       .get()
       .then((data) => {
-        if (!data.empty) shopNameErr = "shop name already taken";
+        if (!data.empty) {
+          ToastAndroid.show(
+            "please select other shop name that is not taken",
+            ToastAndroid.SHORT
+          );
+          setLoading(false);
+          return setCredsAvailable({ name: false });
+        }
+        setCredsAvailable({
+          name: true,
+        });
       })
       .catch((err) => console.log(err, "shop name"));
-    if (shopNameErr) return console.log(shopNameErr);
+
     firebase
       .firestore()
       .collection("admins")
@@ -29,17 +50,44 @@ const CreateShop = () => {
       .limit(1)
       .get()
       .then((data) => {
-        if (!data.empty) shopEmailErr = "email already taken";
+        if (!data.empty) {
+          ToastAndroid.show(
+            "please select other email that is not taken",
+            ToastAndroid.SHORT
+          );
+          setLoading(false);
+          return setCredsAvailable((lastState) => ({
+            ...lastState,
+            email: false,
+          }));
+        }
+        setCredsAvailable((lastState) => ({
+          ...lastState,
+          email: true,
+        }));
       })
       .catch((err) => console.log(err, "shop name"));
-    if (shopEmailErr) return console.log(shopNameErr);
+    setFirstStepDetails(val);
+    setLoading(false);
+    if (credsAvailable.email && credsAvailable.name) setProgress(2);
   };
+
   return (
     <>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="flex-1 justify-center items-center">
-          <CreateShopProgress progress={1} />
-          <FirstStep handleFirstStepSubmit={handleFirstStepSubmit} />
+          <CreateShopProgress progress={progress} />
+          {progress === 1 ? (
+            <FirstStep
+              loading={loading}
+              credsAvailable={credsAvailable}
+              firstStepDetails={firstStepDetails}
+              setCredsAvailable={setCredsAvailable}
+              handleFirstStepSubmit={handleFirstStepSubmit}
+            />
+          ) : (
+            <SecondStep />
+          )}
         </View>
       </TouchableWithoutFeedback>
     </>

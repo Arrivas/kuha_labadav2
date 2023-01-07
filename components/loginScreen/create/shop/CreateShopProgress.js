@@ -48,7 +48,7 @@ const CreateShopProgress = ({ progress }) => {
         {() => <Text>{progress}/4</Text>}
       </AnimatedCircularProgress>
       {progressTexts.map((item) => (
-        <View key={item.id}>
+        <View key={item.id} className="max-w-[70%]">
           {item.id === progress && (
             <View className="ml-2">
               <Text className="font-bold text-[16px]">{item.header}</Text>
