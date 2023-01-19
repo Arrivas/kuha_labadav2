@@ -1,34 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   Image,
   ScrollView,
-  TouchableWithoutFeedback,
   TouchableNativeFeedback,
-} from "react-native";
-import SafeScreenView from "../SafeScreenView";
-import getDimensions from "../../config/getDimensions";
-import FormikField from "../forms/FormikField";
-import AppFormField from "../forms/AppFormField";
-import SubmitButton from "../forms/SubmitButton";
-import GoogleSvg from "./GoogleSvg";
-import colors from "../../config/colors";
-import ErrorMessage from "../forms/ErrorMessage";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/auth";
-import ActivityIndicator from "../ActivityIndicator";
+  TouchableWithoutFeedback,
+} from 'react-native';
+import SafeScreenView from '../SafeScreenView';
+import getDimensions from '../../config/getDimensions';
+import FormikField from '../forms/FormikField';
+import AppFormField from '../forms/AppFormField';
+import SubmitButton from '../forms/SubmitButton';
+import GoogleSvg from './GoogleSvg';
+import colors from '../../config/colors';
+import ErrorMessage from '../forms/ErrorMessage';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+import ActivityIndicator from '../ActivityIndicator';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import * as Yup from 'yup';
 
 function LoginScreen({ navigation }) {
   const [showPassword, onShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
   const { width } = getDimensions();
 
   const initialValues = {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   };
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email().required(),
+    password: Yup.string().required(),
+  });
 
   const handleSubmit = async (val) => {
     setLoading(true);
@@ -36,20 +46,69 @@ function LoginScreen({ navigation }) {
       const { user } = await firebase
         .auth()
         .signInWithEmailAndPassword(val.email.trim(), val.password.trim());
-      setLoginError("");
+      setLoginError('');
       setLoading(false);
     } catch (error) {
-      if (error.code === "auth/user-not-found") {
+      if (error.code === 'auth/user-not-found') {
         setLoading(false);
-        return setLoginError("email is not registered");
-      } else if (error.code === "auth/wrong-password") {
+        return setLoginError('email is not registered');
+      } else if (error.code === 'auth/wrong-password') {
         setLoading(false);
-        return setLoginError("invalid email or password");
+        return setLoginError('invalid email or password');
       }
       console.log(error.code);
       setLoading(false);
     }
     setLoading(false);
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '910338142085-5vq3qejpmvnoiahmaao0t598i3703j9g.apps.googleusercontent.com',
+    });
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.signOut();
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const googleCred = firebase.auth.GoogleAuthProvider.credential(
+        userInfo.idToken
+      );
+      firebase.auth().signInWithCredential(googleCred);
+      // console.log(userInfo.serverAuthCode);
+      // firebase
+      //   .firestore()
+      //   .collection('customers')
+      //   .where('email', '==', userInfo?.user?.email)
+      //   .limit(1)
+      //   .get()
+      //   .then((data) => {
+      //     const currentCustomer = [];
+      //     console.log(data);
+      //     if (data.empty) {
+      //       return;
+      //     }
+      //     data.forEach((doc) => currentCustomer.push(doc.data()));
+      //     console.log();
+      //   });
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        console.log('cancelled');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        console.log('cancelled');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log('cancelled');
+      } else {
+        // some other error happened
+        console.log('cancelled 4', error);
+      }
+    }
   };
 
   return (
@@ -65,7 +124,7 @@ function LoginScreen({ navigation }) {
           >
             <Image
               className="self-center"
-              source={require("../../assets/logo_1_blue.png")}
+              source={require('../../assets/logo_1_blue.png')}
               style={{
                 width: width <= 360 ? 140 : 180,
                 height: width <= 360 ? 140 : 180,
@@ -76,14 +135,18 @@ function LoginScreen({ navigation }) {
             <Text
               className="self-center py-2 "
               style={{
-                fontFamily: "Alexandria-Regular",
+                fontFamily: 'Alexandria-Regular',
                 // fontSize: width >= 500 ? width * 0.02 : width * 0.025,
               }}
             >
               Welcome, login to your account
             </Text>
 
-            <FormikField initialValues={initialValues} onSubmit={handleSubmit}>
+            <FormikField
+              validationSchema={validationSchema}
+              initialValues={initialValues}
+              onSubmit={handleSubmit}
+            >
               <AppFormField
                 wrapperClass="w-[99%]"
                 name="email"
@@ -104,7 +167,7 @@ function LoginScreen({ navigation }) {
               <SubmitButton
                 loading={loading}
                 textStyle={{
-                  color: "white",
+                  color: 'white',
                   fontSize: width >= 500 ? width * 0.025 : width * 0.035,
                 }}
                 textClass="font-bold"
@@ -126,7 +189,7 @@ function LoginScreen({ navigation }) {
                 </View>
               </TouchableNativeFeedback>
               <TouchableNativeFeedback
-                onPress={() => navigation.navigate("CreateAccount")}
+                onPress={() => navigation.navigate('CreateAccount')}
               >
                 <View className="self-start">
                   <Text
@@ -148,7 +211,7 @@ function LoginScreen({ navigation }) {
               paddingVertical: width * 0.03,
             }}
           />
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={handleGoogleSignIn}>
             <View
               className="flex-row self-center justify-center items-center"
               style={{

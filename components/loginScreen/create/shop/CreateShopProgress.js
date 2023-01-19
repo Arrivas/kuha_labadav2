@@ -1,37 +1,37 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
-import colors from "../../../../config/colors";
+import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React from 'react';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import colors from '../../../../config/colors';
 
 const CreateShopProgress = ({ progress }) => {
   const progressTexts = [
     {
       id: 1,
-      header: "Shop Name and Email",
-      desc: "check shop name and email availability.",
+      header: 'Shop Name and Email',
+      desc: 'check shop name and email availability.',
     },
     {
       id: 2,
-      header: "Add shop details",
-      desc: "setup your shop by entering necessary informations.",
+      header: 'Add shop details',
+      desc: 'setup your shop by entering necessary informations.',
     },
     {
       id: 3,
-      header: "Shop Image & Services",
-      desc: "upload your shop image, and select your shop services.",
+      header: 'Shop Image & Services',
+      desc: 'upload your shop image, and select your shop services.',
     },
     {
       id: 4,
-      header: "Review Details",
-      desc: "you can still go back to review and change your shop details.",
+      header: 'Review Details',
+      desc: 'you can still go back to review and change your shop details.',
     },
   ];
 
   return (
-    <View className="flex-row items-center py-5">
+    <View className="flex-row items-center my-5 self-center">
       <AnimatedCircularProgress
-        size={50}
-        width={3}
+        size={40}
+        width={2}
         fill={
           progress === 1
             ? 25

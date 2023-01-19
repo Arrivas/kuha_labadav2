@@ -1,37 +1,37 @@
-import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { PermissionsAndroid } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/auth";
-import "@react-native-firebase/firestore";
-import secureStore from "./auth/storage";
-import useAuth from "./auth/useAuth.js";
-import WelcomeScreen from "./components/welcomeScreen/WelcomeScreen.js";
-import * as Location from "expo-location";
-import { AppContext } from "./context/AppContext";
-import { navigationRef } from "./navigation/navigationRef";
-import VerifyEmail from "./components/loginScreen/verify/VerifyEmail";
+import { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { PermissionsAndroid } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/firestore';
+import secureStore from './auth/storage';
+import useAuth from './auth/useAuth.js';
+import WelcomeScreen from './components/welcomeScreen/WelcomeScreen.js';
+import * as Location from 'expo-location';
+import { AppContext } from './context/AppContext';
+import { navigationRef } from './navigation/navigationRef';
+import VerifyEmail from './components/loginScreen/verify/VerifyEmail';
 
 // stack screens
-import AuthStack from "./navigation/auth/AuthStack.js";
-import CustomerRootScreen from "./navigation/customer/CustomerRootScreen";
-import DriverRootScreen from "./navigation/driver/DriverRootScreen";
-import AdminRootScreen from "./navigation/admin/AdminRootScreen";
+import AuthStack from './navigation/auth/AuthStack.js';
+import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
+import DriverRootScreen from './navigation/driver/DriverRootScreen';
+import AdminRootScreen from './navigation/admin/AdminRootScreen';
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [userState, setUserState] = useState(null);
   const [isFirstUse, setIsFirstUse] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [userCurrentLocation, setUserCurrentLocation] = useState("");
+  const [userCurrentLocation, setUserCurrentLocation] = useState('');
   const { logIn, logOut } = useAuth();
 
   const getLocationRequest = async () => {
     const res = await Location.requestForegroundPermissionsAsync();
     if (!res.granted)
       return ToastAndroid.show(
-        "please enable location to use the app properly.",
+        'please enable location to use the app properly.',
         ToastAndroid.SHORT
       );
     const hasPermission = await PermissionsAndroid.request(
@@ -43,24 +43,31 @@ export default function App() {
       accuracy: Location.Accuracy.Highest,
     });
 
-    if (!latitude || !hasPermission) return console.log("cannot get location");
+    if (!latitude || !hasPermission) return console.log('cannot get location');
     setUserCurrentLocation({ longitude, latitude });
   };
 
   const onAuthStateChanged = (authUser) => {
     setUserState(authUser);
+
     if (authUser && authUser?.emailVerified === false) {
       setIsEmailVerified(false);
+      let timer;
       try {
         const unsubscribeOnUserChanged = firebase
           .auth()
-          .onUserChanged((response) => {
-            firebase
-              .auth()
-              .currentUser?.reload()
-              .then((item) => console.log(item));
-
+          .onIdTokenChanged((response) => {
+            if (authUser && authUser?.emailVerified === false) {
+              timer = setTimeout(() => {
+                firebase
+                  .auth()
+                  .currentUser?.reload()
+                  .then((item) => console.log(item, 'asd'));
+                firebase.auth().currentUser.getIdToken(true);
+              }, 20000);
+            }
             if (response?.emailVerified) {
+              clearTimeout(timer);
               // clearTimeout(unsubscribeTimeout);
               setIsEmailVerified(true);
               logIn(authUser?.uid);
@@ -69,6 +76,7 @@ export default function App() {
             }
           });
       } catch (error) {
+        clearTimeout(timer);
         console.log(error);
       }
     }
@@ -97,8 +105,8 @@ export default function App() {
     if (uid)
       return firebase
         .firestore()
-        .collection("customers")
-        .where("userId", "==", uid)
+        .collection('customers')
+        .where('userId', '==', uid)
         .limit(1)
         .get()
         .then((data) => {
@@ -110,8 +118,8 @@ export default function App() {
         .then(() =>
           firebase
             .firestore()
-            .collection("drivers")
-            .where("userId", "==", uid)
+            .collection('drivers')
+            .where('userId', '==', uid)
             .limit(1)
             .get()
             .then((data) => {
@@ -123,8 +131,8 @@ export default function App() {
             .then(() =>
               firebase
                 .firestore()
-                .collection("admins")
-                .where("userId", "==", uid)
+                .collection('admins')
+                .where('userId', '==', uid)
                 .limit(1)
                 .get()
                 .then((data) => {
@@ -133,7 +141,7 @@ export default function App() {
                   data.forEach((doc) => currentAdmin.push(doc.data()));
                   firebase
                     .firestore()
-                    .collection("laundryProviders")
+                    .collection('laundryProviders')
                     .doc(currentAdmin[0]?.laundry_id)
                     .get()
                     .then((doc) => {
@@ -181,11 +189,11 @@ export default function App() {
               isEmailVerified={isEmailVerified}
               userState={userState}
             />
-          ) : user?.userType === "customer" ? (
+          ) : user?.userType === 'customer' ? (
             <CustomerRootScreen />
-          ) : user?.userType === "admin" ? (
+          ) : user?.userType === 'admin' ? (
             <AdminRootScreen />
-          ) : user?.userType === "driver" ? (
+          ) : user?.userType === 'driver' ? (
             <DriverRootScreen />
           ) : (
             <AuthStack />

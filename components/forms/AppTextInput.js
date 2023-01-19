@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { TextInput, View, TouchableNativeFeedback } from "react-native";
-import Icon from "../Icon";
-import colors from "../../config/colors";
-import getDimensions from "../../config/getDimensions";
+import React, { useState } from 'react';
+import { TextInput, View, TouchableNativeFeedback } from 'react-native';
+import Icon from '../Icon';
+import colors from '../../config/colors';
+import getDimensions from '../../config/getDimensions';
 
 const InputText = ({
   name,
@@ -11,7 +11,7 @@ const InputText = ({
   keyboardType,
   isPassword,
   onShowPassword,
-  iconColor = "#4c5464",
+  iconColor = '#4c5464',
   setFieldTouched,
   payment,
   credsAvailable,
@@ -24,11 +24,11 @@ const InputText = ({
   return (
     <View
       className={`items-center flex-row p-2 ${
-        payment ? "py-1 pt-4" : "py-3"
+        payment ? 'py-1 pt-4' : 'py-3'
       } rounded-xl mb-3 bg-gray-100 bgred-400`}
       style={{
         borderWidth: 1,
-        borderColor: applyBorder ? colors.primary : "transparent",
+        borderColor: applyBorder ? colors.primary : 'transparent',
       }}
     >
       {iconName ? (
@@ -67,7 +67,7 @@ const InputText = ({
           >
             <Icon
               className="rounded-none bg-transparent p-2"
-              iconName={showPassword ? "eye-outline" : "eye-off-outline"}
+              iconName={showPassword ? 'eye-outline' : 'eye-off-outline'}
               color="#4c5464"
               iconLibrary="MaterialCommunityIcons"
               size={width >= 500 ? width * 0.025 : width * 0.05}
@@ -83,15 +83,16 @@ const InputText = ({
           color="#24c45c"
           className="absolute right-4 my-auto"
         />
-      ) : credsAvailable === false && checkAvailability ? (
-        <Icon
-          iconName="closecircle"
-          iconLibrary="AntDesign"
-          color="#fc7474"
-          className="absolute right-4 my-auto"
-        />
       ) : (
-        <></>
+        credsAvailable === false &&
+        checkAvailability && (
+          <Icon
+            iconName="closecircle"
+            iconLibrary="AntDesign"
+            color="#fc7474"
+            className="absolute right-4 my-auto"
+          />
+        )
       )}
     </View>
   );

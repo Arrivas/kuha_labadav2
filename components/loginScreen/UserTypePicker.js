@@ -22,13 +22,7 @@ const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
       iconLibrary: 'MaterialCommunityIcons',
       value: 'customer',
     },
-    {
-      id: 2,
-      label: 'Driver',
-      iconName: 'two-wheeler',
-      iconLibrary: 'MaterialIcons',
-      value: 'driver',
-    },
+
     {
       id: 3,
       value: 'or',
@@ -41,6 +35,7 @@ const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
       value: 'createShop',
     },
   ];
+
   return (
     <>
       <View>
@@ -65,7 +60,7 @@ const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
                       fontSize: width >= 500 ? width * 0.018 : width * 0.04,
                     }}
                   >
-                    Select user type
+                    Select account type
                   </Text>
                   <Icon
                     size={22}
@@ -139,6 +134,9 @@ const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
               }}
             >
               {selectedUserType.label}
+            </Text>
+            <Text className="absolute right-4 my-auto text-gray-400">
+              select
             </Text>
           </View>
         </Pressable>
