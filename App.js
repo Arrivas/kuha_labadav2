@@ -16,7 +16,6 @@ import VerifyEmail from './components/loginScreen/verify/VerifyEmail';
 // stack screens
 import AuthStack from './navigation/auth/AuthStack.js';
 import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
-import DriverRootScreen from './navigation/driver/DriverRootScreen';
 import AdminRootScreen from './navigation/admin/AdminRootScreen';
 
 export default function App() {
@@ -193,8 +192,6 @@ export default function App() {
             <CustomerRootScreen />
           ) : user?.userType === 'admin' ? (
             <AdminRootScreen />
-          ) : user?.userType === 'driver' ? (
-            <DriverRootScreen />
           ) : (
             <AuthStack />
           )}
