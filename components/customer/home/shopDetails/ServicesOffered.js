@@ -1,28 +1,28 @@
-import React from "react";
-import { View, Text, TouchableWithoutFeedback, ScrollView } from "react-native";
-import colors from "../../../../config/colors";
-import Icon from "../../../Icon";
+import React from 'react';
+import { View, Text, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import colors from '../../../../config/colors';
+import Icon from '../../../Icon';
 
 function ServicesOffered({
   servicesOffered,
   selectedServices,
   setSelectedService,
-  type = "default",
+  type = 'default',
 }) {
   return (
     <>
-      {type === "default" ? (
+      {type === 'default' ? (
         <>
           <Text className="font-semibold text-lg">Services Offered</Text>
           <View className="flex-row flex-wrap w-full">
             <ScrollView horizontal>
-              {servicesOffered.map((item) => (
+              {servicesOffered?.map((item) => (
                 <View
                   className="mr-1 mb-1.5 rounded-full"
                   style={{
                     backgroundColor: selectedServices.includes(item.value)
                       ? colors.primary
-                      : "#F3F4F6",
+                      : '#F3F4F6',
                   }}
                   key={item.value}
                 >
@@ -39,25 +39,25 @@ function ServicesOffered({
                       <Icon
                         color={
                           selectedServices.includes(item.value)
-                            ? "white"
-                            : "black"
+                            ? 'white'
+                            : 'black'
                         }
                         iconName={
-                          item.value === "ironing"
-                            ? "iron-outline"
-                            : item.value === "wash-dry-fold"
-                            ? "local-laundry-service"
-                            : item.value === "dry-cleaning"
-                            ? "dry-cleaning"
-                            : "ios-layers"
+                          item.value === 'ironing'
+                            ? 'iron-outline'
+                            : item.value === 'wash-dry-fold'
+                            ? 'local-laundry-service'
+                            : item.value === 'dry-cleaning'
+                            ? 'dry-cleaning'
+                            : 'ios-layers'
                         }
                         iconLibrary={
-                          item.value === "wash-dry-fold" ||
-                          item.value === "dry-cleaning"
-                            ? "MaterialIcons"
-                            : item.value === "comforter/blankets"
-                            ? "IonIcons"
-                            : "MaterialCommunityIcons"
+                          item.value === 'wash-dry-fold' ||
+                          item.value === 'dry-cleaning'
+                            ? 'MaterialIcons'
+                            : item.value === 'comforter/blankets'
+                            ? 'IonIcons'
+                            : 'MaterialCommunityIcons'
                         }
                         size={20}
                       />
@@ -65,8 +65,8 @@ function ServicesOffered({
                         className="pr-2 py-1"
                         style={{
                           color: selectedServices.includes(item.value)
-                            ? "white"
-                            : "black",
+                            ? 'white'
+                            : 'black',
                         }}
                       >
                         {item.value}
@@ -85,14 +85,14 @@ function ServicesOffered({
           </Text>
           <View className="w-full pb-10">
             <ScrollView className="">
-              {servicesOffered.map((item) => (
+              {servicesOffered?.map((item) => (
                 <View
                   className={`my-1 rounded-lg py-5 h-[80px] w-full justify-center mr-2 ${
                     selectedServices.some((ss) => {
                       if (ss.value === item.value) return ss.offering;
                     })
                       ? `bg-[${colors.primary}]`
-                      : "bg-[#F3F4F6]"
+                      : 'bg-[#F3F4F6]'
                   }`}
                   key={item.value}
                 >
@@ -114,25 +114,25 @@ function ServicesOffered({
                           selectedServices.some((ss) => {
                             if (ss.value === item.value) return ss.offering;
                           })
-                            ? "white"
-                            : "black"
+                            ? 'white'
+                            : 'black'
                         }
                         iconName={
-                          item.value === "ironing"
-                            ? "iron-outline"
-                            : item.value === "wash-dry-fold"
-                            ? "local-laundry-service"
-                            : item.value === "dry-cleaning"
-                            ? "dry-cleaning"
-                            : "ios-layers"
+                          item.value === 'ironing'
+                            ? 'iron-outline'
+                            : item.value === 'wash-dry-fold'
+                            ? 'local-laundry-service'
+                            : item.value === 'dry-cleaning'
+                            ? 'dry-cleaning'
+                            : 'ios-layers'
                         }
                         iconLibrary={
-                          item.value === "wash-dry-fold" ||
-                          item.value === "dry-cleaning"
-                            ? "MaterialIcons"
-                            : item.value === "comforter/blankets"
-                            ? "IonIcons"
-                            : "MaterialCommunityIcons"
+                          item.value === 'wash-dry-fold' ||
+                          item.value === 'dry-cleaning'
+                            ? 'MaterialIcons'
+                            : item.value === 'comforter/blankets'
+                            ? 'IonIcons'
+                            : 'MaterialCommunityIcons'
                         }
                         size={25}
                       />
@@ -142,8 +142,8 @@ function ServicesOffered({
                           color: selectedServices.some((ss) => {
                             if (ss.value === item.value) return ss.offering;
                           })
-                            ? "white"
-                            : "black",
+                            ? 'white'
+                            : 'black',
                         }}
                       >
                         {item.value}

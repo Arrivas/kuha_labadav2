@@ -15,7 +15,7 @@ import { moderateScale } from '../../config/metrics';
 const CustomerHomeScreen = ({ navigation }) => {
   const [selectedService, setSelectedService] = useState('');
   const [laundryServices, setLaundryServices] = useState([]);
-  const { user, userCurrentLocation } = useContext(AppContext);
+  const { user } = useContext(AppContext);
 
   const fetchLaundryServices = async () => {
     // const fetchedLaundryServices = [];

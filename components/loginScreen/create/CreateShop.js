@@ -3,49 +3,47 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ToastAndroid,
-} from "react-native";
-import React, { useState } from "react";
-import CreateShopProgress from "./shop/CreateShopProgress";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/firestore";
-import "@react-native-firebase/auth";
-import "@react-native-firebase/storage";
-import { utils } from "@react-native-firebase/app";
+} from 'react-native';
+import React, { useState } from 'react';
+import CreateShopProgress from './shop/CreateShopProgress';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/storage';
 
 // steps
-import FirstStep from "./shop/FirstStep";
-import SecondStep from "./shop/SecondStep";
-import ThirdStep from "./shop/ThirdStep";
-import FourthStep from "./shop/FourthStep";
+import FirstStep from './shop/FirstStep';
+import SecondStep from './shop/SecondStep';
+import ThirdStep from './shop/ThirdStep';
+import FourthStep from './shop/FourthStep';
 
 const CreateShop = ({}) => {
   const [progress, setProgress] = useState(1);
   const [credsAvailable, setCredsAvailable] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const [openHours, setOpenHours] = useState("");
-  const [closeHours, setCloseHours] = useState("");
-  const [openCloseErr, setOpenCloseErr] = useState("");
+  const [openHours, setOpenHours] = useState('');
+  const [closeHours, setCloseHours] = useState('');
+  const [openCloseErr, setOpenCloseErr] = useState('');
 
-  const [image, setImage] = useState("");
-  const [imageError, setImageError] = useState("");
+  const [image, setImage] = useState('');
+  const [imageError, setImageError] = useState('');
   const [selectedServices, setSelectedService] = useState([
-    { offering: false, value: "wash-dry-fold" },
+    { offering: false, value: 'wash-dry-fold' },
     {
       offering: false,
-      value: "dry-cleaning",
+      value: 'dry-cleaning',
     },
     {
       offering: false,
-      value: "ironing",
+      value: 'ironing',
     },
     {
       offering: false,
-      value: "comforter/blankets",
+      value: 'comforter/blankets',
     },
   ]);
-  const [selectedServicesError, setSelectedServicesError] = useState("");
-
+  const [selectedServicesError, setSelectedServicesError] = useState('');
   const [firstStepDetails, setFirstStepDetails] = useState({});
   const [secondStepDetails, setSecondStepDetails] = useState({});
   const [thirdStepDetails, setThirdStepDetails] = useState({});
@@ -56,14 +54,14 @@ const CreateShop = ({}) => {
     setLoading(true);
     firebase
       .firestore()
-      .collection("laundryProviders")
-      .where("name", "==", val.name.trim())
+      .collection('laundryProviders')
+      .where('name', '==', val.name.trim())
       .limit(1)
       .get()
       .then((data) => {
         if (!data.empty) {
           ToastAndroid.show(
-            "select other shop name that is not taken",
+            'select other shop name that is not taken',
             ToastAndroid.SHORT
           );
           setLoading(false);
@@ -73,18 +71,18 @@ const CreateShop = ({}) => {
           name: true,
         });
       })
-      .catch((err) => console.log(err, "shop name"));
+      .catch((err) => console.log(err, 'shop name'));
 
     firebase
       .firestore()
-      .collection("admins")
-      .where("email", "==", val.email.trim())
+      .collection('admins')
+      .where('email', '==', val.email.trim())
       .limit(1)
       .get()
       .then((data) => {
         if (!data.empty) {
           ToastAndroid.show(
-            "please select other email that is not taken",
+            'please select other email that is not taken',
             ToastAndroid.SHORT
           );
           setLoading(false);
@@ -98,7 +96,7 @@ const CreateShop = ({}) => {
           email: true,
         }));
       })
-      .catch((err) => console.log(err, "shop name"));
+      .catch((err) => console.log(err, 'shop name'));
     setFirstStepDetails(val);
     setLoading(false);
     if (credsAvailable.email && credsAvailable.name) setProgress(2);
@@ -106,29 +104,29 @@ const CreateShop = ({}) => {
 
   const handleSecondStepSubmit = (values) => {
     if (!openHours || !closeHours)
-      return setOpenCloseErr("fields must not be empty");
-    setOpenCloseErr("");
+      return setOpenCloseErr('fields must not be empty');
+    setOpenCloseErr('');
     setSecondStepDetails(values);
     setProgress(3);
   };
 
   const handleThirdStepSubmit = () => {
     if (!image || image === null)
-      return setImageError("select your shop image");
+      return setImageError('select your shop image');
     const counter = selectedServices.filter((item) => item.offering === false);
     if (counter.length === 4)
       return setSelectedServicesError(
-        "please select at least one shop service"
+        'please select at least one shop service'
       );
-    setSelectedServicesError("");
-    if (selectedServicesError !== "") return;
-    setImageError("");
+    setSelectedServicesError('');
+    if (selectedServicesError !== '') return;
+    setImageError('');
     setThirdStepDetails(image, selectedServices);
     setProgress(4);
   };
 
   const handleFourthStepSubmit = async () => {
-    const imageExtension = image.split(".")[image.split(".").length - 1];
+    const imageExtension = image.split('.')[image.split('.').length - 1];
     try {
       const ref = firebase
         .storage()
@@ -168,11 +166,12 @@ const CreateShop = ({}) => {
         minPerKilo: secondStepDetails.minPerKilo,
         rate: secondStepDetails.rate,
       },
-      selectedServices,
-      userType: "admin",
+      servicesOffered: selectedServices,
+      userType: 'admin',
       vicinity: secondStepDetails.vicinity,
       password: firstStepDetails.password,
     };
+
     firebase
       .auth()
       .createUserWithEmailAndPassword(
@@ -183,13 +182,13 @@ const CreateShop = ({}) => {
         const uid = res.user.uid;
         firebase
           .firestore()
-          .collection("laundryProviders")
+          .collection('laundryProviders')
           .add(toSubmitObj)
           .then((laundryRes) => {
             laundryRes.update({ laundry_id: laundryRes.id });
             firebase
               .firestore()
-              .collection("admins")
+              .collection('admins')
               .add({
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 email: toSubmitObj.email,
@@ -203,21 +202,21 @@ const CreateShop = ({}) => {
                 adminRes.update({ docId: adminRes.id });
               })
               .catch((err) =>
-                ToastAndroid.show("Something went wrong.", ToastAndroid.LONG)
+                ToastAndroid.show('Something went wrong.', ToastAndroid.LONG)
               );
             firebase
               .firestore()
-              .collection("laundryProviders")
+              .collection('laundryProviders')
               .doc(laundryRes.id)
-              .collection("pendingServices")
-              .doc("history");
+              .collection('pendingServices')
+              .doc('history');
           })
           .catch((err) =>
-            ToastAndroid.show("Something went wrong.", ToastAndroid.LONG)
+            ToastAndroid.show('Something went wrong.', ToastAndroid.LONG)
           );
       })
       .catch((err) =>
-        ToastAndroid.show("Something went wrong.", ToastAndroid.LONG)
+        ToastAndroid.show('Something went wrong.', ToastAndroid.LONG)
       );
   };
 

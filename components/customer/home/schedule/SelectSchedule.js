@@ -1,18 +1,18 @@
-import React, { useContext, useState } from "react";
-import { View, Text, ScrollView, TouchableNativeFeedback } from "react-native";
-import SafeScreenView from "../../../SafeScreenView";
-import PriceDetails from "./PriceDetails";
-import colors from "../../../../config/colors";
-import getDimensions from "../../../../config/getDimensions";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/firestore";
-import ErrorMessage from "../../../forms/ErrorMessage";
-import { AppContext } from "../../../../context/AppContext";
+import React, { useContext, useState } from 'react';
+import { View, Text, ScrollView, TouchableNativeFeedback } from 'react-native';
+import SafeScreenView from '../../../SafeScreenView';
+import PriceDetails from './PriceDetails';
+import colors from '../../../../config/colors';
+import getDimensions from '../../../../config/getDimensions';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import ErrorMessage from '../../../forms/ErrorMessage';
+import { AppContext } from '../../../../context/AppContext';
 
-import ScheduleStep from "./ScheduleStep";
-import PickupSelection from "./PickupSelection";
-import DeliverSelection from "./DeliverSelection";
-import NavigationButton from "./NavigationButton";
+import ScheduleStep from './ScheduleStep';
+import PickupSelection from './PickupSelection';
+import DeliverSelection from './DeliverSelection';
+import NavigationButton from './NavigationButton';
 
 const SelectSchedule = ({ route, navigation }) => {
   const {
@@ -29,8 +29,8 @@ const SelectSchedule = ({ route, navigation }) => {
   const { user, userCurrentLocation } = useContext(AppContext);
 
   const [method, setMethod] = useState({
-    label: "Pickup & Deliver",
-    value: "pickup&deliver",
+    label: 'Pickup & Deliver',
+    value: 'pickup&deliver',
   });
 
   // const [pickupDate, setPickupDate] = useState('');
@@ -42,17 +42,17 @@ const SelectSchedule = ({ route, navigation }) => {
   const { height } = getDimensions();
 
   const [scheduleStep, setScheduleStep] = useState(1);
-  const [isPickup, setIsPickup] = useState("no");
-  const [toBeDeliver, setToBeDeliver] = useState("no");
+  const [isPickup, setIsPickup] = useState('no');
+  const [toBeDeliver, setToBeDeliver] = useState('no');
 
   const bookNow = async () => {
     const availableBookingsRef = firebase
       .firestore()
-      .collection("availableBookings");
-    const customersRef = firebase.firestore().collection("customers");
+      .collection('availableBookings');
+    const customersRef = firebase.firestore().collection('customers');
 
     // redirect user to success page
-    navigation.replace("SuccessfullyBooked", {
+    navigation.replace('SuccessfullyBooked', {
       name,
       method,
       pickupDate,
@@ -64,7 +64,6 @@ const SelectSchedule = ({ route, navigation }) => {
   return (
     <SafeScreenView>
       {/* step */}
-
       <View className="flex-1 items-center self-center max-w-[80%]">
         <View
           className="items-center"
@@ -82,7 +81,7 @@ const SelectSchedule = ({ route, navigation }) => {
         {scheduleStep === 1 ? (
           <View className=" items-center justify-center flex-1">
             <PickupSelection isPickup={isPickup} setIsPickup={setIsPickup} />
-            {isPickup === "no" && (
+            {isPickup === 'no' && (
               <Text className="text-xs w-[150px] self-end">
                 please drop off your laundry in our shop
               </Text>
@@ -90,7 +89,7 @@ const SelectSchedule = ({ route, navigation }) => {
           </View>
         ) : (
           scheduleStep === 2 &&
-          isPickup === "no" && (
+          isPickup === 'no' && (
             <>
               <View className=" items-center justify-center flex-1">
                 <DeliverSelection

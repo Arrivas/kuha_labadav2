@@ -4,14 +4,14 @@ import {
   TouchableNativeFeedback,
   Image,
   ScrollView,
-} from "react-native";
-import React, { useContext } from "react";
-import useAuth from "../../auth/useAuth";
-import { useNavigation, CommonActions } from "@react-navigation/native";
-import SafeScreenView from "../SafeScreenView";
-import { moderateScale, horizontalScale } from "../../config/metrics";
-import { AppContext } from "../../context/AppContext";
-import SettingsItem from "./settings/SettingsItem";
+} from 'react-native';
+import React, { useContext } from 'react';
+import useAuth from '../../auth/useAuth';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import SafeScreenView from '../SafeScreenView';
+import { moderateScale, horizontalScale } from '../../config/metrics';
+import { AppContext } from '../../context/AppContext';
+import SettingsItem from './settings/SettingsItem';
 
 const AdminSettingsScreen = () => {
   const { logOut } = useAuth();
@@ -20,21 +20,21 @@ const AdminSettingsScreen = () => {
   const settingsArr = [
     {
       id: 1,
-      label: "My Shop",
-      path: "MyShop",
-      iconName: "storefront",
-      outerBg: "#e6f7fe",
-      iconColor: "#2fa1db",
-      iconLibrary: "MaterialIcons",
+      label: 'My Shop',
+      path: 'MyShop',
+      iconName: 'storefront',
+      outerBg: '#e6f7fe',
+      iconColor: '#2fa1db',
+      iconLibrary: 'MaterialIcons',
     },
     {
       id: 2,
-      label: "Logout",
-      path: "",
-      iconName: "logout",
-      outerBg: "#eee",
-      iconColor: "black",
-      iconLibrary: "MaterialIcons",
+      label: 'Logout',
+      path: '',
+      iconName: 'logout',
+      outerBg: '#eee',
+      iconColor: 'black',
+      iconLibrary: 'MaterialIcons',
     },
     // {
     //   id: 2,
@@ -76,7 +76,7 @@ const AdminSettingsScreen = () => {
         <View className="flex-1 justify-center">
           <View className="flex-row items-center py-10">
             <Image
-              resizeMode="contain"
+              resizeMode="cover"
               source={{ uri: user?.imageUrl }}
               className="h-[70px] w-[70px] rounded-full"
             />
