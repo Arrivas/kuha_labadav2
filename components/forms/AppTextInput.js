@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { TextInput, View, TouchableNativeFeedback } from 'react-native';
-import Icon from '../Icon';
-import colors from '../../config/colors';
-import getDimensions from '../../config/getDimensions';
+import React, { useState } from "react";
+import { TextInput, View, TouchableNativeFeedback } from "react-native";
+import Icon from "../Icon";
+import colors from "../../config/colors";
+import getDimensions from "../../config/getDimensions";
 
 const InputText = ({
   name,
@@ -11,11 +11,13 @@ const InputText = ({
   keyboardType,
   isPassword,
   onShowPassword,
-  iconColor = '#4c5464',
+  iconColor = "#4c5464",
   setFieldTouched,
   payment,
   credsAvailable,
   checkAvailability = false,
+  setCredsAvailable,
+  description = false,
   ...rest
 }) => {
   const [applyBorder, setApplyBorder] = useState(false);
@@ -24,11 +26,11 @@ const InputText = ({
   return (
     <View
       className={`items-center flex-row p-2 ${
-        payment ? 'py-1 pt-4' : 'py-3'
+        payment ? "py-1 pt-4" : "py-3"
       } rounded-xl mb-3 bg-gray-100 bgred-400`}
       style={{
         borderWidth: 1,
-        borderColor: applyBorder ? colors.primary : 'transparent',
+        borderColor: applyBorder ? colors.primary : "transparent",
       }}
     >
       {iconName ? (
@@ -46,6 +48,8 @@ const InputText = ({
           fontSize: width >= 500 ? width * 0.018 : width * 0.035,
           paddingHorizontal: width >= 500 ? width * 0.025 : width * 0.035,
         }}
+        numberOfLines={description ? 2 : 1}
+        multiline={description}
         clearButtonMode="always"
         secureTextEntry={isPassword ? !showPassword : showPassword}
         onBlur={() => {
@@ -53,6 +57,11 @@ const InputText = ({
           setFieldTouched(name);
         }}
         onFocus={() => setApplyBorder(true)}
+        onChange={() => {
+          if (checkAvailability) {
+            setCredsAvailable({ name: "", email: "" });
+          }
+        }}
         keyboardType={keyboardType}
         className="w-full"
         {...rest}
@@ -67,7 +76,7 @@ const InputText = ({
           >
             <Icon
               className="rounded-none bg-transparent p-2"
-              iconName={showPassword ? 'eye-outline' : 'eye-off-outline'}
+              iconName={showPassword ? "eye-outline" : "eye-off-outline"}
               color="#4c5464"
               iconLibrary="MaterialCommunityIcons"
               size={width >= 500 ? width * 0.025 : width * 0.05}

@@ -1,13 +1,15 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import { View, Text } from "react-native";
+import React from "react";
 
-const ScheduleStep = ({ scheduleStep, colors }) => {
-  const stepObj = [
-    { id: 1, label: 'step 1' },
-    { id: 2, label: 'step 2' },
-    { id: 3, label: 'step 3' },
-    { id: 4, label: 'step 4' },
-  ];
+const ScheduleStep = ({ scheduleStep, colors, isPickup, fabconEnabled }) => {
+  const stepObj =
+    isPickup === "no"
+      ? Array(fabconEnabled ? 4 : 3)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }))
+      : Array(fabconEnabled ? 5 : 4)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }));
 
   return (
     <View className=" flex-row space-x-1 self-center mt-5">
@@ -20,7 +22,7 @@ const ScheduleStep = ({ scheduleStep, colors }) => {
               ? `rounded-r bg-[${colors.primary}]`
               : scheduleStep === item.id || scheduleStep >= item.id
               ? `bg-[${colors.primary}]`
-              : 'bg-gray-100'
+              : "bg-gray-100"
           }  flex-1 py-1 `}
           key={item.id}
         >

@@ -1,7 +1,7 @@
-import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import Icon from '../../../Icon';
-import ServicesOffered from './ServicesOffered';
+import React from "react";
+import { ScrollView, Text, View } from "react-native";
+import Icon from "../../../Icon";
+import ServicesOffered from "./ServicesOffered";
 
 const ShopOverview = ({
   description,
@@ -56,15 +56,7 @@ const ShopOverview = ({
                 opacity: selectedServices.length === 0 ? 1 : 0.2,
               }}
             >
-              {description} asdas dasd asd asdas das dasd asdasdas dasd asd asd
-              asd asdas das dasd asd asd asd asd asdas das dasd asd asdas das
-              dasd asd asd asd asd asdas das dasd asd asdas das dasd asd asd asd
-              asd asdas das dasd asd asdas das dasd asd asd asd asd asdas das
-              dasd asd asdas das dasd asd asd asd asd asdas das dasd dasd asd
-              asdas das dasd asd asd asd asd asdas das dasd dasd asd asdas das
-              dasd asd asd asd asd asdas das dasd dasd asd asdas das dasd asd
-              asd asd asd asdas das dasd asd asd asd asdas das dasd asd asd asd
-              asdas das dasd asd asd asd asdas das dasd
+              {description}
             </Text>
           </View>
         </ScrollView>

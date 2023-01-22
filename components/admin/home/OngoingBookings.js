@@ -5,15 +5,15 @@ import {
   ScrollView,
   ToastAndroid,
   TouchableNativeFeedback,
-} from 'react-native';
-import React from 'react';
-import CardDetailsLabel from '../home/card/CardDetailsLabel';
-import Moment from 'moment';
-import colors from '../../../config/colors';
-import formattedDate from '../../../functions/formattedDate';
-import properStatus from '../../../functions/properStatus';
-import HandleAdminButtonActions from '../HandleAdminButtonActions';
-import { verticalScale } from '../../../config/metrics';
+} from "react-native";
+import React from "react";
+import CardDetailsLabel from "../home/card/CardDetailsLabel";
+import Moment from "moment";
+import colors from "../../../config/colors";
+import formattedDate from "../../../functions/formattedDate";
+import properStatus from "../../../functions/properStatus";
+import HandleAdminButtonActions from "../HandleAdminButtonActions";
+import { verticalScale } from "../../../config/metrics";
 
 const OngoingBookings = ({ ongoingItems }) => {
   return (
@@ -23,13 +23,13 @@ const OngoingBookings = ({ ongoingItems }) => {
         paddingHorizontal: verticalScale(15),
       }}
     >
-      {ongoingItems.map((item) => (
+      {ongoingItems?.map((item) => (
         <View
           className="rounded-xl overflow-hidden"
           style={{
             flex: 1,
-            backgroundColor: 'white',
-            shadowColor: 'black',
+            backgroundColor: "white",
+            shadowColor: "black",
             shadowOpacity: 1,
             elevation: 2,
             marginBottom: 15,
@@ -54,7 +54,7 @@ const OngoingBookings = ({ ongoingItems }) => {
               <View className="mx-2">
                 <Text
                   style={{
-                    fontFamily: 'Alexandria-Regular',
+                    fontFamily: "Alexandria-Regular",
                   }}
                 >
                   Customer Name
@@ -77,8 +77,8 @@ const OngoingBookings = ({ ongoingItems }) => {
                       item.selectedPickupTime
                     )
                   ),
-                  'ddd DD-MMM-YYYY, hh:mm A'
-                ).format('lll')}
+                  "ddd DD-MMM-YYYY, hh:mm A"
+                ).format("lll")}
               />
               <CardDetailsLabel label="Address" value={item.customerAddress} />
               <CardDetailsLabel label="Phone#" value={item.customerMobile} />

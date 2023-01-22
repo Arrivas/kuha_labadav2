@@ -1,17 +1,17 @@
-import React from 'react';
-import { View, TextInput, TouchableNativeFeedback, Text } from 'react-native';
-import Icon from '../Icon';
+import React from "react";
+import { View, TextInput, TouchableNativeFeedback, Text } from "react-native";
+import Icon from "../Icon";
 
 function SelectTime({ value, handleOnPress, name, error, ...rest }) {
   return (
     <>
       <View
         className={`${
-          error ? 'border border-red-400' : ''
-        } flex flex-row w-[95%] self-center items-center justify-center bg-gray-100 rounded-xl p-3 overflow-hidden`}
+          error ? "border border-red-400" : ""
+        } flex flex-row self-center ml-0.5 items-center justify-center bg-gray-100 rounded-xl p-3 overflow-hidden`}
       >
         <TextInput
-          className="w-[90%] text-gray-600"
+          className="w-[90%] text-gray-600 px-4"
           editable={false}
           clearButtonMode="always"
           value={value}

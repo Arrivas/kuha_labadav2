@@ -1,11 +1,12 @@
 import { View, Text, TouchableWithoutFeedback } from "react-native";
 import React from "react";
 
-const PickupSelection = ({ isPickup, setIsPickup }) => {
-  const pickupItems = [
+const DeliverSelection = ({ toBeDeliver, setToBeDeliver }) => {
+  const deliverItems = [
     { id: 1, label: "Yes", value: "yes" },
     { id: 2, label: "No", value: "no" },
   ];
+
   return (
     <View className="items-center">
       <Text
@@ -14,13 +15,13 @@ const PickupSelection = ({ isPickup, setIsPickup }) => {
         }}
         className="font-semibold py-2"
       >
-        Do you like your laundry to be pick-up?
+        Would you prefer for your laundry to be delivered to you?
       </Text>
       <View className="flex-wrap">
-        {pickupItems.map((item) => (
+        {deliverItems.map((item) => (
           <TouchableWithoutFeedback
             onPress={() => {
-              setIsPickup(item.value);
+              setToBeDeliver(item.value);
             }}
             key={item.id}
           >
@@ -28,7 +29,7 @@ const PickupSelection = ({ isPickup, setIsPickup }) => {
               <View className="h-[25px] w-[25px] rounded-full bg-black mr-2 items-center justify-center">
                 <View
                   className={`h-[22px] w-[22px] absolute rounded-full bg-black ${
-                    isPickup === item.value
+                    toBeDeliver === item.value
                       ? "border-[2px] border-white"
                       : "bg-white"
                   } mr-2`}
@@ -43,4 +44,4 @@ const PickupSelection = ({ isPickup, setIsPickup }) => {
   );
 };
 
-export default PickupSelection;
+export default DeliverSelection;

@@ -1,33 +1,36 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, ScrollView, TouchableNativeFeedback } from 'react-native';
-import SafeScreenView from '../../../SafeScreenView';
-import PriceDetails from './PriceDetails';
-import colors from '../../../../config/colors';
-import getDimensions from '../../../../config/getDimensions';
-import firebase from '@react-native-firebase/app';
-import '@react-native-firebase/firestore';
-import ErrorMessage from '../../../forms/ErrorMessage';
-import { AppContext } from '../../../../context/AppContext';
+import React, { useContext, useState } from "react";
+import { View, Text, ScrollView, TouchableNativeFeedback } from "react-native";
+import SafeScreenView from "../../../SafeScreenView";
+import PriceDetails from "./PriceDetails";
+import colors from "../../../../config/colors";
+import getDimensions from "../../../../config/getDimensions";
+import firebase from "@react-native-firebase/app";
+import "@react-native-firebase/firestore";
+import ErrorMessage from "../../../forms/ErrorMessage";
+import { AppContext } from "../../../../context/AppContext";
 
-import ScheduleStep from './ScheduleStep';
-import PickupSelection from './PickupSelection';
-import NavigationButton from './NavigationButton';
+import ScheduleStep from "./ScheduleStep";
+import PickupSelection from "./PickupSelection";
+import DeliverSelection from "./DeliverSelection";
+import NavigationButton from "./NavigationButton";
 
 const SelectSchedule = ({ route, navigation }) => {
   const {
     name,
     pricing,
+    fabcons,
     imageUrl,
     laundry_id,
-    availablePickupTimes,
+    fabconEnabled,
     deliveredByItems,
     selectedServices,
+    availablePickupTimes,
   } = route.params;
   const { user, userCurrentLocation } = useContext(AppContext);
 
   const [method, setMethod] = useState({
-    label: 'Pickup & Deliver',
-    value: 'pickup&deliver',
+    label: "Pickup & Deliver",
+    value: "pickup&deliver",
   });
 
   // const [pickupDate, setPickupDate] = useState('');
@@ -39,77 +42,17 @@ const SelectSchedule = ({ route, navigation }) => {
   const { height } = getDimensions();
 
   const [scheduleStep, setScheduleStep] = useState(1);
-  const [isPickup, setIsPickup] = useState('no');
+  const [isPickup, setIsPickup] = useState("no");
+  const [toBeDeliver, setToBeDeliver] = useState("no");
 
   const bookNow = async () => {
     const availableBookingsRef = firebase
       .firestore()
-      .collection('availableBookings');
-    const customersRef = firebase.firestore().collection('customers');
-
-    // validation
-    // if (
-    //   (!pickupDate && method.value === 'pickup&deliver') ||
-    //   (!pickupDate && method.value === 'pickupOnly')
-    // )
-    //   return setPickupDateError('select pickup date');
-    // else if (
-    //   (!pickupTime && method.value === 'pickup&deliver') ||
-    //   (!pickupTime && method.value === 'pickupOnly')
-    // )
-    //   return setPickupTimeError('select pickup time');
-    // else if (
-    //   (!deliveryDate && method.value === 'pickup&deliver') ||
-    //   (!deliveryDate && method.value === 'deliverOnly')
-    // )
-    //   return setDeliveryDateError('select pickup time');
-
-    // setPickupDateError('');
-    // setPickupTimeError('');
-    // setDeliveryDateError('');
-
-    // const newBooking = {
-    //   userLocation: userCurrentLocation,
-    //   timeOfBooking: new Date().toISOString(),
-    //   status: 'confirmedBooking',
-    //   selectedServices,
-    //   selectedPickupTime: pickupTime,
-    //   selectedPickupDay: pickupDate.actualDate,
-    //   selectedDelivery: deliveryDate,
-    //   priceConfirmed: false,
-    //   method,
-    //   laundry_id,
-    //   laundryServiceName: name,
-    //   laundryImageUrl: imageUrl,
-    //   customerImageUrl: user.imageUrl,
-    //   customerName: user.name,
-    //   customerMobile: user.mobileNumber,
-    //   customerDocId: user.docId,
-    //   customerAddress: user.customerAddress,
-    // };
-
-    // const currentCustomer = [];
-
-    // await customersRef
-    //   .where('docId', '==', user.docId)
-    //   .limit(1)
-    //   .get()
-    //   .then(async (data) => {
-    //     data.forEach((doc) => currentCustomer.push(doc.data()));
-    //     await availableBookingsRef.add(newBooking).then((data) => {
-    //       data.update({ docId: data.id });
-    //       newBooking.docId = data.id;
-    //     });
-    //     currentCustomer[0].confirmedBooking.push(newBooking);
-    //   })
-    //   .then(async () => {
-    //     await customersRef.doc(user.docId).update(currentCustomer[0]);
-    //     console.log('success');
-    //   })
-    //   .catch((err) => console.log(err));
+      .collection("availableBookings");
+    const customersRef = firebase.firestore().collection("customers");
 
     // redirect user to success page
-    navigation.replace('SuccessfullyBooked', {
+    navigation.replace("SuccessfullyBooked", {
       name,
       method,
       pickupDate,
@@ -122,22 +65,49 @@ const SelectSchedule = ({ route, navigation }) => {
     <SafeScreenView>
       {/* step */}
 
-      <View className="flex-1 justify-between items-center self-center max-w-[80%]">
+      <View className="flex-1 items-center self-center max-w-[80%]">
         <View
           className="items-center"
           //  style={{ flex: 1 }}
         >
-          <ScheduleStep scheduleStep={scheduleStep} colors={colors} />
+          <ScheduleStep
+            colors={colors}
+            isPickup={isPickup}
+            scheduleStep={scheduleStep}
+            fabconEnabled={fabconEnabled}
+          />
           <Text className="font-bold text-lg pt-5">Set Schedule</Text>
         </View>
-        <View
-          className="w-full items-center justify-center mt-24"
-          // style={{ flex: 5 }}
-        >
-          <PickupSelection isPickup={isPickup} setIsPickup={setIsPickup} />
-        </View>
-        <NavigationButton />
+        {/* step 1 */}
+        {scheduleStep === 1 ? (
+          <View className=" items-center justify-center flex-1">
+            <PickupSelection isPickup={isPickup} setIsPickup={setIsPickup} />
+            {isPickup === "no" && (
+              <Text className="text-xs w-[150px] self-end">
+                please drop off your laundry in our shop
+              </Text>
+            )}
+          </View>
+        ) : (
+          scheduleStep === 2 &&
+          isPickup === "no" && (
+            <>
+              <View className=" items-center justify-center flex-1">
+                <DeliverSelection
+                  toBeDeliver={toBeDeliver}
+                  setToBeDeliver={setToBeDeliver}
+                />
+              </View>
+            </>
+          )
+        )}
       </View>
+      <NavigationButton
+        isPickup={isPickup}
+        scheduleStep={scheduleStep}
+        fabconEnabled={fabconEnabled}
+        setScheduleStep={setScheduleStep}
+      />
     </SafeScreenView>
   );
 };

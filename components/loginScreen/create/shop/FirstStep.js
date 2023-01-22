@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, ScrollView } from "react-native";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import FormikField from "../../../forms/FormikField";
@@ -7,11 +7,16 @@ import SubmitButton from "../../../forms/SubmitButton";
 
 const FirstStep = ({
   handleFirstStepSubmit,
-  credsAvailable,
   setCredsAvailable,
+  firstStepDetails,
+  credsAvailable,
   loading,
 }) => {
-  const initialValues = { name: "", email: "", password: "" };
+  const initialValues = {
+    name: firstStepDetails?.name || "",
+    email: firstStepDetails?.email || "",
+    password: firstStepDetails?.password || "",
+  };
   const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object().shape({
@@ -26,7 +31,7 @@ const FirstStep = ({
       onSubmit={handleFirstStepSubmit}
       validationSchema={validationSchema}
     >
-      <View>
+      <View className="items-center">
         <AppFormField
           placeholder="shop name"
           containerStyle="w-[80%]"
@@ -56,16 +61,15 @@ const FirstStep = ({
           showPassword={showPassword}
           onShowPassword={setShowPassword}
         />
-
-        <SubmitButton
-          mode="default"
-          loading={loading}
-          disabled={loading}
-          containerStyle="self-end w-[32%] py-3"
-          textClass="font-bold text-white mr-2 "
-          title={credsAvailable.name && credsAvailable.name ? "next" : "check"}
-        />
       </View>
+      <SubmitButton
+        mode="default"
+        loading={loading}
+        disabled={loading}
+        containerStyle="self-end w-[32%] py-3 mr-2"
+        textClass="font-bold text-white"
+        title={credsAvailable.name && credsAvailable.name ? "next" : "check"}
+      />
     </FormikField>
   );
 };

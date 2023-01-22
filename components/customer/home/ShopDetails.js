@@ -18,10 +18,12 @@ const ShopDetails = ({ navigation, route }) => {
   const {
     name,
     pricing,
+    fabcons,
     imageUrl,
     vicinity,
     laundry_id,
     description,
+    fabconEnabled,
     pendingServices,
     servicesOffered,
     deliveredByItems,
@@ -105,8 +107,10 @@ const ShopDetails = ({ navigation, route }) => {
             navigation.navigate("SelectSchedule", {
               name,
               pricing,
+              fabcons,
               imageUrl,
               laundry_id,
+              fabconEnabled,
               deliveredByItems,
               selectedServices,
               availablePickupTimes,
