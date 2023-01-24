@@ -1,18 +1,28 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, ScrollView, TouchableNativeFeedback } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableNativeFeedback,
+  ToastAndroid,
+} from 'react-native';
 import SafeScreenView from '../../../SafeScreenView';
-import PriceDetails from './PriceDetails';
 import colors from '../../../../config/colors';
-import getDimensions from '../../../../config/getDimensions';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 import ErrorMessage from '../../../forms/ErrorMessage';
 import { AppContext } from '../../../../context/AppContext';
+import { horizontalScale } from '../../../../config/metrics';
 
 import ScheduleStep from './ScheduleStep';
 import PickupSelection from './PickupSelection';
 import DeliverSelection from './DeliverSelection';
 import NavigationButton from './NavigationButton';
+import Summary from './Summary';
+import DateTimePickerComponent from './DateTimePickerComponent';
+import DeliveredBy from './DeliveredBy';
+import Moment from 'moment';
+import FabconSelection from './FabconSelection';
 
 const SelectSchedule = ({ route, navigation }) => {
   const {
@@ -24,58 +34,121 @@ const SelectSchedule = ({ route, navigation }) => {
     fabconEnabled,
     deliveredByItems,
     selectedServices,
-    availablePickupTimes,
   } = route.params;
   const { user, userCurrentLocation } = useContext(AppContext);
 
-  const [method, setMethod] = useState({
-    label: 'Pickup & Deliver',
-    value: 'pickup&deliver',
-  });
-
-  // const [pickupDate, setPickupDate] = useState('');
-  // const [pickupTime, setPickupTime] = useState('');
-  // const [deliveryDate, setDeliveryDate] = useState('');
-  // const [pickUpDateError, setPickupDateError] = useState('');
-  // const [pickupTimeError, setPickupTimeError] = useState('');
-  // const [deliveryDateError, setDeliveryDateError] = useState('');
-  const { height } = getDimensions();
-
-  const [scheduleStep, setScheduleStep] = useState(1);
   const [isPickup, setIsPickup] = useState('no');
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
   const [toBeDeliver, setToBeDeliver] = useState('no');
+  const [scheduleStep, setScheduleStep] = useState(1);
+  const [timeDateError, setTimeDateError] = useState('');
+  const [selectedFabcons, setSelectedFabcons] = useState([]);
+  const [deliveryDate, setDeliveryDate] = useState(deliveredByItems[0].label);
 
-  const bookNow = async () => {
-    const availableBookingsRef = firebase
+  let formattedDateTime =
+    pickupTime && pickupDate
+      ? Moment(new Date(`${pickupDate} ${pickupTime}`)).format('LLLL')
+      : '';
+
+  const stepObj =
+    isPickup === 'no' && toBeDeliver === 'no'
+      ? Array(fabconEnabled ? 4 : 3)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }))
+      : (isPickup === 'yes' && toBeDeliver === 'no') ||
+        (isPickup === 'no' && toBeDeliver === 'yes')
+      ? Array(fabconEnabled ? 5 : 4)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }))
+      : isPickup === 'yes' && toBeDeliver === 'yes'
+      ? Array(fabconEnabled ? 6 : 5)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }))
+      : Array(fabconEnabled ? 5 : 4)
+          .fill()
+          .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }));
+
+  const handleBookNow = async () => {
+    if (isPickup === 'no') {
+      setPickupDate('');
+      setPickupTime('');
+    }
+
+    const currentBooking = {
+      laundryShopDetails: {
+        laundryShopName: name,
+        laundry_id,
+        laundryImageUrl: imageUrl,
+      },
+      customerDetails: {
+        customerName: user.name,
+        customerMobileNumber: user.mobileNumber,
+        customerDocId: user.docId,
+        customerAddress: user.customerAddress,
+      },
+      method: {
+        pickup: isPickup,
+        toBeDeliver,
+      },
+      schedule: {
+        pickupDateTime: isPickup === 'yes' ? formattedDateTime : '',
+        deliveryDate: toBeDeliver === 'yes' ? deliveryDate : '',
+      },
+      service: selectedServices,
+      fabcons: selectedFabcons,
+    };
+
+    await firebase
       .firestore()
-      .collection('availableBookings');
-    const customersRef = firebase.firestore().collection('customers');
+      .collection('availableBookings')
+      .add(currentBooking)
+      .then((doc) => {
+        currentBooking.docId = doc.id;
+        doc.update({ docId: doc.id });
+      })
+      .catch((err) => {
+        ToastAndroid.show(
+          'cannot process booking, something went wrong',
+          ToastAndroid.SHORT
+        );
+      });
 
+    const userCopy = { ...user };
+    userCopy.confirmedBooking.push(currentBooking);
+    firebase
+      .firestore()
+      .collection('customers')
+      .doc(user?.docId)
+      .update(userCopy)
+      .then(() => {
+        console.log('successfully booked');
+      })
+      .catch((err) => console.log(err));
     // redirect user to success page
-    navigation.replace('SuccessfullyBooked', {
-      name,
-      method,
-      pickupDate,
-      pickupTime,
-      deliveryDate,
-    });
+    // navigation.replace('SuccessfullyBooked');
   };
 
   return (
     <SafeScreenView>
       {/* step */}
-      <View className="flex-1 items-center self-center max-w-[80%]">
-        <View
-          className="items-center"
-          //  style={{ flex: 1 }}
-        >
+      <View className="flex-1 items-center">
+        <View className="items-center">
           <ScheduleStep
+            stepObj={stepObj}
             colors={colors}
             isPickup={isPickup}
+            toBeDeliver={toBeDeliver}
             scheduleStep={scheduleStep}
             fabconEnabled={fabconEnabled}
           />
-          <Text className="font-bold text-lg pt-5">Set Schedule</Text>
+          <Text className="font-bold text-lg pt-5">
+            {scheduleStep === stepObj[stepObj.length - 1].id
+              ? 'Summary'
+              : scheduleStep === stepObj[stepObj.length - 2].id && fabconEnabled
+              ? 'Additionals'
+              : 'Set Schedule'}
+          </Text>
         </View>
         {/* step 1 */}
         {scheduleStep === 1 ? (
@@ -87,98 +160,90 @@ const SelectSchedule = ({ route, navigation }) => {
               </Text>
             )}
           </View>
+        ) : (scheduleStep === 2 && isPickup === 'no') ||
+          (scheduleStep === 3 && isPickup === 'yes') ? (
+          <>
+            <View className=" items-center justify-center flex-1">
+              <DeliverSelection
+                toBeDeliver={toBeDeliver}
+                setToBeDeliver={setToBeDeliver}
+                horizontalScale={horizontalScale}
+              />
+              {toBeDeliver === 'no' && (
+                <Text className="text-xs w-[150px] self-end">
+                  please pickup your laundry on our shop
+                </Text>
+              )}
+            </View>
+          </>
+        ) : scheduleStep === 2 && isPickup === 'yes' ? (
+          <>
+            <View className=" items-center justify-center flex-1">
+              <DateTimePickerComponent
+                pickupDate={pickupDate}
+                pickupTime={pickupTime}
+                setPickupDate={setPickupDate}
+                setPickupTime={setPickupTime}
+                timeDateError={timeDateError}
+                horizontalScale={horizontalScale}
+                setTimeDateError={setTimeDateError}
+              />
+            </View>
+          </>
+        ) : (scheduleStep === 3 && toBeDeliver === 'yes') ||
+          (scheduleStep === 4 &&
+            toBeDeliver === 'yes' &&
+            isPickup === 'yes') ? (
+          <View className=" items-center justify-center flex-1">
+            <DeliveredBy
+              deliveryDate={deliveryDate}
+              setDeliveryDate={setDeliveryDate}
+              deliveredByItems={deliveredByItems}
+            />
+          </View>
+        ) : stepObj[stepObj.length - 2].id === scheduleStep && fabconEnabled ? (
+          <View className=" items-center justify-center flex-1">
+            <FabconSelection
+              fabcons={fabcons}
+              selectedFabcons={selectedFabcons}
+              horizontalScale={horizontalScale}
+              setSelectedFabcons={setSelectedFabcons}
+            />
+          </View>
         ) : (
-          scheduleStep === 2 &&
-          isPickup === 'no' && (
-            <>
-              <View className=" items-center justify-center flex-1">
-                <DeliverSelection
-                  toBeDeliver={toBeDeliver}
-                  setToBeDeliver={setToBeDeliver}
-                />
-              </View>
-            </>
+          stepObj[stepObj.length - 1].id === scheduleStep && (
+            <Summary
+              user={user}
+              pricing={pricing}
+              isPickup={isPickup}
+              imageUrl={imageUrl}
+              laundryShopName={name}
+              toBeDeliver={toBeDeliver}
+              deliveryDate={deliveryDate}
+              horizontalScale={horizontalScale}
+              selectedServices={selectedServices}
+              setTimeDateError={setTimeDateError}
+              formattedDateTime={formattedDateTime}
+            />
           )
         )}
       </View>
       <NavigationButton
+        stepObj={stepObj}
         isPickup={isPickup}
+        pickupDate={pickupDate}
+        pickupTime={pickupTime}
+        toBeDeliver={toBeDeliver}
         scheduleStep={scheduleStep}
         fabconEnabled={fabconEnabled}
+        setPickupDate={setPickupDate}
+        setPickupTime={setPickupTime}
+        handleBookNow={handleBookNow}
         setScheduleStep={setScheduleStep}
+        setTimeDateError={setTimeDateError}
       />
     </SafeScreenView>
   );
 };
 
 export default SelectSchedule;
-
-// <View
-//   className="justify-around"
-//   style={{
-//     paddingHorizontal: 20,
-//     marginBottom: 5,
-//     height: height - 150,
-//   }}
-// >
-//   <ScrollView
-//     contentContainerStyle={{
-//       justifyContent: 'space-between',
-//       flexGrow: 1,
-//     }}
-//   >
-//     <Method
-//       method={method}
-//       setMethod={setMethod}
-//       setPickupDate={setPickupDate}
-//       setPickupTime={setPickupTime}
-//       setDeliveryDate={setDeliveryDate}
-//       setPickupDateError={setPickupDateError}
-//       setPickupTimeError={setPickupTimeError}
-//       setDeliveryDateError={setDeliveryDateError}
-//     />
-//     {/* pickup & deliver */}
-
-//     <PickupDate
-//       method={method}
-//       pickupDate={pickupDate}
-//       setPickupDate={setPickupDate}
-//       setPickupDateError={setPickupDateError}
-//       _
-//     />
-//     <ErrorMessage error={pickUpDateError} />
-//     {/* pickup time */}
-//     <PickupTime
-//       method={method}
-//       pickupTime={pickupTime}
-//       setPickupTime={setPickupTime}
-//       setPickupTimeError={setPickupTimeError}
-//       availablePickupTimes={availablePickupTimes}
-//     />
-//     <ErrorMessage error={pickupTimeError} />
-//     {/* delivery date */}
-//     <DeliveryDate
-//       method={method}
-//       deliveryDate={deliveryDate}
-//       setDeliveryDate={setDeliveryDate}
-//       deliveredByItems={deliveredByItems}
-//       setDeliveryDateError={setDeliveryDateError}
-//     />
-//     <ErrorMessage error={deliveryDateError} />
-//     {/* price details/delivery details */}
-//     <PriceDetails pricing={pricing} />
-//   </ScrollView>
-// </View>
-// {/* button */}
-// <View>
-//   <TouchableNativeFeedback onPress={bookNow}>
-//     <View
-//       className="self-center w-[90%] py-4 rounded-xl flex-row items-center justify-center px-10"
-//       style={{
-//         backgroundColor: colors.primary,
-//       }}
-//     >
-//       <Text className="font-bold text-[15px] text-white">Book Now</Text>
-//     </View>
-//   </TouchableNativeFeedback>
-// </View>

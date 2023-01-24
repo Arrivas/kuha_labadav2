@@ -15,39 +15,33 @@ import { moderateScale } from '../../config/metrics';
 const CustomerHomeScreen = ({ navigation }) => {
   const [selectedService, setSelectedService] = useState('');
   const [laundryServices, setLaundryServices] = useState([]);
-  const { user } = useContext(AppContext);
+  const { user, userCurrentLocation } = useContext(AppContext);
 
   const fetchLaundryServices = async () => {
-    // const fetchedLaundryServices = [];
     const getNearbyGeo = [];
     await firebase
       .firestore()
-
       .collection('laundryProviders')
-
       .get()
-
       .then((data) => {
         data.forEach((doc) => {
-          const currentLaundryProv = doc.data();
-          if (!currentLaundryProv) return;
-          const { lat, lng } = currentLaundryProv?.geometryLocation;
-
-          //   const dis = getPreciseDistance(
-          //     {
-          //       latitude: userCurrentLocation.latitude,
-          //       longitude: userCurrentLocation.longitude,
-          //     },
-          //     {
-          //       latitude: lat,
-          //       longitude: lng,
-          //     }
-          //   );
-          currentLaundryProv.distance = { distanceKM: 1 / 1000 };
-          getNearbyGeo.push(currentLaundryProv);
+          if (!doc.exists) return;
+          const { lat, lng } = doc.data().geometryLocation;
+          const dis = getPreciseDistance(
+            {
+              latitude: userCurrentLocation.latitude,
+              longitude: userCurrentLocation.longitude,
+            },
+            {
+              latitude: lat,
+              longitude: lng,
+            }
+          );
+          doc.data().distance = { distanceKM: dis / 1000 };
+          getNearbyGeo.push(doc.data());
         });
       })
-      .catch((error) => console.log(error, 'asd'));
+      .catch((error) => console.log(error));
     return (
       getNearbyGeo.sort((a, b) => (a.distanceKM > b.distanceKM ? 1 : -1)) || []
     );
@@ -63,7 +57,7 @@ const CustomerHomeScreen = ({ navigation }) => {
     () => {
       mounted = false;
     };
-  }, []);
+  }, [userCurrentLocation]);
 
   return (
     <SafeScreenView enablePadding={true}>

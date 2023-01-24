@@ -1,20 +1,17 @@
-import { View, Text, TouchableWithoutFeedback } from "react-native";
-import React from "react";
+import { View, Text, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
 
-const DeliverSelection = ({ toBeDeliver, setToBeDeliver }) => {
+const DeliverSelection = ({ toBeDeliver, setToBeDeliver, horizontalScale }) => {
   const deliverItems = [
-    { id: 1, label: "Yes", value: "yes" },
-    { id: 2, label: "No", value: "no" },
+    { id: 1, label: 'Yes', value: 'yes' },
+    { id: 2, label: 'No', value: 'no' },
   ];
-
   return (
-    <View className="items-center">
-      <Text
-        style={{
-          fontSize: 16,
-        }}
-        className="font-semibold py-2"
-      >
+    <View
+      className="items-center"
+      style={{ paddingHorizontal: horizontalScale(22) }}
+    >
+      <Text className="font-semibold py-2 text-center max-w-[70%]">
         Would you prefer for your laundry to be delivered to you?
       </Text>
       <View className="flex-wrap">
@@ -30,8 +27,8 @@ const DeliverSelection = ({ toBeDeliver, setToBeDeliver }) => {
                 <View
                   className={`h-[22px] w-[22px] absolute rounded-full bg-black ${
                     toBeDeliver === item.value
-                      ? "border-[2px] border-white"
-                      : "bg-white"
+                      ? 'border-[2px] border-white'
+                      : 'bg-white'
                   } mr-2`}
                 ></View>
               </View>

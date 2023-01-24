@@ -9,7 +9,7 @@ import {
 import React, { useContext, useState } from 'react';
 import SafeScreenView from '../../SafeScreenView';
 import { AppContext } from '../../../context/AppContext';
-import { horizontalScale, verticalScale } from '../../../config/metrics';
+import { horizontalScale } from '../../../config/metrics';
 import FormikField from '../../forms/FormikField';
 import AppFormField from '../../forms/AppFormField';
 import SelectTime from '../../forms/SelectTime';
@@ -44,7 +44,7 @@ const MyShopComponent = () => {
   const [fabconErr, setFabconErr] = useState('');
   const [fabconPrice, setFabconPrice] = useState();
   const [image, setImage] = useState('');
-  const [imageError, setImageError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const initialValues = {
     max: user?.pendingServices?.max || '',
@@ -62,6 +62,7 @@ const MyShopComponent = () => {
   };
 
   const handleSubmit = (values) => {
+    setLoading(true);
     let userCopy = { ...user };
     userCopy.vicinity = values.vicinity;
     userCopy.pendingServices.max = values.max;
@@ -81,8 +82,10 @@ const MyShopComponent = () => {
     userCopy.fabcons = fabcons;
     userCopy.fabconEnabled = fabconEnabled;
 
-    if (!openHours || !closeHours)
+    if (!openHours || !closeHours) {
+      setLoading(false);
       return setOpenCloseErr('fields must not be empty');
+    }
     setOpenCloseErr('');
 
     if (showOptional)
@@ -95,11 +98,16 @@ const MyShopComponent = () => {
         userCopy.deliveredByItems.pop();
       }
     }
-    if (values.fabcons.length === 0 && fabconEnabled)
+    if (values.fabcons.length === 0 && fabconEnabled) {
+      setLoading(false);
       return setFabconErr('add at least one');
-    if (!fabconEnabled) delete userCopy.fabcons;
+    }
+    if (!fabconEnabled) {
+      setFabcons([]);
+      delete userCopy.fabcons;
+    }
     setFabconErr('');
-    setFabcons([]);
+
     // console.log(userCopy.fabcons);
     firebase
       .firestore()
@@ -109,14 +117,17 @@ const MyShopComponent = () => {
       .then(() => {
         ToastAndroid.show('shop updated successfully', ToastAndroid.SHORT);
         setUser(userCopy);
+        setLoading(false);
       })
-      .catch((err) =>
+      .catch((err) => {
         ToastAndroid.show(
           'update failed, something went wrong',
           ToastAndroid.SHORT
-        )
-      );
+        );
+        setLoading(false);
+      });
     uploadImage();
+    setLoading(false);
   };
 
   const setDate = (e, date) => {
@@ -164,10 +175,8 @@ const MyShopComponent = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.6,
     });
-    setImageError('');
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      setImageError('');
     }
   };
 
@@ -249,6 +258,8 @@ const MyShopComponent = () => {
                   title="Save"
                   textClass="text-white"
                   containerStyle="self-end w-[30%] py-3 mb-2 mt-3"
+                  loading={loading}
+                  disabled={loading}
                 />
               </ScrollView>
             </FormikField>
