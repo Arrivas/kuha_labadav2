@@ -74,25 +74,18 @@ const CreateShop = ({}) => {
       .catch((err) => console.log(err, 'shop name'));
 
     firebase
-      .firestore()
-      .collection('admins')
-      .where('email', '==', val.email.trim())
-      .limit(1)
-      .get()
-      .then((data) => {
-        if (!data.empty) {
-          ToastAndroid.show(
+      .auth()
+      .fetchSignInMethodsForEmail(val.email.trim())
+      .then((doc) => {
+        if (doc?.length !== 0) {
+          setCredsAvailable((prevState) => ({ ...prevState, email: false }));
+          return ToastAndroid.show(
             'please select other email that is not taken',
             ToastAndroid.SHORT
           );
-          setLoading(false);
-          return setCredsAvailable((lastState) => ({
-            ...lastState,
-            email: false,
-          }));
         }
-        setCredsAvailable((lastState) => ({
-          ...lastState,
+        return setCredsAvailable((prevState) => ({
+          ...prevState,
           email: true,
         }));
       })

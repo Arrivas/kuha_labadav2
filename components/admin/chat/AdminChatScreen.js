@@ -8,6 +8,7 @@ import {
   TouchableNativeFeedback,
   ScrollView,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { expoNotificationApi } from '../../../api/sendNotification';
@@ -32,6 +33,7 @@ const AdminChatScreen = ({ navigation, route }) => {
     customerName,
     customerImageUrl,
     laundryServiceName,
+    fabcons,
   } = route.params;
 
   const getCustomerPushToken = () =>
@@ -42,8 +44,8 @@ const AdminChatScreen = ({ navigation, route }) => {
       .get()
       .then((doc) => doc.data().pushToken);
 
-  const sendMessage = async (e) => {
-    const messagesRef = await firebase
+  const sendMessage = (e) => {
+    const messagesRef = firebase
       .firestore()
       .collection('customers')
       .doc(customerDocId)
@@ -63,6 +65,7 @@ const AdminChatScreen = ({ navigation, route }) => {
     messagesRef.doc(chatId).set(
       {
         customerSeen: false,
+        chatId,
       },
       { merge: true }
     );
@@ -76,6 +79,20 @@ const AdminChatScreen = ({ navigation, route }) => {
         sound: 'default',
       });
     });
+  };
+
+  const seenMessage = () => {
+    const messagesRef = firebase
+      .firestore()
+      .collection('customers')
+      .doc(customerDocId)
+      .collection('chats');
+    messagesRef.doc(chatId).set(
+      {
+        adminSeen: true,
+      },
+      { merge: true }
+    );
   };
 
   useLayoutEffect(() => {
@@ -125,6 +142,7 @@ const AdminChatScreen = ({ navigation, route }) => {
           setChatDetails(currentChatDetails);
         });
     }
+    seenMessage();
     setLoading(false);
     return () => {
       unsubscribe();
@@ -243,11 +261,13 @@ const AdminChatScreen = ({ navigation, route }) => {
               }}
             />
           ) : (
-            <View className="flex-1 items-center justify-center">
-              <Text className="text-gray-300">
-                start a conversation with {customerName}
-              </Text>
-            </View>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-gray-300">
+                  start a conversation with {customerName}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           )}
           <View className="px-3 my-2">
             <View className="flex-row items-center justify-between">
@@ -280,6 +300,7 @@ const AdminChatScreen = ({ navigation, route }) => {
       </SafeScreenView>
       <CreatePayment
         chatId={chatId}
+        fabcons={fabcons}
         customerDocId={customerDocId}
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

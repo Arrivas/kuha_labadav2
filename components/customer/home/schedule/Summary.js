@@ -4,18 +4,16 @@ import Icon from '../../../Icon';
 import MethodNotice from './MethodNotice';
 
 const Summary = ({
-  service,
   deliveryDate,
-  fabcons,
   laundryShopName,
   pricing,
   user,
   toBeDeliver,
   isPickup,
-  imageUrl,
   horizontalScale,
   selectedServices,
   formattedDateTime,
+  selectedFabcons,
 }) => {
   const [showMethodNotice, setShowMethodNotice] = useState(false);
   const textLabelClass = 'font-semibold text-gray-400';
@@ -33,11 +31,6 @@ const Summary = ({
           {laundryShopName}
         </Text>
       </View>
-      {/* <Image
-          resizeMode="cover"
-          source={{ uri: imageUrl }}
-          className="h-[50px] w-[50px] rounded-full"
-        /> */}
       <ScrollView contentContainerStyle={{ paddingVertical: 10 }}>
         <View className="flex-row justify-between">
           <Text className="font-bold">Service</Text>
@@ -88,7 +81,17 @@ const Summary = ({
           <Text className="font-bold">Additionals</Text>
           <View className="flex-row justify-between">
             <Text className={textLabelClass}>fabcons</Text>
-            <Text className="max-w-[50%] text-right">{'-'}</Text>
+            <View className="max-w-[50%]">
+              {selectedFabcons.length !== 0 ? (
+                selectedFabcons?.map((item, index) => (
+                  <Text className="text-right" key={index}>
+                    {item.label} x{item.qty}
+                  </Text>
+                ))
+              ) : (
+                <Text>-</Text>
+              )}
+            </View>
           </View>
         </View>
 
@@ -131,7 +134,7 @@ const Summary = ({
           className={`w-full flex-row items-center justify-start p-2 rounded-md`}
         >
           <Text className={`text-xl px-3`}>₱</Text>
-          <View className={``}>
+          <View>
             <Text className={`font-bold text-sm`}>Shop Rate</Text>
             <Text className={`text-sm font-semibold`}>
               {pricing.rate} per {pricing.minPerKilo} kilo

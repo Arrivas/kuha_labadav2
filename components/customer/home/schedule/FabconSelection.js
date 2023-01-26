@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import colors from '../../../../config/colors';
+import Icon from '../../../Icon';
 
 const FabconSelection = ({
   fabcons,
@@ -26,7 +27,7 @@ const FabconSelection = ({
 
   return (
     <View
-      className=" flex-1"
+      className="flex-1"
       style={{
         paddingHorizontal: horizontalScale(22),
       }}
@@ -49,7 +50,7 @@ const FabconSelection = ({
                     sFabconsCopy.splice(index, 1);
                     return sFabconsCopy;
                   }
-                  return [...prevState, { ...item, qty: 0 }];
+                  return [...prevState, { ...item, qty: 1 }];
                 });
               }}
             >
@@ -79,7 +80,7 @@ const FabconSelection = ({
           ))}
         </View>
       </View>
-      <View style={{ flex: 2 }}>
+      <View style={{ flex: 0.8 }}>
         {selectedFabcons.length !== 0 && (
           <Text className="font-semibold py-2 max-w-[80%]">
             Selected Fabcons:
@@ -89,10 +90,10 @@ const FabconSelection = ({
         <ScrollView>
           {selectedFabcons?.map((item, index) => (
             <View
-              className="bg-gray-100 p-3 px-3 rounded-full mr-1 mb-1 flex-row justify-between"
+              className="bg-gray-100 p-3 px-3 rounded-full mr-1 mb-1 flex-row justify-between items-center"
               key={index}
             >
-              <View>
+              <View className="flex-1 pl-1">
                 <Text className="font-semibold">
                   {item.label}{' '}
                   <Text className="font-light">
@@ -100,13 +101,58 @@ const FabconSelection = ({
                   </Text>
                 </Text>
               </View>
-              <View className="w-[50%] flex-row justify-between">
-                <TextInput
-                  className="border border-black text-black w-full px-2"
-                  value={String(item.qty)}
-                  onChangeText={(text) => console.log(text)}
-                  keyboardType="numeric"
-                />
+              <View className="flex-1 flex-row items-center justify-between">
+                <TouchableNativeFeedback
+                  background={TouchableNativeFeedback.Ripple('#c7c7c7', true)}
+                  onPress={() => {
+                    const fabconsCopy = [...selectedFabcons];
+                    if (fabconsCopy[index].qty <= 1) return;
+                    fabconsCopy[index].qty -= 1;
+                    setSelectedFabcons(fabconsCopy);
+                  }}
+                >
+                  <View className="items-center p-2  overflow-hidden">
+                    <Icon
+                      iconLibrary="AntDesign"
+                      iconName="minuscircle"
+                      color="#4d4d4d"
+                    />
+                  </View>
+                </TouchableNativeFeedback>
+                <View className="flex-1 items-center">
+                  <TextInput
+                    textAlign="center"
+                    className="border-b border-gray-500 text-gray-500 px-2 w-[40%]"
+                    value={String(item.qty)}
+                    onChangeText={(text) => {
+                      if (Math.floor(text) > 99) return;
+                      const fabconsCopy = [...selectedFabcons];
+                      fabconsCopy[index].qty = Math.floor(
+                        text.replace(/[^0-9]/g, '')
+                      );
+
+                      setSelectedFabcons(fabconsCopy);
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
+                <TouchableNativeFeedback
+                  onPress={() => {
+                    const fabconsCopy = [...selectedFabcons];
+                    if (fabconsCopy[index].qty >= 99) return;
+                    fabconsCopy[index].qty += 1;
+                    setSelectedFabcons(fabconsCopy);
+                  }}
+                  background={TouchableNativeFeedback.Ripple('#c7c7c7', true)}
+                >
+                  <View className="items-center p-2">
+                    <Icon
+                      iconLibrary="AntDesign"
+                      iconName="pluscircle"
+                      color="#4d4d4d"
+                    />
+                  </View>
+                </TouchableNativeFeedback>
               </View>
             </View>
           ))}

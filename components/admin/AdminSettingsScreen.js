@@ -46,7 +46,7 @@ const AdminSettingsScreen = () => {
     //   iconLibrary: 'Feather',
     // },
   ];
-  // console.log(user);
+  // console.log(`${user?.imageUrl}?${new Date().toISOString()}`);
   return (
     <SafeScreenView>
       <View
@@ -77,7 +77,11 @@ const AdminSettingsScreen = () => {
           <View className="flex-row items-center py-10">
             <Image
               resizeMode="cover"
-              source={{ uri: user?.imageUrl }}
+              source={{
+                uri: `${user?.imageUrl}&random=${Math.random()
+                  .toString(36)
+                  .substring(7)}`,
+              }}
               className="h-[70px] w-[70px] rounded-full"
             />
             <Text className="font-semibold text-lg ml-5">{user?.name}</Text>

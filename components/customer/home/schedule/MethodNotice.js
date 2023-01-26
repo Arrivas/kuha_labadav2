@@ -34,14 +34,14 @@ const MethodNotice = ({
       </View>
       {showMethodNotice && (
         <View className="bg-[#fff9d5] p-2 rounded-md mt-1">
-          {toBeDeliver === 'no' && (
-            <Text className="text-[#ac9457] ">
-              please pickup your laundry on our shop
-            </Text>
-          )}
           {isPickup === 'no' && (
             <Text className="text-[#ac9457] ">
               please drop off your laundry in our shop
+            </Text>
+          )}
+          {toBeDeliver === 'no' && (
+            <Text className="text-[#ac9457] ">
+              please pickup your laundry on our shop
             </Text>
           )}
         </View>

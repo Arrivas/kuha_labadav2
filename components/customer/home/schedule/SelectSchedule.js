@@ -1,16 +1,9 @@
 import React, { useContext, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableNativeFeedback,
-  ToastAndroid,
-} from 'react-native';
+import { View, Text, ToastAndroid } from 'react-native';
 import SafeScreenView from '../../../SafeScreenView';
 import colors from '../../../../config/colors';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
-import ErrorMessage from '../../../forms/ErrorMessage';
 import { AppContext } from '../../../../context/AppContext';
 import { horizontalScale } from '../../../../config/metrics';
 
@@ -86,6 +79,7 @@ const SelectSchedule = ({ route, navigation }) => {
         customerMobileNumber: user.mobileNumber,
         customerDocId: user.docId,
         customerAddress: user.customerAddress,
+        customerImageUrl: user.imageUrl,
       },
       method: {
         pickup: isPickup,
@@ -97,6 +91,7 @@ const SelectSchedule = ({ route, navigation }) => {
       },
       service: selectedServices,
       fabcons: selectedFabcons,
+      status: 'confirmed booking',
     };
 
     await firebase
@@ -105,7 +100,10 @@ const SelectSchedule = ({ route, navigation }) => {
       .add(currentBooking)
       .then((doc) => {
         currentBooking.docId = doc.id;
-        doc.update({ docId: doc.id });
+        doc.update({
+          docId: doc.id,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
       })
       .catch((err) => {
         ToastAndroid.show(
@@ -123,10 +121,10 @@ const SelectSchedule = ({ route, navigation }) => {
       .update(userCopy)
       .then(() => {
         console.log('successfully booked');
+        // redirect user to success page
+        navigation.replace('SuccessfullyBooked');
       })
       .catch((err) => console.log(err));
-    // redirect user to success page
-    // navigation.replace('SuccessfullyBooked');
   };
 
   return (
@@ -220,6 +218,7 @@ const SelectSchedule = ({ route, navigation }) => {
               laundryShopName={name}
               toBeDeliver={toBeDeliver}
               deliveryDate={deliveryDate}
+              selectedFabcons={selectedFabcons}
               horizontalScale={horizontalScale}
               selectedServices={selectedServices}
               setTimeDateError={setTimeDateError}

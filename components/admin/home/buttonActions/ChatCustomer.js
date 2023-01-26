@@ -2,13 +2,11 @@ import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import React from 'react';
 
 const ChatCustomer = ({ navigation, bookingDetails }) => {
-  const {
-    docId,
-    customerDocId,
-    customerName,
-    customerImageUrl,
-    laundryServiceName,
-  } = bookingDetails;
+  const { docId, customerDetails, laundryShopDetails, fabcons } =
+    bookingDetails;
+  const { customerImageUrl, customerName, customerDocId } = customerDetails;
+  const { laundryShopName } = laundryShopDetails;
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -20,13 +18,14 @@ const ChatCustomer = ({ navigation, bookingDetails }) => {
             customerDocId: customerDocId,
             customerName: customerName,
             customerImageUrl: customerImageUrl,
-            laundryServiceName,
+            laundryServiceName: laundryShopName,
+            fabcons,
           },
         });
       }}
     >
-      <View>
-        <Text>Message</Text>
+      <View className="mx-2">
+        <Text>message</Text>
       </View>
     </TouchableWithoutFeedback>
   );

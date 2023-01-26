@@ -1,11 +1,10 @@
-import { View, Text, TouchableNativeFeedback } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import SafeScreenView from '../SafeScreenView';
-import colors from '../../config/colors';
 import { AppContext } from '../../context/AppContext';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 import SelectionTab from './home/SelectionTab';
+import ActivityIndicator from '../ActivityIndicator';
 
 // booking tabs
 import AvailableBookings from './home/AvailableBookings';
@@ -13,6 +12,7 @@ import OngoingBookings from './home/OngoingBookings';
 
 const AdminHomeScreen = () => {
   const [activeTab, setActiveTab] = useState('Available');
+  const [loading, setLoading] = useState(false);
   const { user, setUser } = useContext(AppContext);
   const { ongoing } = user?.pendingServices;
 
@@ -37,11 +37,12 @@ const AdminHomeScreen = () => {
 
   return (
     <SafeScreenView>
+      <ActivityIndicator isVisible={loading} />
       <SelectionTab setActiveTab={setActiveTab} activeTab={activeTab} />
       {activeTab === 'Available' ? (
-        <AvailableBookings />
+        <AvailableBookings laundry_id={user?.laundry_id} user={user} />
       ) : (
-        <OngoingBookings ongoingItems={ongoing} />
+        <OngoingBookings ongoingItems={ongoing} setLoading={setLoading} />
       )}
     </SafeScreenView>
   );

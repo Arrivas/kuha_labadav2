@@ -6,7 +6,7 @@ import {
   TouchableNativeFeedback,
   ToastAndroid,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import SafeScreenView from '../../SafeScreenView';
 import { AppContext } from '../../../context/AppContext';
 import { horizontalScale } from '../../../config/metrics';
@@ -44,6 +44,7 @@ const MyShopComponent = () => {
   const [fabconErr, setFabconErr] = useState('');
   const [fabconPrice, setFabconPrice] = useState();
   const [image, setImage] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
 
   const initialValues = {
@@ -78,7 +79,6 @@ const MyShopComponent = () => {
         label: values.deliveredByItems2,
       },
     ];
-    userCopy.imageUrl = image || user?.imageUrl;
     userCopy.fabcons = fabcons;
     userCopy.fabconEnabled = fabconEnabled;
 
@@ -191,11 +191,16 @@ const MyShopComponent = () => {
           `shopImages/${user?.name}/${user?.name}_shopImage.${imageExtension}`
         );
       await ref.putFile(image);
+      // url
+      // console.log(
+      //   `https://firebasestorage.googleapis.com/v0/b/labada-app.appspot.com/o/shopImages%2F${user?.name}%2F${user?.name}_shopImage.${imageExtension}?alt=media`
+      // );
     } catch (error) {
       console.log(error);
     }
   };
 
+  useEffect(() => {}, [user?.imageUrl]);
   return (
     <>
       <SafeScreenView>
@@ -208,7 +213,13 @@ const MyShopComponent = () => {
             <View className="items-center">
               <Image
                 resizeMode="contain"
-                source={{ uri: image || user?.imageUrl }}
+                source={{
+                  uri:
+                    image ||
+                    `${user?.imageUrl}&random=${Math.random()
+                      .toString(36)
+                      .substring(7)}`,
+                }}
                 className="rounded-full w-[120px] h-[120px]"
               />
               <TouchableNativeFeedback onPress={pickImage}>

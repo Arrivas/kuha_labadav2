@@ -11,10 +11,9 @@ const ChatListItem = ({
   laundryServiceName,
   laundry_id,
   navigation,
-  driverDetails,
 }) => {
-  const [messages, setMessages] = useState([]);
   const [seen, setSeen] = useState(false);
+  const [messages, setMessages] = useState([]);
   const { width } = getDimensions();
 
   const fetchSeen = () => {
@@ -25,9 +24,9 @@ const ChatListItem = ({
         .doc(customerDocId)
         .collection('chats')
         .onSnapshot((snapshot) => {
-          snapshot.forEach((doc) =>
-            setSeen(doc.data().customerSeen ? doc.data().customerSeen : false)
-          );
+          snapshot.forEach((doc) => {
+            setSeen(doc.data().customerSeen ? doc.data().customerSeen : false);
+          });
         });
     } catch (error) {
       console.log(err);
@@ -55,6 +54,7 @@ const ChatListItem = ({
           setMessages(currentMessages);
         });
     }
+
     return () => {
       mounted = false;
       unsubscribe();
@@ -63,47 +63,50 @@ const ChatListItem = ({
 
   return (
     <>
-      <TouchableNativeFeedback
-        onPress={() =>
-          navigation.navigate('ChatScreen', {
-            chatId,
-            laundry_id,
-            driverDetails,
-            customerDocId,
-            laundryImageUrl,
-            laundryServiceName,
-          })
-        }
-      >
-        <View className="flex-row items-center py-4 px-5">
-          <Image
-            source={{ uri: laundryImageUrl }}
-            className="h-[50px] w-[50px] rounded-full"
-          />
-          <View>
-            <Text
-              className="font-bold px-2"
-              style={{
-                width: width - 100,
-              }}
-              numberOfLines={1}
-            >
-              {laundryServiceName}
-            </Text>
-            <Text
-              className={`px-2 text-${seen ? 'gray-300' : 'black'}`}
-              style={{
-                width: width - 100,
-              }}
-              numberOfLines={1}
-            >
-              {!messages[0]?.data?.payment
-                ? messages[0]?.data?.message
-                : 'payment notice'}
-            </Text>
+      {messages[0]?.data?.message ? (
+        <TouchableNativeFeedback
+          onPress={() =>
+            navigation.navigate('ChatScreen', {
+              chatId,
+              laundry_id,
+              customerDocId,
+              laundryImageUrl,
+              laundryServiceName,
+            })
+          }
+        >
+          <View className="flex-row items-center py-4 px-5">
+            <Image
+              source={{ uri: laundryImageUrl }}
+              className="h-[50px] w-[50px] rounded-full"
+            />
+            <View>
+              <Text
+                className="font-bold px-2"
+                style={{
+                  width: width - 100,
+                }}
+                numberOfLines={1}
+              >
+                {laundryServiceName}
+              </Text>
+              <Text
+                className={`px-2 text-${seen ? 'gray-300' : 'black'}`}
+                style={{
+                  width: width - 100,
+                }}
+                numberOfLines={1}
+              >
+                {!messages[0]?.data?.payment
+                  ? messages[0]?.data?.message
+                  : 'payment notice'}
+              </Text>
+            </View>
           </View>
-        </View>
-      </TouchableNativeFeedback>
+        </TouchableNativeFeedback>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

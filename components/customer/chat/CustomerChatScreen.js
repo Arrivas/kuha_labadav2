@@ -69,7 +69,7 @@ const CustomerChatScreen = ({ route, navigation }) => {
           setChatDetails(currentChatDetails);
         });
     }
-    // seenMessage();
+    seenMessage();
     return () => {
       unsubscribe();
       getChatDetails();
@@ -100,7 +100,6 @@ const CustomerChatScreen = ({ route, navigation }) => {
     messagesRef.doc(chatId).set(
       {
         customerSeen: true,
-        adminSeen: false,
       },
       { merge: true }
     );
@@ -123,6 +122,12 @@ const CustomerChatScreen = ({ route, navigation }) => {
     });
 
     setInputMessage('');
+    messagesRef.doc(chatId).set(
+      {
+        adminSeen: false,
+      },
+      { merge: true }
+    );
 
     // send notif if shop owner is logged in
     getAdminPushToken().then((adminPushToken) => {

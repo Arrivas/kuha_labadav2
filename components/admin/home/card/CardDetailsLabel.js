@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import colors from '../../../../config/colors';
 
 const CardDetailsLabel = ({ label = '', value, textColor = '#000' }) => {
   return (
@@ -16,6 +15,7 @@ const CardDetailsLabel = ({ label = '', value, textColor = '#000' }) => {
           {label}
         </Text>
         <Text
+          className="max-w-[50%] text-right"
           style={{
             fontFamily: 'Alexandria-Light',
             color: textColor,

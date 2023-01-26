@@ -27,6 +27,7 @@ const CreatePayment = ({
   isModalVisible,
   setIsModalVisible,
   laundryServiceName,
+  fabcons,
 }) => {
   const initialValues = {
     payment: [],

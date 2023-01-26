@@ -63,7 +63,7 @@ export default function App() {
                   .currentUser?.reload()
                   .then((item) => console.log(item, 'asd'));
                 firebase.auth().currentUser.getIdToken(true);
-              }, 20000);
+              }, 15000);
             }
             if (response?.emailVerified) {
               clearTimeout(timer);
@@ -175,7 +175,12 @@ export default function App() {
     <>
       <NavigationContainer ref={navigationRef}>
         <AppContext.Provider
-          value={{ user, setUser, userCurrentLocation, setUserCurrentLocation }}
+          value={{
+            user,
+            setUser,
+            userCurrentLocation,
+            setUserCurrentLocation,
+          }}
         >
           {isFirstUse ? (
             <WelcomeScreen
