@@ -5,7 +5,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import useAuth from '../../auth/useAuth';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import SafeScreenView from '../SafeScreenView';
@@ -16,7 +16,8 @@ import SettingsItem from './settings/SettingsItem';
 const CustomerSettingsScreen = () => {
   const { logOut } = useAuth();
   const { user, setUser } = useContext(AppContext);
-  const navigation = useNavigation();
+  const { now, setNow } = useState();
+  const navigation = useNavigation(new Date());
   const settingsArr = [
     {
       id: 1,
@@ -62,7 +63,7 @@ const CustomerSettingsScreen = () => {
         className="flex-1"
         style={{ paddingHorizontal: horizontalScale(20) }}
       >
-        <View style={{ flex: 1 }} className="mb-2">
+        <View style={{ flex: 0.5 }} className="mb-2">
           <Text
             className="font-semibold"
             style={{
@@ -73,7 +74,25 @@ const CustomerSettingsScreen = () => {
           </Text>
         </View>
 
-        <View style={{ flex: 4 }}>
+        <View style={{ flex: 0.5 }} className="mb-2 flex-row items-center">
+          <Image
+            source={{ uri: user?.imageUrl }}
+            className="h-[60px] w-[60px] rounded-full"
+          />
+          <View className="ml-2">
+            <Text
+              className="font-bold"
+              style={{
+                fontSize: moderateScale(20),
+              }}
+            >
+              Not yet verified
+            </Text>
+            <Text>verify your account now</Text>
+          </View>
+        </View>
+
+        <View style={{ flex: 3 }}>
           <Text
             className="pb-2"
             style={{
@@ -95,6 +114,7 @@ const CustomerSettingsScreen = () => {
                   path={item.path}
                   navigation={navigation}
                   logOut={logOut}
+                  imageUrl={user?.imageUrl}
                 />
               ))}
             </View>

@@ -12,7 +12,7 @@ import getDimensions from '../../config/getDimensions';
 import Icon from '../Icon';
 
 const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
   const { width } = getDimensions();
   const usertypeItem = [
     {

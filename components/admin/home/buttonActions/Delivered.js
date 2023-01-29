@@ -45,6 +45,16 @@ const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
                 1
               );
             }
+
+            firebase
+              .firestore()
+              .collection('customers')
+              .doc(customerDocId)
+              .collection('chats')
+              .doc(docId)
+              .delete()
+              .catch((err) => console.log('chat already deleted'));
+
             firebase
               .firestore()
               .collection('laundryProviders')

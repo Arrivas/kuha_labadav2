@@ -16,6 +16,7 @@ import { AppContext } from '../../../context/AppContext';
 
 const ShopDetails = ({ navigation, route }) => {
   const {
+    max,
     name,
     pricing,
     fabcons,
@@ -33,7 +34,12 @@ const ShopDetails = ({ navigation, route }) => {
   const { width } = getDimensions();
   const [selectedServices, setSelectedService] = useState([]);
   const [selectedTab, setSelectedTab] = useState('overview');
-  const { customerAddress } = user;
+  const { customerAddress, confirmedBooking } = user;
+
+  const isCurrentlyBooked = confirmedBooking.filter(
+    (item) => item.laundryShopDetails.laundry_id === laundry_id
+  );
+
   return (
     <>
       <View className="flex-1 bg-white">
@@ -105,7 +111,25 @@ const ShopDetails = ({ navigation, route }) => {
       {selectedServices.length !== 0 ? (
         <TouchableNativeFeedback
           onPress={() => {
-            // aa
+            // check if user is verified
+            if (!user?.isVerified) {
+              navigation.navigate('SettingsStack', {
+                screen: 'Verification',
+                initial: false,
+              });
+              return alert(
+                'verify your identity for security purposes before proceeding with the booking.'
+              );
+            }
+            // check if shop is full
+            if (pendingServices.max <= pendingServices.ongoing.length)
+              return alert('this shop is currently full');
+            // if user is curerntly booked in this shop
+            if (isCurrentlyBooked.length !== 0)
+              return alert(
+                'please complete your booking at this laundry shop before booking again'
+              );
+            // no address
             if (!customerAddress) {
               navigation.navigate('SettingsStack', {
                 screen: 'PersonalInfo',

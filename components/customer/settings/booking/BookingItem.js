@@ -38,17 +38,30 @@ const BookingItem = ({ itemArry, colors }) => {
                 </Text>
               </View>
               <View>
+                {/* method */}
+                {method.pickup === 'yes' && (
+                  <View className="flex-row justify-between">
+                    <Text>Pickup</Text>
+                    <Text>{method.pickup || '-'}</Text>
+                  </View>
+                )}
+                {method.toBeDeliver === 'yes' && (
+                  <View className="flex-row justify-between">
+                    <Text>Pickup</Text>
+                    <Text>{method.toBeDeliver || '-'}</Text>
+                  </View>
+                )}
                 {/* pickup date & time */}
                 <View className="flex-row justify-between">
                   <Text>Pickup Date & Time</Text>
                   <Text className="max-w-[50%] text-right">
-                    {pickupDateTime}
+                    {pickupDateTime || '-'}
                   </Text>
                 </View>
                 {/* delivery date */}
                 <View className="flex-row justify-between">
                   <Text>Delivery Date</Text>
-                  <Text>{deliveryDate}</Text>
+                  <Text>{deliveryDate || '-'}</Text>
                 </View>
               </View>
               <View className="flex-row self-end items-center justify-center pt-2">

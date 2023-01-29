@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CustomerSettingsScreen from '../../components/customer/CustomerSettingsScreen';
 import PersonalInfo from '../../components/customer/settings/PersonalInfo';
 import MyBooking from '../../components/customer/settings/booking/MyBooking';
+import Verification from '../../components/customer/settings/Verification';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,15 @@ const CustomerSettingsStack = () => (
         title: 'My Bookings',
       }}
       component={MyBooking}
+    />
+    <Stack.Screen
+      name="Verification"
+      options={{
+        // headerShown: false,
+        headerShadowVisible: false,
+        title: 'Verify',
+      }}
+      component={Verification}
     />
   </Stack.Navigator>
 );

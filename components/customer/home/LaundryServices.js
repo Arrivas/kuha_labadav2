@@ -39,7 +39,7 @@ const LaundryServices = ({ selectedService, navigation, laundryServices }) => {
         }}
         horizontal
       >
-        {filteredLaundryServices?.map((item, index) => (
+        {filteredLaundryServices?.slice(0, 3).map((item, index) => (
           <TouchableWithoutFeedback
             onPress={() => navigation.navigate('ShopDetails', { item })}
             key={index}

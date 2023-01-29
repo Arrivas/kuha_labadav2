@@ -9,7 +9,7 @@ const DeliverSelection = ({ toBeDeliver, setToBeDeliver, horizontalScale }) => {
   return (
     <View
       className="items-center"
-      style={{ paddingHorizontal: horizontalScale(22) }}
+      style={{ paddingHorizontal: horizontalScale(10) }}
     >
       <Text className="font-semibold py-2 text-center max-w-[70%]">
         Would you prefer for your laundry to be delivered to you?

@@ -89,7 +89,7 @@ const CreateShop = ({}) => {
           email: true,
         }));
       })
-      .catch((err) => console.log(err, 'shop name'));
+      .catch((err) => console.log(err, 'shop email'));
     setFirstStepDetails(val);
     setLoading(false);
     if (credsAvailable.email && credsAvailable.name) setProgress(2);

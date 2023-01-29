@@ -17,6 +17,7 @@ import VerifyEmail from './components/loginScreen/verify/VerifyEmail';
 import AuthStack from './navigation/auth/AuthStack.js';
 import CustomerRootScreen from './navigation/customer/CustomerRootScreen';
 import AdminRootScreen from './navigation/admin/AdminRootScreen';
+import HigherAdminTab from './navigation/higherAdmin/HighgerAdminTab';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -25,6 +26,8 @@ export default function App() {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [userCurrentLocation, setUserCurrentLocation] = useState('');
   const { logIn, logOut } = useAuth();
+  const [refreshInterval, setRefreshInterval] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getLocationRequest = async () => {
     const res = await Location.requestForegroundPermissionsAsync();
@@ -46,56 +49,56 @@ export default function App() {
     setUserCurrentLocation({ longitude, latitude });
   };
 
-  const onAuthStateChanged = (authUser) => {
-    setUserState(authUser);
+  // const onAuthStateChanged = (authUser) => {
+  //   setUserState(authUser);
+  // console.log(authUser);
+  // if (authUser && authUser?.emailVerified === false) {
+  //   setIsEmailVerified(false);
+  //   let timer;
+  //   try {
+  //     const unsubscribeOnUserChanged = firebase
+  //       .auth()
+  //       .onIdTokenChanged((response) => {
+  //         if (authUser && authUser?.emailVerified === false) {
+  //           timer = setTimeout(() => {
+  //             firebase
+  //               .auth()
+  //               .currentUser?.reload()
+  //               .then((item) => console.log(item, 'asd'));
+  //             firebase.auth().currentUser.getIdToken(true);
+  //           }, 5000);
+  //         }
+  //         if (response?.emailVerified) {
+  //           clearTimeout(timer);
+  //           // clearTimeout(unsubscribeTimeout);
+  //           setIsEmailVerified(true);
+  //           logIn(authUser?.uid);
+  //           getUserInfo();
+  //           return unsubscribeOnUserChanged();
+  //         }
+  //       });
+  //   } catch (error) {
+  //     clearTimeout(timer);
+  //     console.log(error);
+  //   }
+  // }
+  // if (authUser && authUser?.emailVerified === true) {
+  //   setIsEmailVerified(true);
+  //   logIn(authUser?.uid);
+  //   getUserInfo();
+  // }
+  // console.log(authUser);
+  // setUserState(authUser);
 
-    if (authUser && authUser?.emailVerified === false) {
-      setIsEmailVerified(false);
-      let timer;
-      try {
-        const unsubscribeOnUserChanged = firebase
-          .auth()
-          .onIdTokenChanged((response) => {
-            if (authUser && authUser?.emailVerified === false) {
-              timer = setTimeout(() => {
-                firebase
-                  .auth()
-                  .currentUser?.reload()
-                  .then((item) => console.log(item, 'asd'));
-                firebase.auth().currentUser.getIdToken(true);
-              }, 15000);
-            }
-            if (response?.emailVerified) {
-              clearTimeout(timer);
-              // clearTimeout(unsubscribeTimeout);
-              setIsEmailVerified(true);
-              logIn(authUser?.uid);
-              getUserInfo();
-              return unsubscribeOnUserChanged();
-            }
-          });
-      } catch (error) {
-        clearTimeout(timer);
-        console.log(error);
-      }
-    }
-    if (authUser && authUser?.emailVerified === true) {
-      setIsEmailVerified(true);
-      logIn(authUser?.uid);
-      getUserInfo();
-    }
-    // console.log(authUser);
-    // setUserState(authUser);
+  // if (authUser && authUser?.emailVerified === false)
+  //   return setIsEmailVerified(false);
 
-    // if (authUser && authUser?.emailVerified === false)
-    //   return setIsEmailVerified(false);
-
-    // if (authUser) {
-    //   setIsEmailVerified(true);
-    //   logIn(authUser?.uid);
-    //   getUserInfo();
-    // }
-  };
+  // if (authUser) {
+  //   setIsEmailVerified(true);
+  //   logIn(authUser?.uid);
+  //   getUserInfo();
+  // }
+  // };
 
   const getUserInfo = async () => {
     // retrieve uid if available on secure store
@@ -117,7 +120,7 @@ export default function App() {
         .then(() =>
           firebase
             .firestore()
-            .collection('drivers')
+            .collection('higherAdmin')
             .where('userId', '==', uid)
             .limit(1)
             .get()
@@ -160,17 +163,77 @@ export default function App() {
     setIsFirstUse(false);
   };
 
+  // useEffect(() => {
+  //   getLocationRequest();
+  //   const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+  //   if (firebase.auth().currentUser?.uid) getUserInfo();
+  //   checkFirstUse();
+
+  //   return () => {
+  //     subscriber();
+  //   };
+  // }, []);
+
   useEffect(() => {
-    getLocationRequest();
-    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-    if (firebase.auth().currentUser?.uid) getUserInfo();
     checkFirstUse();
+    const subscriber = firebase.auth().onAuthStateChanged((authUser) => {
+      if (authUser) {
+        setUserState(authUser);
+        if (authUser?.emailVerified === true) {
+          setIsEmailVerified(true);
+          logIn(authUser?.uid);
+          getUserInfo();
+          getLocationRequest();
+        }
+
+        authUser.reload().then(() => {
+          setIsEmailVerified(authUser.emailVerified);
+        });
+      }
+    });
+
+    if (firebase.auth().currentUser?.uid) getUserInfo();
 
     return () => {
       subscriber();
     };
   }, []);
 
+  useEffect(() => {
+    if (!isEmailVerified) {
+      const interval = setInterval(() => {
+        console.log(isEmailVerified);
+        const currentUser = firebase.auth().currentUser;
+
+        if (currentUser && !refreshing) {
+          if (currentUser?.emailVerified === true) {
+            setIsEmailVerified(true);
+            logIn(currentUser?.uid);
+            getUserInfo();
+            getLocationRequest();
+            setRefreshing(false);
+          }
+
+          setRefreshing(true);
+          currentUser.reload().then(() => {
+            setRefreshing(false);
+            setIsEmailVerified(currentUser.emailVerified);
+          });
+        }
+      }, 3000);
+      setRefreshInterval(interval);
+    } else {
+      clearInterval(refreshInterval);
+    }
+
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+  }, [isEmailVerified]);
+
+  if (isEmailVerified) clearInterval(refreshInterval);
   return (
     <>
       <NavigationContainer ref={navigationRef}>
@@ -197,6 +260,8 @@ export default function App() {
             <CustomerRootScreen />
           ) : user?.userType === 'admin' ? (
             <AdminRootScreen />
+          ) : user?.userType === 'higherAdmin' ? (
+            <HigherAdminTab />
           ) : (
             <AuthStack />
           )}

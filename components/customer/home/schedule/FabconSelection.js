@@ -27,13 +27,13 @@ const FabconSelection = ({
 
   return (
     <View
-      className="flex-1"
+      className="flex-1 w-full"
       style={{
         paddingHorizontal: horizontalScale(22),
       }}
     >
       <View className="flex-1">
-        <Text className="font-semibold py-2 max-w-[80%]">
+        <Text className="font-semibold py-2">
           Fabcon Selection<Text className="text-gray-400">(optional):</Text>
         </Text>
         <View className="flex-row flex-wrap">
@@ -72,7 +72,7 @@ const FabconSelection = ({
                       inArray(selectedFabcons, item.label) ? `white` : 'black'
                     } font-light`}
                   >
-                    ₱{parseFloat(item.price).toFixed(2)}{' '}
+                    ₱{parseFloat(item.price).toFixed(2)}
                   </Text>
                 </Text>
               </View>
@@ -80,10 +80,10 @@ const FabconSelection = ({
           ))}
         </View>
       </View>
-      <View style={{ flex: 0.8 }}>
+      <View style={{ flex: 1 }}>
         {selectedFabcons.length !== 0 && (
           <Text className="font-semibold py-2 max-w-[80%]">
-            Selected Fabcons:
+            Selected Fabcons: sd
           </Text>
         )}
 

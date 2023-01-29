@@ -5,6 +5,7 @@ import {
   TouchableNativeFeedback,
   Switch,
   ScrollView,
+  Image,
 } from 'react-native';
 import Icon from '../../Icon';
 
@@ -19,6 +20,7 @@ function SettingsItem({
   navigation,
   iconLibrary,
   logOut,
+  imageUrl,
 }) {
   return (
     <>
@@ -35,7 +37,7 @@ function SettingsItem({
           className={`flex-row items-center ${iconName === 'list' && 'mt-5'}`}
         >
           <View
-            className=" p-3 rounded-full"
+            className=" p-3 rounded-full overflow-hidden"
             style={{
               backgroundColor: outerBg,
             }}

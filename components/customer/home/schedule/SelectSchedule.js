@@ -135,7 +135,7 @@ const SelectSchedule = ({ route, navigation }) => {
   return (
     <SafeScreenView>
       {/* step */}
-      <View className="flex-1 items-center">
+      <View className="flex-1">
         <View className="items-center">
           <ScheduleStep
             stepObj={stepObj}
@@ -173,26 +173,24 @@ const SelectSchedule = ({ route, navigation }) => {
                 horizontalScale={horizontalScale}
               />
               {toBeDeliver === 'no' && (
-                <Text className="text-xs w-[150px] self-end">
+                <Text className="text-xs self-end right-5 w-[120px]">
                   please pickup your laundry on our shop
                 </Text>
               )}
             </View>
           </>
         ) : scheduleStep === 2 && isPickup === 'yes' ? (
-          <>
-            <View className=" items-center justify-center flex-1">
-              <DateTimePickerComponent
-                pickupDate={pickupDate}
-                pickupTime={pickupTime}
-                setPickupDate={setPickupDate}
-                setPickupTime={setPickupTime}
-                timeDateError={timeDateError}
-                horizontalScale={horizontalScale}
-                setTimeDateError={setTimeDateError}
-              />
-            </View>
-          </>
+          <View className=" items-center justify-center flex-1">
+            <DateTimePickerComponent
+              pickupDate={pickupDate}
+              pickupTime={pickupTime}
+              setPickupDate={setPickupDate}
+              setPickupTime={setPickupTime}
+              timeDateError={timeDateError}
+              horizontalScale={horizontalScale}
+              setTimeDateError={setTimeDateError}
+            />
+          </View>
         ) : (scheduleStep === 3 && toBeDeliver === 'yes') ||
           (scheduleStep === 4 &&
             toBeDeliver === 'yes' &&
@@ -205,7 +203,7 @@ const SelectSchedule = ({ route, navigation }) => {
             />
           </View>
         ) : stepObj[stepObj.length - 2].id === scheduleStep && fabconEnabled ? (
-          <View className=" items-center justify-center flex-1">
+          <View className="items-center justify-center flex-1">
             <FabconSelection
               fabcons={fabcons}
               selectedFabcons={selectedFabcons}

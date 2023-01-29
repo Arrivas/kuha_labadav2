@@ -78,22 +78,6 @@ function LoginScreen({ navigation }) {
         userInfo.idToken
       );
       firebase.auth().signInWithCredential(googleCred);
-      // console.log(userInfo.serverAuthCode);
-      // firebase
-      //   .firestore()
-      //   .collection('customers')
-      //   .where('email', '==', userInfo?.user?.email)
-      //   .limit(1)
-      //   .get()
-      //   .then((data) => {
-      //     const currentCustomer = [];
-      //     console.log(data);
-      //     if (data.empty) {
-      //       return;
-      //     }
-      //     data.forEach((doc) => currentCustomer.push(doc.data()));
-      //     console.log();
-      //   });
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -175,7 +159,9 @@ function LoginScreen({ navigation }) {
               />
             </FormikField>
             <View className="pt-3">
-              <TouchableNativeFeedback>
+              <TouchableNativeFeedback
+                onPress={() => navigation.navigate('ForgotPassword')}
+              >
                 <View className="self-start">
                   <Text
                     className="text-gray-400 py-1"

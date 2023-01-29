@@ -14,6 +14,8 @@ import SafeScreenView from '../../SafeScreenView';
 import Icon from '../../Icon';
 import colors from '../../../config/colors';
 import DisplayMessage from './DisplayMessage';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
 
 const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -51,6 +53,42 @@ const VerifyEmail = ({ setIsEmailVerified, emailVerified, userState }) => {
       clearInterval(intervalId);
     };
   }, [timeLeft]);
+
+  // useEffect(() => {
+  //   const subscriber = firebase.auth().onAuthStateChanged((user) => {
+  //     if (user) {
+  //       user.reload().then(() => {
+  //         setIsEmailVerified(user.emailVerified);
+  //       });
+  //     }
+  //   });
+
+  //   return () => {
+  //     subscriber();
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!emailVerified) {
+  //     const interval = setInterval(() => {
+  //       const currentUser = firebase.auth().currentUser;
+  //       if (currentUser && !refreshing) {
+  //         setRefreshing(true);
+  //         currentUser.reload().then(() => {
+  //           setRefreshing(false);
+  //           setIsEmailVerified(currentUser.emailVerified);
+  //         });
+  //       }
+  //     }, 1000);
+  //     setRefreshInterval(interval);
+  //   }
+
+  //   return () => {
+  //     if (refreshInterval) {
+  //       clearInterval(refreshInterval);
+  //     }
+  //   };
+  // }, [emailVerified]);
 
   return (
     <>
