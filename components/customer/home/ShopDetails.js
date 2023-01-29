@@ -1,18 +1,18 @@
-import React from "react";
-import { useState } from "react";
+import React from 'react';
+import { useState, useContext } from 'react';
 import {
   View,
   Text,
   Image,
   TouchableNativeFeedback,
-  ScrollView,
   TouchableWithoutFeedback,
-} from "react-native";
-import getDimensions from "../../../config/getDimensions";
-import ShopOverview from "./shopDetails/ShopOverview";
-import Icon from "../../Icon";
-import ShopRatings from "./shopDetails/ShopRatings";
-import colors from "../../../config/colors";
+} from 'react-native';
+import getDimensions from '../../../config/getDimensions';
+import ShopOverview from './shopDetails/ShopOverview';
+import Icon from '../../Icon';
+import ShopRatings from './shopDetails/ShopRatings';
+import colors from '../../../config/colors';
+import { AppContext } from '../../../context/AppContext';
 
 const ShopDetails = ({ navigation, route }) => {
   const {
@@ -29,17 +29,18 @@ const ShopDetails = ({ navigation, route }) => {
     deliveredByItems,
     availablePickupTimes,
   } = route.params.item;
+  const { user } = useContext(AppContext);
   const { width } = getDimensions();
   const [selectedServices, setSelectedService] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("overview");
-
+  const [selectedTab, setSelectedTab] = useState('overview');
+  const { customerAddress } = user;
   return (
     <>
       <View className="flex-1 bg-white">
         <Image
           style={{
             height: width <= 360 ? 280 : 500,
-            width: "auto",
+            width: 'auto',
             flex: 1,
           }}
           source={{
@@ -61,23 +62,23 @@ const ShopDetails = ({ navigation, route }) => {
           {/* buttons */}
           <View className="flex-row">
             <TouchableWithoutFeedback
-              onPress={() => setSelectedTab("overview")}
+              onPress={() => setSelectedTab('overview')}
             >
               <View className="py-1 mr-4 self-start">
                 <Text
                   className={`font-bold text-lg ${
-                    selectedTab === "overview" ? "text-black" : "text-gray-300"
+                    selectedTab === 'overview' ? 'text-black' : 'text-gray-300'
                   }`}
                 >
                   Overview
                 </Text>
               </View>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => setSelectedTab("ratings")}>
+            <TouchableWithoutFeedback onPress={() => setSelectedTab('ratings')}>
               <View className="py-1 self-start">
                 <Text
                   className={`font-bold text-lg ${
-                    selectedTab === "ratings" ? "text-black" : "text-gray-300"
+                    selectedTab === 'ratings' ? 'text-black' : 'text-gray-300'
                   }`}
                 >
                   Ratings
@@ -86,7 +87,7 @@ const ShopDetails = ({ navigation, route }) => {
             </TouchableWithoutFeedback>
           </View>
           {/* overview */}
-          {selectedTab === "overview" ? (
+          {selectedTab === 'overview' ? (
             <ShopOverview
               vicinity={vicinity}
               description={description}
@@ -103,8 +104,16 @@ const ShopDetails = ({ navigation, route }) => {
       {/* button */}
       {selectedServices.length !== 0 ? (
         <TouchableNativeFeedback
-          onPress={() =>
-            navigation.navigate("SelectSchedule", {
+          onPress={() => {
+            // aa
+            if (!customerAddress) {
+              navigation.navigate('SettingsStack', {
+                screen: 'PersonalInfo',
+                initial: false,
+              });
+              return alert('please complete your profile first before booking');
+            }
+            navigation.navigate('SelectSchedule', {
               name,
               pricing,
               fabcons,
@@ -114,14 +123,14 @@ const ShopDetails = ({ navigation, route }) => {
               deliveredByItems,
               selectedServices,
               availablePickupTimes,
-            })
-          }
+            });
+          }}
         >
           <View
             className="self-center absolute bottom-2 py-4 rounded-full flex-row items-center justify-between px-10"
             style={{
               backgroundColor: colors.primary,
-              width: width >= 500 ? "40%" : "70%",
+              width: width >= 500 ? '40%' : '70%',
             }}
           >
             <Text className="font-bold text-[15px] text-white">

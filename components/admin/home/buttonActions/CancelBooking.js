@@ -3,11 +3,12 @@ import React, { useContext } from 'react';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 import { AppContext } from '../../../../context/AppContext';
+import { expoNotificationApi } from '../../../../api/sendNotification';
 
 const CancelBooking = ({ bookingDetails }) => {
   const { user } = useContext(AppContext);
   const { customerDetails, docId, laundryShopDetails } = bookingDetails;
-  const { laundry_id } = laundryShopDetails;
+  const { laundry_id, laundryShopName } = laundryShopDetails;
   const { customerDocId } = customerDetails;
 
   const handleCancel = () =>
@@ -44,7 +45,12 @@ const CancelBooking = ({ bookingDetails }) => {
             //   userCopy.pendingServices.ongoing.splice(index, 1);
             //   laundryProviders.doc(laundry_id).update(userCopy);
             // }
-
+            const notifObject = {
+              seen: false,
+              title: 'Booking Cancelled',
+              body: `${laundryShopName} cancelled your booking with the ref id ${docId}.`,
+              createdAt: new Date().toISOString(),
+            };
             // customer
             customersRef
               .doc(customerDocId)
@@ -59,7 +65,17 @@ const CancelBooking = ({ bookingDetails }) => {
                   currentCustomer.confirmedBooking[index]
                 );
                 currentCustomer.confirmedBooking.splice(index, 1);
+                // add notification
+                currentCustomer.notifications.push(notifObject);
                 customersRef.doc(customerDocId).update(currentCustomer);
+
+                // send notif if customer is logged in
+                expoNotificationApi.post('/', {
+                  to: currentCustomer.pushToken,
+                  title: notifObject.title,
+                  body: notifObject.body,
+                  sound: 'default',
+                });
               })
               .catch((err) => console.log(err));
             availableBookingsRef.doc(docId).delete();

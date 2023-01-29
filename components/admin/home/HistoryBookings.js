@@ -1,64 +1,12 @@
-import {
-  Text,
-  View,
-  Image,
-  ScrollView,
-  ToastAndroid,
-  TouchableNativeFeedback,
-} from 'react-native';
-import React, { useEffect, useState } from 'react';
-import firebase from '@react-native-firebase/app';
+import { Text, View, Image, ScrollView } from 'react-native';
 import '@react-native-firebase/firestore';
 import CardDetailsLabel from '../home/card/CardDetailsLabel';
 import { verticalScale } from '../../../config/metrics';
 import colors from '../../../config/colors';
 import properStatus from '../../../functions/properStatus';
 import NoItemsYet from '../../NoItemsYet';
-import CancelBooking from './buttonActions/CancelBooking';
 
-const AvailableBookings = ({ laundry_id, user, now }) => {
-  const [availableBookings, setAvailableBookings] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-    let unsubscribe;
-    if (mounted) {
-      unsubscribe = firebase
-        .firestore()
-        .collection('availableBookings')
-        .where('laundryShopDetails.laundry_id', '==', laundry_id)
-        .onSnapshot((data) => {
-          const currentAvailabelBookings = [];
-          data?.forEach((doc) => currentAvailabelBookings.push(doc.data()));
-          setAvailableBookings(currentAvailabelBookings);
-        });
-    }
-    return () => {
-      mounted = false;
-      unsubscribe();
-    };
-  }, []);
-
-  const handleAccept = (selectedItem) => {
-    const laundryProvRef = firebase.firestore().collection('laundryProviders');
-    const availableBookingsRef = firebase
-      .firestore()
-      .collection('availableBookings');
-
-    const { laundryShopDetails } = selectedItem;
-    const userCopy = { ...user };
-    userCopy.pendingServices.ongoing.push(selectedItem);
-
-    laundryProvRef
-      .doc(laundryShopDetails.laundry_id)
-      .update(userCopy)
-      .then(() => {
-        availableBookingsRef.doc(selectedItem.docId).delete();
-        ToastAndroid.show('booking accepted', ToastAndroid.SHORT);
-      })
-      .catch((err) => console.log(err));
-  };
-
+const HistoryBookings = ({ bookingHistory, now }) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -67,8 +15,8 @@ const AvailableBookings = ({ laundry_id, user, now }) => {
         flexGrow: 1,
       }}
     >
-      {availableBookings.length !== 0 ? (
-        availableBookings
+      {bookingHistory?.length !== 0 ? (
+        bookingHistory
           ?.sort((a, b) =>
             new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1
           )
@@ -101,7 +49,7 @@ const AvailableBookings = ({ laundry_id, user, now }) => {
                         width: 60,
                       }}
                       source={{
-                        uri: `${customerDetails.customerImageUrl}&time=${now}`,
+                        uri: `${customerDetails.customerImageUrl}&date=${now}`,
                       }}
                     />
                     <View className="mx-2">
@@ -158,15 +106,6 @@ const AvailableBookings = ({ laundry_id, user, now }) => {
                       value={properStatus(item.status)}
                     />
                   </View>
-                  {/* button */}
-                  <View className="self-end flex-row">
-                    <CancelBooking bookingDetails={item} />
-                    <TouchableNativeFeedback onPress={() => handleAccept(item)}>
-                      <View className="self-end p-2">
-                        <Text>accept</Text>
-                      </View>
-                    </TouchableNativeFeedback>
-                  </View>
                 </View>
               </View>
             );
@@ -178,4 +117,4 @@ const AvailableBookings = ({ laundry_id, user, now }) => {
   );
 };
 
-export default AvailableBookings;
+export default HistoryBookings;

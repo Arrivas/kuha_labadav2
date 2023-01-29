@@ -15,6 +15,7 @@ const ChatListItem = ({
 }) => {
   const [messages, setMessages] = useState([]);
   const [seen, setSeen] = useState(false);
+  const [now, setNow] = useState(new Date());
   const { width } = getDimensions();
 
   const fetchSeen = () => {
@@ -81,7 +82,9 @@ const ChatListItem = ({
         >
           <View className="flex-row items-center py-4 px-5">
             <Image
-              source={{ uri: customerImageUrl }}
+              source={{
+                uri: `${customerImageUrl}&time=${now}`,
+              }}
               className="h-[50px] w-[50px] rounded-full"
             />
             <View>

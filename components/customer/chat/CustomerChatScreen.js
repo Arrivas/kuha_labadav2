@@ -23,6 +23,7 @@ const CustomerChatScreen = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [chatDetails, setChatDetails] = useState();
+  const [now, setNow] = useState(new Date());
   const {
     chatId,
     customerDocId,
@@ -253,7 +254,7 @@ const CustomerChatScreen = ({ route, navigation }) => {
                     ) : (
                       <View className="flex-row items-center">
                         <Image
-                          source={{ uri: laundryImageUrl }}
+                          source={{ uri: laundryImageUrl + '&time=' + now }}
                           className="h-[25px] w-[25px] rounded-full mr-1"
                         />
                         <View className="self-start p-2 rounded-xl w-full max-w-[70%] bg-gray-200">

@@ -7,7 +7,7 @@ import HandleAdminButtonActions from '../HandleAdminButtonActions';
 import { verticalScale } from '../../../config/metrics';
 import NoItemsYet from '../../NoItemsYet';
 
-const OngoingBookings = ({ ongoingItems, setLoading }) => {
+const OngoingBookings = ({ ongoingItems, setLoading, now }) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -50,7 +50,9 @@ const OngoingBookings = ({ ongoingItems, setLoading }) => {
                         height: 60,
                         width: 60,
                       }}
-                      source={{ uri: customerDetails.customerImageUrl }}
+                      source={{
+                        uri: `${customerDetails.customerImageUrl}&date=${now}`,
+                      }}
                     />
                     <View className="mx-2">
                       <Text

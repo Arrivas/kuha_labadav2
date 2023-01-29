@@ -28,7 +28,7 @@ const SelectSchedule = ({ route, navigation }) => {
     deliveredByItems,
     selectedServices,
   } = route.params;
-  const { user, userCurrentLocation } = useContext(AppContext);
+  const { user } = useContext(AppContext);
 
   const [isPickup, setIsPickup] = useState('no');
   const [pickupDate, setPickupDate] = useState('');
@@ -38,6 +38,7 @@ const SelectSchedule = ({ route, navigation }) => {
   const [timeDateError, setTimeDateError] = useState('');
   const [selectedFabcons, setSelectedFabcons] = useState([]);
   const [deliveryDate, setDeliveryDate] = useState(deliveredByItems[0].label);
+  const [doneBooking, setDoneBooking] = useState(false);
 
   let formattedDateTime =
     pickupTime && pickupDate
@@ -63,6 +64,7 @@ const SelectSchedule = ({ route, navigation }) => {
           .map((_, i) => ({ id: i + 1, label: `step ${i + 1}` }));
 
   const handleBookNow = async () => {
+    if (doneBooking) return;
     if (isPickup === 'no') {
       setPickupDate('');
       setPickupTime('');
@@ -92,6 +94,7 @@ const SelectSchedule = ({ route, navigation }) => {
       service: selectedServices,
       fabcons: selectedFabcons,
       status: 'confirmed booking',
+      createdAt: new Date().toISOString(),
     };
 
     await firebase
@@ -104,6 +107,7 @@ const SelectSchedule = ({ route, navigation }) => {
           docId: doc.id,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         });
+        setDoneBooking(true);
       })
       .catch((err) => {
         ToastAndroid.show(
@@ -121,6 +125,7 @@ const SelectSchedule = ({ route, navigation }) => {
       .update(userCopy)
       .then(() => {
         console.log('successfully booked');
+        setDoneBooking(true);
         // redirect user to success page
         navigation.replace('SuccessfullyBooked');
       })
@@ -233,6 +238,7 @@ const SelectSchedule = ({ route, navigation }) => {
         pickupDate={pickupDate}
         pickupTime={pickupTime}
         toBeDeliver={toBeDeliver}
+        doneBooking={doneBooking}
         scheduleStep={scheduleStep}
         fabconEnabled={fabconEnabled}
         setPickupDate={setPickupDate}

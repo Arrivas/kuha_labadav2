@@ -16,15 +16,16 @@ const Tab = createBottomTabNavigator();
 const { width, height } = getDimensions();
 
 const CustomerTab = () => {
-  const { user } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
   const [unseenMessageCount, setUnseenMessageCount] = useState(0);
   const { confirmedBooking } = user;
 
   useEffect(() => {
     let mounted = true;
     let unsubscribe;
+    let fetchUserSubscribe;
     if (mounted) {
-      unsubscribe = confirmedBooking.filter((item) =>
+      unsubscribe = confirmedBooking?.filter((item) =>
         firebase
           .firestore()
           .collection('customers')
@@ -33,17 +34,33 @@ const CustomerTab = () => {
           .onSnapshot((snapshot) => {
             const chatData = [];
             snapshot.forEach((doc) => {
-              if (doc.data().customerSeen === false) chatData.push(doc.data());
-              setUnseenMessageCount(chatData.length);
+              if (doc.data().customerSeen === false) {
+                chatData.push(doc.data());
+                return setUnseenMessageCount(chatData.length);
+              }
+              setUnseenMessageCount(0);
             });
           })
       );
+      unsubscribe = firebase
+        .firestore()
+        .collection('customers')
+        .doc(user.docId)
+        .onSnapshot((doc) => {
+          setUser(doc.data());
+        });
     }
-    () => {
+    return () => {
       mounted = false;
       unsubscribe();
+      // fetchUserSubscribe();
     };
   }, []);
+
+  const notificationCount = user?.notifications.filter(
+    (item) => item.seen === false
+  );
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -123,6 +140,7 @@ const CustomerTab = () => {
               size={25}
             />
           ),
+          tabBarBadge: notificationCount?.length || null,
         }}
         component={CustomerNotificationsStack}
       />

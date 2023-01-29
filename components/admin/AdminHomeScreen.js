@@ -5,6 +5,7 @@ import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 import SelectionTab from './home/SelectionTab';
 import ActivityIndicator from '../ActivityIndicator';
+import HistoryBookings from './home/HistoryBookings';
 
 // booking tabs
 import AvailableBookings from './home/AvailableBookings';
@@ -14,7 +15,8 @@ const AdminHomeScreen = () => {
   const [activeTab, setActiveTab] = useState('Available');
   const [loading, setLoading] = useState(false);
   const { user, setUser } = useContext(AppContext);
-  const { ongoing } = user?.pendingServices;
+  const { ongoing, history } = user?.pendingServices;
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
     let mounted = true;
@@ -40,9 +42,19 @@ const AdminHomeScreen = () => {
       <ActivityIndicator isVisible={loading} />
       <SelectionTab setActiveTab={setActiveTab} activeTab={activeTab} />
       {activeTab === 'Available' ? (
-        <AvailableBookings laundry_id={user?.laundry_id} user={user} />
+        <AvailableBookings
+          laundry_id={user?.laundry_id}
+          user={user}
+          now={now}
+        />
+      ) : activeTab === 'Ongoing' ? (
+        <OngoingBookings
+          ongoingItems={ongoing}
+          setLoading={setLoading}
+          now={now}
+        />
       ) : (
-        <OngoingBookings ongoingItems={ongoing} setLoading={setLoading} />
+        <HistoryBookings bookingHistory={history} now={now} />
       )}
     </SafeScreenView>
   );

@@ -8,7 +8,8 @@ const CustomerNotificationsStack = () => (
     <Stack.Screen
       name="Notification"
       options={{
-        headerShown: false,
+        headerShadowVisible: false,
+        title: 'Notifications',
       }}
       component={CustomerNotificationScreen}
     />

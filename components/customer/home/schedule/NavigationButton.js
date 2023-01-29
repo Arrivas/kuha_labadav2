@@ -16,6 +16,7 @@ const NavigationButton = ({
   setScheduleStep,
   setTimeDateError,
   formattedDateTime,
+  doneBooking,
 }) => {
   return (
     <View
@@ -42,6 +43,7 @@ const NavigationButton = ({
         </TouchableNativeFeedback>
       )}
       <TouchableNativeFeedback
+        disabled={doneBooking}
         onPress={() => {
           if (scheduleStep === stepObj[stepObj.length - 1].id)
             return handleBookNow();

@@ -16,6 +16,7 @@ const CustomerHomeScreen = ({ navigation }) => {
   const [selectedService, setSelectedService] = useState('');
   const [laundryServices, setLaundryServices] = useState([]);
   const { user, userCurrentLocation } = useContext(AppContext);
+  const [now, setNow] = useState(new Date());
 
   const fetchLaundryServices = async () => {
     const getNearbyGeo = [];
@@ -82,7 +83,9 @@ const CustomerHomeScreen = ({ navigation }) => {
           {/* profile */}
           <Image
             className="rounded-full"
-            source={{ uri: user?.imageUrl }}
+            source={{
+              uri: `${user?.imageUrl}&time=${now}`,
+            }}
             style={{
               // height: width * 0.09,
               // width: width * 0.09,

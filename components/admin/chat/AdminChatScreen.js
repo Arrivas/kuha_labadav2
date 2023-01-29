@@ -35,6 +35,7 @@ const AdminChatScreen = ({ navigation, route }) => {
     laundryServiceName,
     fabcons,
   } = route.params;
+  const [now, setNow] = useState(new Date());
 
   const getCustomerPushToken = () =>
     firebase
@@ -202,8 +203,11 @@ const AdminChatScreen = ({ navigation, route }) => {
                         !item?.data?.payment ? (
                         <View className="flex-row items-center">
                           <Image
+                            key={new Date()}
                             className="h-[25px] w-[25px] rounded-full mr-1"
-                            source={{ uri: customerImageUrl }}
+                            source={{
+                              uri: customerImageUrl + '&time=' + now,
+                            }}
                           />
                           <View
                             key={index}
