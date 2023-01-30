@@ -158,7 +158,7 @@ const SelectSchedule = ({ route, navigation }) => {
           <View className=" items-center justify-center flex-1">
             <PickupSelection isPickup={isPickup} setIsPickup={setIsPickup} />
             {isPickup === 'no' && (
-              <Text className="text-xs w-[150px] self-end">
+              <Text className="text-xs w-[120px] self-end right-5">
                 please drop off your laundry in our shop
               </Text>
             )}

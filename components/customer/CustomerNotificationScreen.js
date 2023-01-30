@@ -49,9 +49,13 @@ const CustomerNotificationScreen = ({ navigation }) => {
       {notifications.length !== 0 ? (
         <ScrollView contentContainerStyle={{ paddingTop: 5 }}>
           <View>
-            {notifications.map((item, index) => (
-              <NotificationItem notification={item} key={index} />
-            ))}
+            {notifications
+              .sort((a, b) =>
+                new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
+              )
+              .map((item, index) => (
+                <NotificationItem notification={item} key={index} />
+              ))}
           </View>
         </ScrollView>
       ) : (

@@ -10,8 +10,8 @@ const expoTokenCustomer = async (userId, token) => {
     .catch((err) => console.log('cannot udpate pushToken on db', err));
 };
 
-const expoTokenDriver = async (userId, token) => {
-  const driverRef = await firebase.firestore().collection('drivers');
+const expoTokenHigherAdmin = async (userId, token) => {
+  const driverRef = await firebase.firestore().collection('higherAdmin');
 
   return driverRef
     .doc(userId)
@@ -28,4 +28,4 @@ const expoTokenAdmin = async (userId, token) => {
     .catch((err) => console.log('cannot udpate pushToken on db', err));
 };
 
-export { expoTokenCustomer, expoTokenDriver, expoTokenAdmin };
+export { expoTokenCustomer, expoTokenHigherAdmin, expoTokenAdmin };

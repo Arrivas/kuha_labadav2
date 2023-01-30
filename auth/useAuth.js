@@ -3,10 +3,9 @@ import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import { useNavigation, CommonActions } from '@react-navigation/native';
 import {
   expoTokenCustomer,
-  expoTokenDriver,
+  expoTokenHigherAdmin,
   expoTokenAdmin,
 } from '../api/setExpoToken.js';
 
@@ -31,8 +30,8 @@ const useAuth = () => {
       return expoTokenCustomer(user?.docId.trim(), '');
     else if (user?.userType === 'admin')
       return expoTokenAdmin(user?.laundry_id.trim(), '');
-    else if (user?.userType === 'driver')
-      return expoTokenDriver(user?.docId.trim(), '');
+    else if (user?.userType === 'higherAdmin')
+      return expoTokenHigherAdmin(user?.docId.trim(), '');
   };
 
   return { logIn, logOut };

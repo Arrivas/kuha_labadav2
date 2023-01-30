@@ -10,10 +10,8 @@ import CustomerChatStack from './CustomerChatStack';
 
 import Icon from '../../components/Icon';
 import colors from '../../config/colors';
-import getDimensions from '../../config/getDimensions';
 
 const Tab = createBottomTabNavigator();
-const { width, height } = getDimensions();
 
 const CustomerTab = () => {
   const { user, setUser } = useContext(AppContext);

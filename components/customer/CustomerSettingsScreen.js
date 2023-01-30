@@ -76,7 +76,7 @@ const CustomerSettingsScreen = () => {
 
         <View style={{ flex: 0.5 }} className="mb-2 flex-row items-center">
           <Image
-            source={{ uri: user?.imageUrl }}
+            source={{ uri: `${user?.imageUrl}&time=${now}` }}
             className="h-[60px] w-[60px] rounded-full"
           />
           <View className="ml-2">
@@ -86,9 +86,19 @@ const CustomerSettingsScreen = () => {
                 fontSize: moderateScale(20),
               }}
             >
-              Not yet verified
+              {user?.verified === 'verified' ? 'Verified' : 'Not yet verified'}
             </Text>
-            <Text>verify your account now</Text>
+            <TouchableNativeFeedback
+              onPress={() => navigation.navigate('Verification')}
+            >
+              <View>
+                <Text>
+                  {user?.verified === 'verified'
+                    ? 'your account is verified'
+                    : 'verify your account now'}
+                </Text>
+              </View>
+            </TouchableNativeFeedback>
           </View>
         </View>
 

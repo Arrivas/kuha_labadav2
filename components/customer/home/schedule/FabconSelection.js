@@ -83,7 +83,7 @@ const FabconSelection = ({
       <View style={{ flex: 1 }}>
         {selectedFabcons.length !== 0 && (
           <Text className="font-semibold py-2 max-w-[80%]">
-            Selected Fabcons: sd
+            Selected Fabcons:
           </Text>
         )}
 

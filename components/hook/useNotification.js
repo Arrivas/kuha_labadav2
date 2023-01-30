@@ -4,7 +4,7 @@ import { AppContext } from '../../context/AppContext';
 import { useNavigation } from '@react-navigation/native';
 import {
   expoTokenCustomer,
-  expoTokenDriver,
+  expoTokenHigherAdmin,
   expoTokenAdmin,
 } from '../../api/setExpoToken.js';
 
@@ -47,11 +47,11 @@ export default useNotifications = (navigateTo) => {
         userCopy.pushToken = token;
         setUser(userCopy);
         return expoTokenAdmin(user?.laundry_id.trim(), token);
-      } else if (user?.userType === 'driver') {
+      } else if (user?.userType === 'higherAdmin') {
         const userCopy = { ...user };
         userCopy.pushToken = token;
         setUser(userCopy);
-        return expoTokenDriver(user?.docId.trim(), token);
+        return expoTokenHigherAdmin(user?.docId.trim(), token);
       }
     } catch (error) {
       console.log('cannot use notification', error);

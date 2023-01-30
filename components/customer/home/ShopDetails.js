@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -13,6 +12,8 @@ import Icon from '../../Icon';
 import ShopRatings from './shopDetails/ShopRatings';
 import colors from '../../../config/colors';
 import { AppContext } from '../../../context/AppContext';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
 
 const ShopDetails = ({ navigation, route }) => {
   const {
@@ -35,10 +36,27 @@ const ShopDetails = ({ navigation, route }) => {
   const [selectedServices, setSelectedService] = useState([]);
   const [selectedTab, setSelectedTab] = useState('overview');
   const { customerAddress, confirmedBooking } = user;
+  const [ratings, setRatings] = useState([]);
 
   const isCurrentlyBooked = confirmedBooking.filter(
     (item) => item.laundryShopDetails.laundry_id === laundry_id
   );
+
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection('laundryProviders')
+      .doc(laundry_id)
+      .collection('ratings')
+      .onSnapshot((data) => {
+        const currentRatings = [];
+        data.forEach((doc) => currentRatings.push(doc.data()));
+        setRatings(currentRatings);
+      });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <>
@@ -103,7 +121,10 @@ const ShopDetails = ({ navigation, route }) => {
               setSelectedService={setSelectedService}
             />
           ) : (
-            <ShopRatings />
+            <ShopRatings
+              selectedServices={selectedServices}
+              ratings={ratings}
+            />
           )}
         </View>
       </View>
@@ -112,7 +133,7 @@ const ShopDetails = ({ navigation, route }) => {
         <TouchableNativeFeedback
           onPress={() => {
             // check if user is verified
-            if (!user?.isVerified) {
+            if (user?.isVerified === 'waiting' || !user?.isVerified) {
               navigation.navigate('SettingsStack', {
                 screen: 'Verification',
                 initial: false,
