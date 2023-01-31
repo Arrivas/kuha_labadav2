@@ -21,7 +21,6 @@ const CustomerTab = () => {
   useEffect(() => {
     let mounted = true;
     let unsubscribe;
-    let fetchUserSubscribe;
     if (mounted) {
       unsubscribe = confirmedBooking?.filter((item) =>
         firebase

@@ -45,7 +45,7 @@ const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
                 1
               );
             }
-
+            // chat
             firebase
               .firestore()
               .collection('customers')
@@ -53,7 +53,19 @@ const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
               .collection('chats')
               .doc(docId)
               .delete()
-              .catch((err) => console.log('chat already deleted'));
+              .catch((err) => console.log(err));
+            // messages
+            firebase
+              .firestore()
+              .collection('customers')
+              .doc(customerDocId)
+              .collection('chats')
+              .doc(docId)
+              .delete('messages', {
+                recursive: true,
+                yes: true,
+              })
+              .catch((err) => console.log(err));
 
             firebase
               .firestore()

@@ -10,38 +10,42 @@ const ShopRatings = ({ selectedServices, ratings }) => {
       {ratings.length !== 0 ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}>
           {ratings?.map((item) => (
-            <>
-              <View className="mb-3" key={item.docId}>
-                <View className="flex-row items-center">
-                  <Image
-                    resizeMode="contain"
-                    className="w-[35px] h-[35px] rounded-full"
-                    source={{ uri: item.customerImageUrl }}
-                  />
-                  <View className="items-start ml-2">
-                    <Text className="font-semibold">{item.customerName}</Text>
-                    <View className="">
-                      {new Array(item.rating).fill().map((item, index) => (
-                        <Icon
-                          iconLibrary="MaterialIcons"
-                          iconName="star"
-                          color="#FFC107"
-                        />
-                      ))}
-                    </View>
-                    {item?.description && (
-                      <Text>
-                        {item?.description} asdas dasd asd asd asdasd asdas
-                        dasdas dasd asdasd
-                      </Text>
-                    )}
-                    <Text className="text-gray-300 text-xs">
-                      {Moment(new Date(item.createdAt)).format('L h:mma')}
-                    </Text>
+            <View className="mb-3" key={item.docId}>
+              <View className="flex-row items-center">
+                <Image
+                  resizeMode="contain"
+                  className="w-[35px] h-[35px] rounded-full"
+                  source={{ uri: item.customerImageUrl }}
+                />
+                <View className="items-start ml-2">
+                  <Text className="font-semibold">{item.customerName}</Text>
+                  <View className="flex-row">
+                    {new Array(item.rating).fill().map((item, index1) => (
+                      <Icon
+                        key={index1}
+                        iconLibrary="MaterialIcons"
+                        iconName="star"
+                        color="#FFC107"
+                      />
+                    ))}
+                    {new Array(5 - item.rating).fill().map((item, index) => (
+                      <Icon
+                        key={index}
+                        iconLibrary="MaterialIcons"
+                        iconName="star-outline"
+                        color="#FFC107"
+                      />
+                    ))}
                   </View>
+                  {item?.description && (
+                    <Text className="pr-2">{item?.description}</Text>
+                  )}
+                  <Text className="text-gray-300 text-xs">
+                    {Moment(new Date(item.createdAt)).format('L h:mma')}
+                  </Text>
                 </View>
               </View>
-            </>
+            </View>
           ))}
         </ScrollView>
       ) : (

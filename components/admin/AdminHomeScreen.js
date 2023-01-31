@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { Text, View } from 'react-native';
 import SafeScreenView from '../SafeScreenView';
 import { AppContext } from '../../context/AppContext';
 import firebase from '@react-native-firebase/app';
@@ -6,12 +7,13 @@ import '@react-native-firebase/firestore';
 import SelectionTab from './home/SelectionTab';
 import ActivityIndicator from '../ActivityIndicator';
 import HistoryBookings from './home/HistoryBookings';
+import NotVerifiedMessage from './settings/verfied/NotVerifiedMessage';
 
 // booking tabs
 import AvailableBookings from './home/AvailableBookings';
 import OngoingBookings from './home/OngoingBookings';
 
-const AdminHomeScreen = () => {
+const AdminHomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Available');
   const [loading, setLoading] = useState(false);
   const { user, setUser } = useContext(AppContext);
@@ -40,6 +42,11 @@ const AdminHomeScreen = () => {
   return (
     <SafeScreenView>
       <ActivityIndicator isVisible={loading} />
+      {!user?.isVerified ||
+      user?.isVerified === 'waiting' ||
+      user?.isVerified === 'declined' ? (
+        <NotVerifiedMessage navigation={navigation} />
+      ) : null}
       <SelectionTab setActiveTab={setActiveTab} activeTab={activeTab} />
       {activeTab === 'Available' ? (
         <AvailableBookings

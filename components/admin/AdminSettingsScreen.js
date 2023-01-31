@@ -84,7 +84,30 @@ const AdminSettingsScreen = () => {
               }}
               className="h-[70px] w-[70px] rounded-full"
             />
-            <Text className="font-semibold text-lg ml-5">{user?.name}</Text>
+            <View className="ml-2">
+              <Text
+                className="font-bold"
+                style={{
+                  fontSize: moderateScale(20),
+                }}
+              >
+                {user?.isVerified === 'verified'
+                  ? 'Verified'
+                  : 'Not yet verified'}
+              </Text>
+              <TouchableNativeFeedback
+                disabled={user?.isVerified === 'verified' ? true : false}
+                onPress={() => navigation.navigate('Verification')}
+              >
+                <View>
+                  <Text>
+                    {user?.isVerified === 'verified'
+                      ? 'your account is verified'
+                      : 'verify your account now'}
+                  </Text>
+                </View>
+              </TouchableNativeFeedback>
+            </View>
           </View>
         </View>
 

@@ -13,7 +13,7 @@ import colors from '../../config/colors';
 const Tab = createBottomTabNavigator();
 
 const AdminTab = () => {
-  const { user } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
   const [unseenMessageCount, setUnseenMessageCount] = useState(0);
   const { pendingServices } = user;
   const { ongoing } = pendingServices;
@@ -36,12 +36,23 @@ const AdminTab = () => {
             });
           })
       );
+      // unsubscribe = firebase
+      //   .firestore()
+      //   .collection('laundryProviders')
+      //   .doc(user.laundry_id)
+      //   .onSnapshot((doc) => {
+      //     setUser(doc.data());
+      //   });
     }
     () => {
       mounted = false;
       unsubscribe();
     };
   }, []);
+
+  const notificationCount = user?.notifications.filter(
+    (item) => item.seen === false
+  );
 
   return (
     <Tab.Navigator
@@ -122,6 +133,7 @@ const AdminTab = () => {
               size={25}
             />
           ),
+          tabBarBadge: notificationCount?.length || null,
         }}
         component={AdminNotificationStack}
       />

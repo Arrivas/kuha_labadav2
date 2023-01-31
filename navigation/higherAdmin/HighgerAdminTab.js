@@ -3,7 +3,7 @@ import Icon from '../../components/Icon';
 
 import HigherAdminHomeStack from './HigherAdminHomeStack';
 import HigherAdminSettingsStack from './HigherAdminSettingsStack';
-import HigherAdminNotificationStack from './HigherAdminNotificationStack';
+// import HigherAdminNotificationStack from './HigherAdminNotificationStack';
 import useNotification from '../../components/hook/useNotification';
 
 const Tab = createBottomTabNavigator();
@@ -40,7 +40,7 @@ const HigherAdminTab = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="NotificationStack"
         component={HigherAdminNotificationStack}
         options={{
@@ -58,7 +58,7 @@ const HigherAdminTab = () => {
             />
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="SettingsStack"
         component={HigherAdminSettingsStack}

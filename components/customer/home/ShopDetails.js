@@ -133,7 +133,11 @@ const ShopDetails = ({ navigation, route }) => {
         <TouchableNativeFeedback
           onPress={() => {
             // check if user is verified
-            if (user?.isVerified === 'waiting' || !user?.isVerified) {
+            if (
+              user?.isVerified === 'waiting' ||
+              user?.isVerified === 'declined' ||
+              !user?.isVerified
+            ) {
               navigation.navigate('SettingsStack', {
                 screen: 'Verification',
                 initial: false,

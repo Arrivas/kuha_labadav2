@@ -1,10 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, RefreshControl, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  RefreshControl,
+  ScrollView,
+  TextInput,
+  TouchableNativeFeedback,
+} from 'react-native';
 import FindServices from './home/FindServices';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/auth';
 import '@react-native-firebase/firestore';
 import { getPreciseDistance } from 'geolib';
+import Icon from '../Icon';
 
 // components
 import SafeScreenView from '../SafeScreenView';
@@ -18,6 +27,8 @@ const CustomerHomeScreen = ({ navigation }) => {
   const { user, userCurrentLocation } = useContext(AppContext);
   const [now, setNow] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [isSearch, setIsSearch] = useState(false);
 
   const fetchLaundryServices = async () => {
     const getNearbyGeo = [];
@@ -99,56 +110,94 @@ const CustomerHomeScreen = ({ navigation }) => {
 
   return (
     <SafeScreenView enablePadding={true}>
-      <ScrollView
+      {/* <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
         }
+      > */}
+      <View
+        style={{
+          paddingHorizontal: 10,
+          paddingTop: 10,
+          flex: 1,
+        }}
       >
-        <View
-          style={{
-            paddingHorizontal: 20,
-            paddingTop: 10,
-          }}
-        >
-          <View className="flex-row items-center justify-between">
-            <Text
-              style={{
-                // fontSize: width * 0.05,
-                // fontSize: 30,
-                fontSize: moderateScale(30),
-                fontFamily: 'Alexandria-SemiBold',
-              }}
-              className="tracking-widest"
-            >
-              Discover
-            </Text>
-            {/* profile */}
-            <Image
-              className="rounded-full"
-              source={{
-                uri: `${user?.imageUrl}&time=${now}`,
-              }}
-              style={{
-                // height: width * 0.09,
-                // width: width * 0.09,
-                height: 42,
-                width: 42,
-              }}
-            />
-          </View>
-          {/* find services */}
-          <FindServices
-            setSelectedService={setSelectedService}
-            selectedService={selectedService}
+        <View className="flex-row items-center justify-between">
+          <Text
+            style={{
+              // fontSize: width * 0.05,
+              // fontSize: 30,
+              fontSize: moderateScale(30),
+              fontFamily: 'Alexandria-SemiBold',
+            }}
+            className="tracking-widest"
+          >
+            Discover
+          </Text>
+          {/* profile */}
+          <Image
+            className="rounded-full"
+            source={{
+              uri: `${user?.imageUrl}&time=${now}`,
+            }}
+            style={{
+              // height: width * 0.09,
+              // width: width * 0.09,
+              height: 42,
+              width: 42,
+            }}
+            resizeMode="contain"
           />
-          {/* laundry services */}
+        </View>
+        {/* find services */}
+        <FindServices
+          setSelectedService={setSelectedService}
+          selectedService={selectedService}
+        />
+        {/* search */}
+        <View className="mt-3 mb-1 w-full justify-center">
+          <TextInput
+            onFocus={() => setIsSearch(true)}
+            onBlur={() => setIsSearch(false)}
+            value={searchText}
+            className="text-black bg-gray-100 px-4 pr-8 py-3 rounded-md w-full"
+            placeholder="search"
+            onChangeText={(text) => setSearchText(text)}
+          />
+          {searchText === '' ? (
+            <Icon
+              iconLibrary="Feather"
+              iconName="search"
+              className="absolute right-4"
+            />
+          ) : (
+            <TouchableNativeFeedback onPress={() => setSearchText('')}>
+              <View className="absolute right-2 p-2">
+                <Icon iconLibrary="Feather" iconName="x" />
+              </View>
+            </TouchableNativeFeedback>
+          )}
+        </View>
+        {/* laundry services */}
+        {!searchText.trim() ? (
           <LaundryServices
             navigation={navigation}
             laundryServices={laundryServices}
             selectedService={selectedService}
+            searchText={searchText}
           />
-        </View>
-      </ScrollView>
+        ) : (
+          <LaundryServices
+            navigation={navigation}
+            laundryServices={laundryServices}
+            selectedService={selectedService}
+            searchText={searchText}
+            type="second"
+          />
+        )}
+      </View>
+      {/* </ScrollView> */}
     </SafeScreenView>
   );
 };

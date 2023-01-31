@@ -18,6 +18,8 @@ import getDimensions from '../../config/getDimensions';
 import colors from '../../config/colors';
 import Moment from 'moment';
 import NoItemsYet from '../NoItemsYet';
+import Customer from './home/Customer';
+import Shop from './home/Shop';
 
 const HigherAdminHomescreen = () => {
   const { user, setUser } = useContext(AppContext);
@@ -49,7 +51,7 @@ const HigherAdminHomescreen = () => {
       {
         text: 'Yes',
         onPress: () => {
-          if (request.from === 'customer')
+          if (request.from === 'customer') {
             firebase
               .firestore()
               .collection('customers')
@@ -80,17 +82,60 @@ const HigherAdminHomescreen = () => {
                 setLoading(false);
               });
 
-          const userCopy = { ...user };
-          const index = userCopy.requests.findIndex(
-            (item) => item.customerDocId
-          );
-          if (index >= 0) userCopy.requests.splice(index, 1);
-          firebase
-            .firestore()
-            .collection('higherAdmin')
-            .doc(user.docId)
-            .update(userCopy);
-          setUser(userCopy);
+            const userCopy = { ...user };
+            const index = userCopy.requests.findIndex(
+              (item) => item.customerDocId
+            );
+            if (index >= 0) userCopy.requests.splice(index, 1);
+            firebase
+              .firestore()
+              .collection('higherAdmin')
+              .doc(user.docId)
+              .update(userCopy);
+            setUser(userCopy);
+          } else {
+            firebase
+              .firestore()
+              .collection('laundryProviders')
+              .doc(request.adminDocId)
+              .get()
+              .then((doc) => {
+                const currentLaundryProv = doc.data();
+
+                currentLaundryProv.isVerified = 'declined';
+                currentLaundryProv.notifications.push(customerNotifObj);
+                firebase
+                  .firestore()
+                  .collection('laundryProviders')
+                  .doc(request.adminDocId)
+                  .update(currentLaundryProv);
+                // send notification
+                if (currentLaundryProv.pushToken)
+                  expoNotificationApi.post('/', {
+                    to: currentLaundryProv.pushToken,
+                    title: 'Verification Failed',
+                    body: 'your credentials has been declined.',
+                    sound: 'default',
+                  });
+                setLoading(false);
+              })
+              .catch((err) => {
+                console.log(err);
+                setLoading(false);
+              });
+
+            const userCopy = { ...user };
+            const index = userCopy.requests.findIndex(
+              (item) => item.adminDocId
+            );
+            if (index >= 0) userCopy.requests.splice(index, 1);
+            firebase
+              .firestore()
+              .collection('higherAdmin')
+              .doc(user.docId)
+              .update(userCopy);
+            setUser(userCopy);
+          }
           setLoading(false);
         },
       },
@@ -117,7 +162,7 @@ const HigherAdminHomescreen = () => {
           text: 'Yes',
           onPress: () => {
             setLoading(true);
-            if (request.from === 'customer')
+            if (request.from === 'customer') {
               firebase
                 .firestore()
                 .collection('customers')
@@ -148,22 +193,65 @@ const HigherAdminHomescreen = () => {
                   setLoading(false);
                 });
 
-            const userCopy = { ...user };
-            const index = userCopy.requests.findIndex(
-              (item) => item.customerDocId
-            );
-            if (index >= 0) userCopy.requests.splice(index, 1);
-            firebase
-              .firestore()
-              .collection('higherAdmin')
-              .doc(user.docId)
-              .update(userCopy);
-            setUser(userCopy);
+              const userCopy = { ...user };
+              const index = userCopy.requests.findIndex(
+                (item) => item.customerDocId
+              );
+              if (index >= 0) userCopy.requests.splice(index, 1);
+              firebase
+                .firestore()
+                .collection('higherAdmin')
+                .doc(user.docId)
+                .update(userCopy);
+              setUser(userCopy);
+            } else {
+              firebase
+                .firestore()
+                .collection('laundryProviders')
+                .doc(request.adminDocId)
+                .get()
+                .then((doc) => {
+                  const currentLaundryProv = doc.data();
+                  currentLaundryProv.isVerified = 'verified';
+                  currentLaundryProv.notifications.push(customerNotifObj);
+                  firebase
+                    .firestore()
+                    .collection('laundryProviders')
+                    .doc(request.adminDocId)
+                    .update(currentLaundryProv);
+                  // send notification
+                  if (currentLaundryProv.pushToken)
+                    expoNotificationApi.post('/', {
+                      to: currentLaundryProv.pushToken,
+                      title: 'Verification Complete',
+                      body: 'your credentials has been verified.',
+                      sound: 'default',
+                    });
+                  setLoading(false);
+                })
+                .catch((err) => {
+                  console.log(err);
+                  setLoading(false);
+                });
+
+              const userCopy = { ...user };
+              const index = userCopy.requests.findIndex(
+                (item) => item.adminDocId
+              );
+              if (index >= 0) userCopy.requests.splice(index, 1);
+              firebase
+                .firestore()
+                .collection('higherAdmin')
+                .doc(user.docId)
+                .update(userCopy);
+              setUser(userCopy);
+            }
             setLoading(false);
           },
         },
       ]
     );
+
     const customerNotifObj = {
       title: 'Verification Complete',
       body: 'your credentials has been verified.',
@@ -176,66 +264,26 @@ const HigherAdminHomescreen = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {currentUser?.requests?.length !== 0 ? (
           currentUser?.requests?.map((item) => (
-            <View
-              style={{
-                // maxHeight: 350,
-                // height: '100%',
-                maxWidth: width - 20,
-                width: '100%',
-              }}
-              className=" self-center p-2 rounded-md bg-white border-y border-gray-200"
-              key={item.createdAt}
-            >
-              <View className="flex-row items-center">
-                <View className="bg-[#F2F2F2] rounded-full p-2">
-                  <Icon
-                    iconLibrary="Feather"
-                    iconName="user"
-                    size={30}
-                    color="black"
-                  />
-                </View>
-                <View className="flex-col ml-2">
-                  <Text className="font-bold text-xl">{item.customerName}</Text>
-                  <Text className="text-xs">{item.from}</Text>
-                </View>
-              </View>
-              <View>
-                <View className="my-5">
-                  <Text className="font-semibold">Submitted documents</Text>
-                  <Text>{item.selectedId.selectedId1}</Text>
-                  <Text>{item.selectedId.selectedId2}</Text>
-                  <Text className="font-semibold">Date & Time Submitted</Text>
-                  <Text>{Moment(new Date(item.createdAt)).format('LLL')}</Text>
-                </View>
-                <DocumentViewer
-                  images={item.credUrls}
-                  selectedId={item.selectedId}
+            <View key={item.createdAt}>
+              {item.from === 'customer' ? (
+                <Customer
+                  item={item}
+                  height={height}
+                  width={width}
+                  loading={loading}
+                  handleDecline={handleDecline}
+                  handleAccept={handleAccept}
                 />
-              </View>
-              <View className="flex-row justify-between px-2 my-3">
-                <TouchableNativeFeedback onPress={() => handleDecline(item)}>
-                  <View className="bg-[#F2F2F2] px-9 py-3 flex-row items-center justify-center rounded-md">
-                    <Text className=" font-semibold">Decline</Text>
-                    {loading && (
-                      <ActivityIndicator color="white" animating={loading} />
-                    )}
-                  </View>
-                </TouchableNativeFeedback>
-                <TouchableNativeFeedback
-                  disabled={loading}
-                  onPress={() => handleAccept(item)}
-                >
-                  <View
-                    className={`bg-[${colors.primary}] px-9 py-3 flex-row items-center justify-center rounded-md`}
-                  >
-                    <Text className="text-white font-semibold">Approve</Text>
-                    {loading && (
-                      <ActivityIndicator color="white" animating={loading} />
-                    )}
-                  </View>
-                </TouchableNativeFeedback>
-              </View>
+              ) : (
+                <Shop
+                  item={item}
+                  height={height}
+                  width={width}
+                  loading={loading}
+                  handleDecline={handleDecline}
+                  handleAccept={handleAccept}
+                />
+              )}
             </View>
           ))
         ) : (

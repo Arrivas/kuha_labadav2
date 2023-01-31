@@ -1,22 +1,20 @@
 import React, { useState, useContext } from 'react';
+import { View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import SafeScreenView from '../../SafeScreenView';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/storage';
 import '@react-native-firebase/firestore';
+import SafeScreenView from '../../SafeScreenView';
 import { AppContext } from '../../../context/AppContext';
+import NotVerified from './verfied/NotVerified';
 import ActivityIndicator1 from '../../ActivityIndicator';
-import NotVerified from './verification/NotVerified';
-import VerifyOnWait from './verification/VerifyOnWait';
+import VerifyOnWait from './verfied/VerifyOnWait';
 
 const Verification = () => {
   const { user, setUser } = useContext(AppContext);
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
-  const [image4, setImage4] = useState(null);
-  const [selectedId1, setSelectedId1] = useState(null);
-  const [selectedId2, setSelectedId2] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const pickImage = async (setImage) => {
@@ -40,7 +38,7 @@ const Verification = () => {
     const imageExtension1 = image1.split('.')[image1.split('.').length - 1];
     const imageExtension2 = image2.split('.')[image2.split('.').length - 1];
     const imageExtension3 = image3.split('.')[image3.split('.').length - 1];
-    const imageExtension4 = image4.split('.')[image4.split('.').length - 1];
+
     let returnUrls = [];
     setLoading(true);
     try {
@@ -57,10 +55,6 @@ const Verification = () => {
           uri: image3,
           name: `${user?.name}_userCredential3.${imageExtension3}`,
         },
-        {
-          uri: image4,
-          name: `${user?.name}_userCredential4.${imageExtension4}`,
-        },
       ];
 
       const promises = images.map(async (image) => {
@@ -69,7 +63,7 @@ const Verification = () => {
         const ref = firebase
           .storage()
           .ref()
-          .child(`userImages/${user?.name}/${image.name}`);
+          .child(`shopImages/${user?.name}/${image.name}`);
         await ref.putFile(image.uri);
         return await ref.getDownloadURL();
       });
@@ -85,20 +79,17 @@ const Verification = () => {
   };
 
   const handleSubmit = async () => {
-    if (!image1 || !image2 || !image3 || !image4) return;
+    if (!image1 || !image2 || !image3) return;
     const urls = await uploadImage().then((res) => res);
     setLoading(true);
     const toSubmit = {
-      from: 'customer',
+      from: 'admin',
       credUrls: urls,
-      customerDocId: user.docId,
+      adminDocId: user.laundry_id,
       createdAt: new Date().toISOString(),
-      selectedId: {
-        selectedId1,
-        selectedId2,
-      },
-      customerName: user.name,
+      adminName: user.name,
     };
+    console.log(toSubmit);
     firebase
       .firestore()
       .collection('higherAdmin')
@@ -136,34 +127,31 @@ const Verification = () => {
     setUser(userCopy);
     firebase
       .firestore()
-      .collection('customers')
-      .doc(user?.docId)
+      .collection('laundryProviders')
+      .doc(user?.laundry_id)
       .update(userCopy);
     setLoading(false);
   };
+
   return (
     <SafeScreenView>
       <ActivityIndicator1 isVisible={loading} />
-      {user?.isVerified === 'declined' || !user?.isVerified ? (
-        <NotVerified
-          handleSubmit={handleSubmit}
-          image1={image1}
-          image2={image2}
-          image3={image3}
-          image4={image4}
-          setImage1={setImage1}
-          setImage2={setImage2}
-          setImage3={setImage3}
-          setImage4={setImage4}
-          pickImage={pickImage}
-          selectedId1={selectedId1}
-          selectedId2={selectedId2}
-          setSelectedId1={setSelectedId1}
-          setSelectedId2={setSelectedId2}
-        />
-      ) : (
-        <VerifyOnWait images={user?.submittedCredentials?.credUrls} />
-      )}
+      <View className="flex-1">
+        {user?.isVerified === 'declined' || !user?.isVerified ? (
+          <NotVerified
+            image1={image1}
+            image2={image2}
+            image3={image3}
+            setImage1={setImage1}
+            setImage2={setImage2}
+            setImage3={setImage3}
+            pickImage={pickImage}
+            handleSubmit={handleSubmit}
+          />
+        ) : (
+          <VerifyOnWait />
+        )}
+      </View>
     </SafeScreenView>
   );
 };

@@ -44,13 +44,13 @@ const NotVerified = ({
         {selectedId1 && (
           <>
             <Text className="font-semibold">{selectedId1}</Text>
-
             <View className="flex-row w-full px-2 py-1 overflow-hidden">
               <TouchableNativeFeedback onPress={() => pickImage(setImage1)}>
                 {image1 ? (
                   <Image
                     source={{ uri: image1 }}
                     className="flex-1 h-48 rounded-md mr-1"
+                    resizeMode="contain"
                   />
                 ) : (
                   <View className="flex-1 h-48 mr-1 bg-gray-400/20 rounded-md items-center justify-center">
@@ -63,6 +63,7 @@ const NotVerified = ({
                   <Image
                     source={{ uri: image2 }}
                     className="flex-1 h-48 rounded-md mr-1"
+                    resizeMode="contain"
                   />
                 ) : (
                   <View className="flex-1 h-48 bg-gray-400/20 rounded-md mr-1 items-center justify-center">
@@ -86,6 +87,7 @@ const NotVerified = ({
                   <Image
                     source={{ uri: image3 }}
                     className="flex-1 h-48  rounded-md mr-1"
+                    resizeMode="contain"
                   />
                 ) : (
                   <View className="flex-1 h-48 mr-1 bg-gray-400/20 rounded-md items-center justify-center">
@@ -101,6 +103,7 @@ const NotVerified = ({
                   <Image
                     source={{ uri: image4 }}
                     className="flex-1 h-48  rounded-md mr-1"
+                    resizeMode="contain"
                   />
                 ) : (
                   <View className="flex-1 h-48 bg-gray-400/20 rounded-md mr-1 items-center justify-center">

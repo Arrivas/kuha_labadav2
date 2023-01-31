@@ -15,9 +15,9 @@ import SettingsItem from './settings/SettingsItem';
 
 const CustomerSettingsScreen = () => {
   const { logOut } = useAuth();
-  const { user, setUser } = useContext(AppContext);
-  const { now, setNow } = useState();
-  const navigation = useNavigation(new Date());
+  const { user } = useContext(AppContext);
+  const [now, setNow] = useState(new Date());
+  const navigation = useNavigation();
   const settingsArr = [
     {
       id: 1,
@@ -78,6 +78,7 @@ const CustomerSettingsScreen = () => {
           <Image
             source={{ uri: `${user?.imageUrl}&time=${now}` }}
             className="h-[60px] w-[60px] rounded-full"
+            resizeMode="contain"
           />
           <View className="ml-2">
             <Text
@@ -86,14 +87,17 @@ const CustomerSettingsScreen = () => {
                 fontSize: moderateScale(20),
               }}
             >
-              {user?.verified === 'verified' ? 'Verified' : 'Not yet verified'}
+              {user?.isVerified === 'verified'
+                ? 'Verified'
+                : 'Not yet verified'}
             </Text>
             <TouchableNativeFeedback
+              disabled={user?.isVerified === 'verified' ? true : false}
               onPress={() => navigation.navigate('Verification')}
             >
               <View>
                 <Text>
-                  {user?.verified === 'verified'
+                  {user?.isVerified === 'verified'
                     ? 'your account is verified'
                     : 'verify your account now'}
                 </Text>

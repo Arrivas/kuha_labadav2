@@ -200,7 +200,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!isEmailVerified) {
+    if (!isEmailVerified && userState) {
       const interval = setInterval(() => {
         console.log(isEmailVerified);
         const currentUser = firebase.auth().currentUser;

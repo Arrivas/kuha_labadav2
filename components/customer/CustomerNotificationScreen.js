@@ -47,7 +47,7 @@ const CustomerNotificationScreen = ({ navigation }) => {
   return (
     <SafeScreenView>
       {notifications.length !== 0 ? (
-        <ScrollView contentContainerStyle={{ paddingTop: 5 }}>
+        <ScrollView>
           <View>
             {notifications
               .sort((a, b) =>

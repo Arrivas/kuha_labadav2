@@ -219,7 +219,7 @@ const AdminChatScreen = ({ navigation, route }) => {
                       ) : (
                         <>
                           <View
-                            className="self-end p-2 rounded-t-xl rounded-l-xl max-w-[70%]"
+                            className="self-end p-2 rounded-t-xl rounded-l-xl max-w-[70%] mt-1"
                             style={{
                               backgroundColor: colors.primary,
                             }}

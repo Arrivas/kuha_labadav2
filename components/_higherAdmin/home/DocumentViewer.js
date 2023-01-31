@@ -44,7 +44,7 @@ const ImageViewer = ({ source, onPress }) => {
   );
 };
 
-const DocumentViewer = ({ images, selectedId }) => {
+const DocumentViewer = ({ images }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -57,7 +57,7 @@ const DocumentViewer = ({ images, selectedId }) => {
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {images.map((image, index) =>
-          index === 0 || index === 1 ? (
+          index === 0 ? (
             <TouchableOpacity key={index} onPress={() => handlePreview(index)}>
               <>
                 <Image
@@ -66,9 +66,19 @@ const DocumentViewer = ({ images, selectedId }) => {
                   style={{ height: 120, width: 120 }}
                   resizeMode="cover"
                 />
-                <Text className="text-center">
-                  {selectedId.selectedId1} - {index === 0 ? 'front' : 'back'}
-                </Text>
+                <Text className="text-center">BIR</Text>
+              </>
+            </TouchableOpacity>
+          ) : index === 1 ? (
+            <TouchableOpacity key={index} onPress={() => handlePreview(index)}>
+              <>
+                <Image
+                  className="mr-1 rounded-md"
+                  source={{ uri: image }}
+                  style={{ height: 120, width: 120 }}
+                  resizeMode="cover"
+                />
+                <Text className="text-center">DTI</Text>
               </>
             </TouchableOpacity>
           ) : (
@@ -80,9 +90,7 @@ const DocumentViewer = ({ images, selectedId }) => {
                   style={{ height: 120, width: 120 }}
                   resizeMode="cover"
                 />
-                <Text className="text-center">
-                  {selectedId.selectedId2} - {index === 0 ? 'front' : 'back'}
-                </Text>
+                <Text className="text-center">Mayor's Permit/ID</Text>
               </>
             </TouchableOpacity>
           )

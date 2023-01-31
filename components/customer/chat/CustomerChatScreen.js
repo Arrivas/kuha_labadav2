@@ -257,7 +257,7 @@ const CustomerChatScreen = ({ route, navigation }) => {
                           source={{ uri: laundryImageUrl + '&time=' + now }}
                           className="h-[25px] w-[25px] rounded-full mr-1"
                         />
-                        <View className="self-start p-2 rounded-xl w-full max-w-[70%] bg-gray-200">
+                        <View className="self-start p-2 rounded-xl w-full max-w-[70%] bg-gray-200 mt-1">
                           <Text className="font-semibold text-lg pb-1">
                             Payment Notice
                           </Text>

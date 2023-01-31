@@ -68,7 +68,8 @@ const BookingItem = ({ itemArry, colors }) => {
   return (
     <>
       {itemArry.map((item) => {
-        const { laundryShopDetails, service, schedule, method, rated } = item;
+        const { laundryShopDetails, service, schedule, method, rated, status } =
+          item;
         const { laundryShopName, laundry_id, laundryImageUrl } =
           laundryShopDetails;
         const { pickupDateTime, deliveryDate } = schedule;
@@ -78,7 +79,7 @@ const BookingItem = ({ itemArry, colors }) => {
           //   background={TouchableNativeFeedback.Ripple('#eee')}
           //   key={item.createdAt}
           // >
-          <View className="p-2 mb-2 bg-white px-4" key={item.createdAt}>
+          <View className="p-2 mb-2 bg-white px-4 py-5" key={item.createdAt}>
             <View className="flex-row justify-between items-center mb-2">
               <View className="flex-row items-center justify-center">
                 <Icon
@@ -130,7 +131,7 @@ const BookingItem = ({ itemArry, colors }) => {
             {rated ? (
               <TouchableNativeFeedback disabled={true}>
                 <View
-                  className="self-end px-10 py-3 rounded-md mt-2 opacity-60"
+                  className="self-end px-8 py-3 rounded-md mt-2 opacity-60"
                   style={{
                     backgroundColor: colors.primary,
                   }}
@@ -139,32 +140,27 @@ const BookingItem = ({ itemArry, colors }) => {
                 </View>
               </TouchableNativeFeedback>
             ) : (
-              <TouchableNativeFeedback
-                onPress={() => setIsModalOpen(!isModalOpen)}
-              >
-                <View
-                  className="self-end px-8 py-3 rounded-md mt-2"
-                  style={{
-                    backgroundColor: colors.primary,
-                  }}
+              status === 'completed' ||
+              (status === 'delivered' && (
+                <TouchableNativeFeedback
+                  onPress={() => setIsModalOpen(!isModalOpen)}
                 >
-                  <Text className="font-semibold text-white">Rate</Text>
-                </View>
-              </TouchableNativeFeedback>
+                  <View
+                    className="self-end px-8 py-3 rounded-md mt-2"
+                    style={{
+                      backgroundColor: colors.primary,
+                    }}
+                  >
+                    <Text className="font-semibold text-white">Rate</Text>
+                  </View>
+                </TouchableNativeFeedback>
+              ))
             )}
 
-            {/* <View className="flex-row self-end items-center justify-center pt-2">
-                <Text>see more</Text>
-                <Icon
-                  iconLibrary="MaterialIcons"
-                  iconName="chevron-right"
-                  size={20}
-                />
-              </View> */}
             <Modal
               animationType="slide"
               transparent={false}
-              visible={isModalOpen}
+              visible={!item.rated && isModalOpen}
               onRequestClose={() => setIsModalOpen(!isModalOpen)}
             >
               <View className="flex-1">
