@@ -186,6 +186,7 @@ const CreatePayment = ({
                                 containerStyle="justify-center"
                                 payment={true}
                                 name={`payment[${index}].${item}`}
+                                placeholder='enter a value'
                               />
                             </View>
 

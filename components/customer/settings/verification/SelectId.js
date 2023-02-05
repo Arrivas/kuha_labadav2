@@ -14,6 +14,7 @@ const SelectId = ({
     'TIN Number',
     'Passport',
     'PhilHealth',
+    'Student ID',
   ];
 
   return (

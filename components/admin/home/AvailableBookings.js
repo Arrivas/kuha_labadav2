@@ -5,6 +5,7 @@ import {
   ScrollView,
   ToastAndroid,
   TouchableNativeFeedback,
+  RefreshControl,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import firebase from '@react-native-firebase/app';
@@ -16,7 +17,13 @@ import properStatus from '../../../functions/properStatus';
 import NoItemsYet from '../../NoItemsYet';
 import CancelBooking from './buttonActions/CancelBooking';
 
-const AvailableBookings = ({ laundry_id, user, now }) => {
+const AvailableBookings = ({
+  laundry_id,
+  user,
+  now,
+  refreshing,
+  handleRefresh,
+}) => {
   const [availableBookings, setAvailableBookings] = useState([]);
 
   useEffect(() => {
@@ -66,6 +73,9 @@ const AvailableBookings = ({ laundry_id, user, now }) => {
         paddingHorizontal: verticalScale(15),
         flexGrow: 1,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
       {availableBookings.length !== 0 ? (
         availableBookings

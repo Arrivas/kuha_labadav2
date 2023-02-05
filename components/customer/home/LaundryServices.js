@@ -13,7 +13,6 @@ import {
   moderateScale,
 } from '../../../config/metrics';
 import { filterLaundryServices } from '../../../config/filterLaundryServices';
-import getDimensions from '../../../config/getDimensions';
 
 const LaundryServices = ({
   selectedService,
@@ -21,6 +20,7 @@ const LaundryServices = ({
   laundryServices,
   searchText,
   type = 'default',
+  toggleAll,
 }) => {
   const filteredLaundryServices = selectedService
     ? filterLaundryServices(laundryServices, selectedService)
@@ -29,7 +29,7 @@ const LaundryServices = ({
         item.name.toLowerCase().startsWith(searchText.toLowerCase())
       )
     : laundryServices;
-  const { width } = getDimensions();
+
   return type === 'default' ? (
     // pt-5
     <View>
@@ -132,7 +132,7 @@ const LaundryServices = ({
             fontSize: 12,
           }}
         >
-          Showing all
+          Services
         </Text>
         {/* <Text
           style={{
@@ -148,7 +148,7 @@ const LaundryServices = ({
         }}
       >
         {filteredLaundryServices
-          ?.slice(0, 5)
+          ?.slice(0, toggleAll ? 20 : 5)
           .filter((item) => item?.isVerified === 'verified')
           .map((item, index) => (
             <TouchableWithoutFeedback

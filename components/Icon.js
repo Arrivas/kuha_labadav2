@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React from 'react';
+import { View } from 'react-native';
 import {
   AntDesign,
   Feather,
@@ -7,32 +7,34 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
   SimpleLineIcons,
-  style,
-} from "@expo/vector-icons";
+  Octicons,
+} from '@expo/vector-icons';
 
 const Icon = ({
-  iconLibrary = "",
-  iconName = "",
+  iconLibrary = '',
+  iconName = '',
   size = 15,
-  color = "#000",
-  className = "",
+  color = '#000',
+  className = '',
   style,
 }) => {
   return (
     <>
       <View className={className} style={style}>
-        {iconLibrary === "AntDesign" ? (
+        {iconLibrary === 'AntDesign' ? (
           <AntDesign name={iconName} size={size} color={color} />
-        ) : iconLibrary === "Feather" ? (
+        ) : iconLibrary === 'Feather' ? (
           <Feather name={iconName} size={size} color={color} />
-        ) : iconLibrary === "IonIcons" ? (
+        ) : iconLibrary === 'IonIcons' ? (
           <Ionicons name={iconName} size={size} color={color} />
-        ) : iconLibrary === "MaterialCommunityIcons" ? (
+        ) : iconLibrary === 'MaterialCommunityIcons' ? (
           <MaterialCommunityIcons name={iconName} size={size} color={color} />
-        ) : iconLibrary === "MaterialIcons" ? (
+        ) : iconLibrary === 'MaterialIcons' ? (
           <MaterialIcons name={iconName} size={size} color={color} />
-        ) : iconLibrary === "SimpleLineIcons" ? (
+        ) : iconLibrary === 'SimpleLineIcons' ? (
           <SimpleLineIcons name={iconName} size={size} color={color} />
+        ) : iconLibrary === 'Octicons' ? (
+          <Octicons name={iconName} size={size} color={color} />
         ) : (
           <></>
         )}

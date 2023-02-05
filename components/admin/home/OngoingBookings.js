@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView } from 'react-native';
+import { Text, View, Image, ScrollView, RefreshControl } from 'react-native';
 import React from 'react';
 import CardDetailsLabel from '../home/card/CardDetailsLabel';
 import colors from '../../../config/colors';
@@ -7,7 +7,13 @@ import HandleAdminButtonActions from '../HandleAdminButtonActions';
 import { verticalScale } from '../../../config/metrics';
 import NoItemsYet from '../../NoItemsYet';
 
-const OngoingBookings = ({ ongoingItems, setLoading, now }) => {
+const OngoingBookings = ({
+  ongoingItems,
+  setLoading,
+  now,
+  refreshing,
+  handleRefresh,
+}) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -15,6 +21,9 @@ const OngoingBookings = ({ ongoingItems, setLoading, now }) => {
         paddingHorizontal: verticalScale(15),
         flexGrow: 1,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
       {ongoingItems?.length !== 0 ? (
         ongoingItems

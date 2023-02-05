@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView } from 'react-native';
+import { Text, View, Image, ScrollView, RefreshControl } from 'react-native';
 import '@react-native-firebase/firestore';
 import CardDetailsLabel from '../home/card/CardDetailsLabel';
 import { verticalScale } from '../../../config/metrics';
@@ -6,7 +6,12 @@ import colors from '../../../config/colors';
 import properStatus from '../../../functions/properStatus';
 import NoItemsYet from '../../NoItemsYet';
 
-const HistoryBookings = ({ bookingHistory, now }) => {
+const HistoryBookings = ({
+  bookingHistory,
+  now,
+  refreshing,
+  handleRefresh,
+}) => {
   return (
     <ScrollView
       contentContainerStyle={{
@@ -14,6 +19,9 @@ const HistoryBookings = ({ bookingHistory, now }) => {
         paddingHorizontal: verticalScale(15),
         flexGrow: 1,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
       {bookingHistory?.length !== 0 ? (
         bookingHistory

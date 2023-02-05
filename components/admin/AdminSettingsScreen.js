@@ -12,6 +12,7 @@ import SafeScreenView from '../SafeScreenView';
 import { moderateScale, horizontalScale } from '../../config/metrics';
 import { AppContext } from '../../context/AppContext';
 import SettingsItem from './settings/SettingsItem';
+import colors from '../../config/colors';
 
 const AdminSettingsScreen = () => {
   const { logOut } = useAuth();
@@ -100,7 +101,12 @@ const AdminSettingsScreen = () => {
                 onPress={() => navigation.navigate('Verification')}
               >
                 <View>
-                  <Text>
+                  <Text
+                    style={{
+                      color: user?.isVerified ? 'black' : colors.primary,
+                    }}
+                    className={`${user?.isVerified ? '' : 'underline'}`}
+                  >
                     {user?.isVerified === 'verified'
                       ? 'your account is verified'
                       : 'verify your account now'}
