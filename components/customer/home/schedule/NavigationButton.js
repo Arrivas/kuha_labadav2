@@ -38,7 +38,7 @@ const NavigationButton = ({
               iconName="chevron-left"
               size={30}
             />
-            <Text>prev</Text>
+            <Text className="text-[17px]">prev</Text>
           </View>
         </TouchableNativeFeedback>
       )}
@@ -91,7 +91,7 @@ const NavigationButton = ({
         background={TouchableNativeFeedback.Ripple('#d6d6d6', true)}
       >
         <View className="flex-row items-center justify-center self-end">
-          <Text>
+          <Text className="text-[17px]">
             {scheduleStep === stepObj[stepObj.length - 1].id
               ? 'book now'
               : 'next'}

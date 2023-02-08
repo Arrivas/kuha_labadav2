@@ -156,8 +156,8 @@ const CustomerHomeScreen = ({ navigation }) => {
             selectedService={selectedService}
           />
           {/* search */}
-          <View className="flex-row pr-10 items-center">
-            <View className="mt-3 mb-1 w-full justify-center">
+          <View className="flex-row items-center w-full">
+            <View className="flex-1 mb-1 w-[71%] items-center mt-1 justify-center">
               <TextInput
                 value={searchText}
                 className="text-black bg-gray-100 px-4 pr-8 py-3 rounded-md w-full"
@@ -179,20 +179,24 @@ const CustomerHomeScreen = ({ navigation }) => {
               )}
             </View>
             <TouchableNativeFeedback onPress={() => setToggleAll(!toggleAll)}>
-              <View className="p-2">
-                {toggleAll ? (
-                  <Icon
-                    iconLibrary="MaterialIcons"
-                    iconName="table-rows"
-                    size={30}
-                  />
-                ) : (
-                  <Icon
-                    iconLibrary="MaterialIcons"
-                    iconName="view-column"
-                    size={30}
-                  />
-                )}
+              <View className=" p-[6px] items-center justify-center runded-md ml-1 bg-gray-100 rounded-md">
+                <View className="flex-row items-center gap-1 rounded-md">
+                  {toggleAll ? (
+                    <Icon
+                      iconLibrary="MaterialIcons"
+                      iconName="table-rows"
+                      size={30}
+                      className="p-1"
+                    />
+                  ) : (
+                    <Icon
+                      iconLibrary="MaterialIcons"
+                      iconName="view-column"
+                      size={30}
+                      className="p-1"
+                    />
+                  )}
+                </View>
               </View>
             </TouchableNativeFeedback>
           </View>

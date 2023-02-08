@@ -38,11 +38,17 @@ const HandleAdminBookingActions = ({
           />
         </View>
       ) : method.pickup === 'yes' && status === 'confirmed booking' ? (
-        <Pickedup
-          bookingDetails={bookingDetails}
-          user={user}
-          setLoading={setLoading}
-        />
+        <View className="flex-row">
+          <ChatCustomer
+            navigation={navigation}
+            bookingDetails={bookingDetails}
+          />
+          <Pickedup
+            bookingDetails={bookingDetails}
+            user={user}
+            setLoading={setLoading}
+          />
+        </View>
       ) : status === 'pickedup' ? (
         <>
           <ChatCustomer
@@ -51,23 +57,29 @@ const HandleAdminBookingActions = ({
           />
         </>
       ) : method.toBeDeliver === 'yes' && status === 'estimated payment' ? (
-        <Delivered
-          bookingDetails={bookingDetails}
-          user={user}
-          method={method}
-          status={status}
-          setLoading={setLoading}
-        />
-      ) : method.toBeDeliver === 'no' && status === 'estimated payment' ? (
-        <>
-          <Delivered
+        <View className="flex-row">
+          <ChatCustomer
+            navigation={navigation}
+            bookingDetails={bookingDetails}
+          />
+          <Pickedup
             bookingDetails={bookingDetails}
             user={user}
-            method={method}
-            status={status}
             setLoading={setLoading}
           />
-        </>
+        </View>
+      ) : method.toBeDeliver === 'no' && status === 'estimated payment' ? (
+        <View className="flex-row">
+          <ChatCustomer
+            navigation={navigation}
+            bookingDetails={bookingDetails}
+          />
+          <Pickedup
+            bookingDetails={bookingDetails}
+            user={user}
+            setLoading={setLoading}
+          />
+        </View>
       ) : (
         <View className="flex-row">
           <ChatCustomer

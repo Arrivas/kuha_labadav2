@@ -36,7 +36,7 @@ const AdminNotificationScreen = ({ navigation }) => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableNativeFeedback onPress={handleClearNotification}>
-          <View className="py-2">
+          <View className="py-2 bg-gray-200 rounded-full px-4">
             <Text>clear all</Text>
           </View>
         </TouchableNativeFeedback>

@@ -99,9 +99,14 @@ const CustomerSettingsScreen = () => {
               <View>
                 <Text
                   style={{
-                    color: user?.isVerified ? 'black' : colors.primary,
+                    color:
+                      user?.isVerified === 'verified'
+                        ? 'black'
+                        : colors.primary,
                   }}
-                  className={`${user?.isVerified ? '' : 'underline'}`}
+                  className={`${
+                    user?.isVerified === 'verified' ? '' : 'underline'
+                  }`}
                 >
                   {user?.isVerified === 'verified'
                     ? 'your account is verified'

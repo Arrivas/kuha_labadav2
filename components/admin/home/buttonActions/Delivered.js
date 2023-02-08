@@ -33,6 +33,7 @@ const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
           onPress: () => {
             setLoading(true);
             const currentLaundryProv = { ...user };
+            bookingDetails.dateCompleted = new Date().toISOString();
             const laundryIndex =
               currentLaundryProv.pendingServices.ongoing.findIndex(
                 (item) => item.docId === docId

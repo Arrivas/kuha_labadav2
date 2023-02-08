@@ -12,6 +12,7 @@ import {
   verticalScale,
   moderateScale,
 } from '../../../config/metrics';
+import getDimensions from '../../../config/getDimensions';
 import { filterLaundryServices } from '../../../config/filterLaundryServices';
 
 const LaundryServices = ({
@@ -29,7 +30,7 @@ const LaundryServices = ({
         item.name.toLowerCase().startsWith(searchText.toLowerCase())
       )
     : laundryServices;
-
+  const { height } = getDimensions();
   return type === 'default' ? (
     // pt-5
     <View>
@@ -146,6 +147,9 @@ const LaundryServices = ({
         contentContainerStyle={{
           paddingVertical: 5,
         }}
+        // style={{
+        //   height: height - 400,
+        // }}
       >
         {filteredLaundryServices
           ?.slice(0, toggleAll ? 20 : 5)

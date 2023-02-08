@@ -30,10 +30,10 @@ const SelectSchedule = ({ route, navigation }) => {
   } = route.params;
   const { user } = useContext(AppContext);
 
-  const [isPickup, setIsPickup] = useState('no');
+  const [isPickup, setIsPickup] = useState('yes');
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
-  const [toBeDeliver, setToBeDeliver] = useState('no');
+  const [toBeDeliver, setToBeDeliver] = useState('yes');
   const [scheduleStep, setScheduleStep] = useState(1);
   const [timeDateError, setTimeDateError] = useState('');
   const [selectedFabcons, setSelectedFabcons] = useState([]);

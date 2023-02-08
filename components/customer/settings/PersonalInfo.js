@@ -125,7 +125,7 @@ const PersonalInfo = () => {
                 className="rounded-full w-[120px] h-[120px]"
               />
               <TouchableNativeFeedback onPress={pickImage}>
-                <View className="items-center justify-center p-2">
+                <View className="items-center justify-center p-2 px-3 bg-gray-200 rounded-full my-2">
                   <Text>select image</Text>
                 </View>
               </TouchableNativeFeedback>
