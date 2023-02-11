@@ -12,7 +12,7 @@ import getDimensions from '../../config/getDimensions';
 import Icon from '../Icon';
 
 const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const { width } = getDimensions();
   const usertypeItem = [
     {
@@ -77,7 +77,10 @@ const UserTypePicker = ({ selectedUserType, setSelectedUserType }) => {
                         <View className="bg-gray-300 h-16 w-[0.5px]" />
                       ) : (
                         <TouchableNativeFeedback
-                          onPress={() => setSelectedUserType(item)}
+                          onPress={() => {
+                            setSelectedUserType(item);
+                            setModalVisible(!modalVisible);
+                          }}
                           background={TouchableNativeFeedback.Ripple(
                             '#ccccc',
                             true

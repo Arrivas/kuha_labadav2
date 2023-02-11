@@ -27,6 +27,7 @@ const SelectSchedule = ({ route, navigation }) => {
     fabconEnabled,
     deliveredByItems,
     selectedServices,
+    openHours,
   } = route.params;
   const { user } = useContext(AppContext);
 
@@ -189,6 +190,7 @@ const SelectSchedule = ({ route, navigation }) => {
               timeDateError={timeDateError}
               horizontalScale={horizontalScale}
               setTimeDateError={setTimeDateError}
+              openHours={openHours}
             />
           </View>
         ) : (scheduleStep === 3 && toBeDeliver === 'yes') ||

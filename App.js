@@ -220,7 +220,7 @@ export default function App() {
             setIsEmailVerified(currentUser.emailVerified);
           });
         }
-      }, 3000);
+      }, 2000);
       setRefreshInterval(interval);
     } else {
       clearInterval(refreshInterval);

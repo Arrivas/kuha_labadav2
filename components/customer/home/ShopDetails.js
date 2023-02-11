@@ -30,6 +30,7 @@ const ShopDetails = ({ navigation, route }) => {
     servicesOffered,
     deliveredByItems,
     availablePickupTimes,
+    openHours,
   } = route.params.item;
   const { user } = useContext(AppContext);
   const { width } = getDimensions();
@@ -172,6 +173,7 @@ const ShopDetails = ({ navigation, route }) => {
               deliveredByItems,
               selectedServices,
               availablePickupTimes,
+              openHours,
             });
           }}
         >

@@ -13,9 +13,11 @@ const DateTimePickerComponent = ({
   setPickupTime,
   timeDateError,
   setTimeDateError,
+  openHours,
 }) => {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState('');
+  const [timeError, setTimeError] = useState('');
 
   const handleDateChange = (event, date) => {
     const {
@@ -23,8 +25,8 @@ const DateTimePickerComponent = ({
       nativeEvent: { timestamp },
     } = event;
 
-    if (type === 'dismissed') return;
     setShow(false);
+    if (type === 'dismissed') return;
     if (mode === 'date') {
       if (
         Moment().isSame(new Date(date), 'day') ||
@@ -34,8 +36,38 @@ const DateTimePickerComponent = ({
         return setPickupDate(Moment(new Date(date)).format('LL'));
       }
     }
-    setPickupTime(Moment(new Date(date)).format('LT'));
-    setTimeDateError('');
+    setTimeError('');
+    const currentDate = new Date();
+    const fromDate = new Date(
+      `${currentDate.toDateString()} ${openHours.from}`
+    );
+    const toDate = new Date(`${currentDate.toDateString()} ${openHours.to}`);
+
+    const isWithinOpenHours = (newDate) => {
+      const isAfterFromDate =
+        newDate.getHours() > fromDate.getHours() ||
+        (newDate.getHours() === fromDate.getHours() &&
+          newDate.getMinutes() >= fromDate.getMinutes());
+      const isBeforeToDate =
+        newDate.getHours() < toDate.getHours() ||
+        (newDate.getHours() === toDate.getHours() &&
+          newDate.getMinutes() <= toDate.getMinutes());
+      return isAfterFromDate && isBeforeToDate;
+    };
+    const res = isWithinOpenHours(date);
+    if (res) {
+      // console.log(
+      //   'from ' + new Date(date).getHours(),
+      //   new Date(`${new Date().toDateString()} ${openHours.from}`).getHours()
+      // );
+      setPickupTime(Moment(new Date(date)).format('LT'));
+      setTimeDateError('');
+    } else
+      return setTimeError(
+        `open hours - ${Moment(fromDate).format(
+          'LT'
+        )} ${`\n`}close hours - ${Moment(toDate).format('LT')}`
+      );
   };
 
   const showMode = (currentMode) => {
@@ -43,13 +75,9 @@ const DateTimePickerComponent = ({
     setMode(currentMode);
   };
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
+  const showDatepicker = () => showMode('date');
 
-  const showTimepicker = () => {
-    showMode('time');
-  };
+  const showTimepicker = () => showMode('time');
 
   return (
     <View style={{ paddingHorizontal: horizontalScale(22) }}>
@@ -89,7 +117,9 @@ const DateTimePickerComponent = ({
         </View>
         <View className="border-b border-gray-200 absolute -bottom-2 w-full h-1" />
       </View>
-      <ErrorMessage error={timeDateError} />
+      <View className="max-w-[90%]">
+        <ErrorMessage error={timeDateError || timeError} />
+      </View>
       {show && (
         <DateTimePicker
           value={new Date()}

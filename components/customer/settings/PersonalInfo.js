@@ -25,15 +25,18 @@ const PersonalInfo = () => {
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedGender, setSelectedGender] = useState('male');
+  const [now, setNow] = useState(new Date());
 
   const initialValues = {
-    name: user?.name || '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     customerAddress: user?.customerAddress || '',
     mobileNumber: user?.mobileNumber || '',
   };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required(),
+    firstName: Yup.string().required(),
+    lastName: Yup.string().required(),
     customerAddress: Yup.string().required().label('address'),
     mobileNumber: Yup.string().required().label('mobile number'),
   });
@@ -43,7 +46,9 @@ const PersonalInfo = () => {
     let imageUrl = await uploadImage().then((url) => url);
     let userCopy = { ...user };
     if (imageUrl) userCopy.imageUrl = imageUrl;
-    userCopy.name = values.name;
+    (userCopy.firstName = values.firstName),
+      (userCopy.lastName = values.lastName),
+      (userCopy.name = `${values.firstName} ${values.lastName}`);
     userCopy.gender = selectedGender;
     userCopy.customerAddress = values.customerAddress;
     userCopy.mobileNumber = values.mobileNumber;
@@ -114,13 +119,8 @@ const PersonalInfo = () => {
                 source={{
                   uri:
                     image ||
-                    `${user?.imageUrl}&random=${Math.random()
-                      .toString(36)
-                      .substring(7)}
+                    `${user?.imageUrl}&random=${now}
                       }`,
-                  // &random=${Math.random()
-                  //   .toString(36)
-                  //   .substring(7)}
                 }}
                 className="rounded-full w-[120px] h-[120px]"
               />
@@ -139,7 +139,14 @@ const PersonalInfo = () => {
             >
               <ScrollView>
                 <Text className="font-light">Name</Text>
-                <AppFormField name="name" placeholder="name" />
+                <View className="flex-row space-x-1">
+                  <View className="flex-1">
+                    <AppFormField name="firstName" placeholder="first name" />
+                  </View>
+                  <View className="flex-1">
+                    <AppFormField name="lastName" placeholder="last name" />
+                  </View>
+                </View>
                 <GenderSelect
                   selectedGender={selectedGender}
                   setSelectedGender={setSelectedGender}

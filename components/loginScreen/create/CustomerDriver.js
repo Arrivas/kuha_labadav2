@@ -1,10 +1,10 @@
-import { View, Text, Image } from "react-native";
-import React, { useState } from "react";
-import firebase from "@react-native-firebase/app";
-import "@react-native-firebase/firestore";
-import "@react-native-firebase/auth";
-import * as Yup from "yup";
-import UserTypePicker from "../UserTypePicker";
+import { View, Text, Image, ToastAndroid } from 'react-native';
+import React, { useState } from 'react';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import '@react-native-firebase/auth';
+import * as Yup from 'yup';
+import UserTypePicker from '../UserTypePicker';
 
 const CustomerDriver = ({
   width,
@@ -18,34 +18,35 @@ const CustomerDriver = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [emailErr, setEmailErr] = useState("");
-  const [nameErr, setNameErr] = useState("");
+  const [emailErr, setEmailErr] = useState('');
+  const [nameErr, setNameErr] = useState('');
 
   const initialValues = {
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
   };
 
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required(),
+    firstName: Yup.string().required(),
+    lastName: Yup.string().required(),
     email: Yup.string().email().required(),
     password: Yup.string()
       .required()
-      .min(6, "password is too short - should be 6 chars minimum.")
-      .max(16, "password is too long - should be 16 chars maximum."),
+      .min(6, 'password is too short - should be 6 chars minimum.')
+      .max(16, 'password is too long - should be 16 chars maximum.'),
     confirmPassword: Yup.string().oneOf(
-      [Yup.ref("password"), null],
-      "passwords must match"
+      [Yup.ref('password'), null],
+      'passwords must match'
     ),
     phone: Yup.string()
-      .matches(phoneRegExp, "must be a valid phone number 09xxxxxxxxx")
-      .min(11, "too short")
-      .max(11, "too long")
+      .matches(phoneRegExp, 'must be a valid phone number 09xxxxxxxxx')
+      .min(11, 'too short')
+      .max(11, 'too long')
       .required(),
   });
   const handleSubmit = async (val) => {
@@ -53,22 +54,33 @@ const CustomerDriver = ({
     setLoading(true);
 
     const users = [];
-    await firebase
-      .firestore()
-      .collection(selectedUserType.value === "driver" ? "drivers" : "customers")
-      .where("name", "==", val.name)
-      .get()
-      .then((data) => {
-        setLoading(false);
-        data.forEach((doc) => users.push(doc.data()));
+    firebase
+      .auth()
+      .fetchSignInMethodsForEmail(val.email.trim())
+      .then((doc) => {
+        if (doc?.length !== 0) {
+          setLoading(false);
+          return setEmailErr('please select other email that is not taken');
+        }
       });
-    if (users.length !== 0) return setNameErr("name is already taken");
+    // await firebase
+    //   .firestore()
+    //   .collection('customers')
+    //   .where('name', '==', val.name)
+    //   .get()
+    //   .then((data) => {
+    //     setLoading(false);
+    //     data.forEach((doc) => users.push(doc.data()));
+    //   });
+    // if (users.length !== 0) return setNameErr('name is already taken');
 
-    setNameErr("");
+    setNameErr('');
     // proceed creating new customer
-    const noImg = "noImage.png";
+    const noImg = 'noImage.png';
     const newCustomer = {
-      name: val.name,
+      firstName: val.firstName,
+      lastName: val.lastName,
+      name: `${val.firstName} ${val.lastName}`,
       email: val.email.trim(),
       password: val.password.trim(),
       confirmPassword: val.confirmPassword.trim(),
@@ -76,30 +88,30 @@ const CustomerDriver = ({
       bookingHistory: [],
       confirmedBooking: [],
       notifications: [],
-      customerAddress: "",
-      gender: "",
+      customerAddress: '',
+      gender: '',
       userType: selectedUserType.value,
       imageUrl: `https://firebasestorage.googleapis.com/v0/b/${
         firebase.app().options.storageBucket
       }/o/${noImg}?alt=media`,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    let emailHasError = "";
+    let emailHasError = '';
     await firebase
       .auth()
       .createUserWithEmailAndPassword(val.email, val.password)
       .then((userInfo) => (newCustomer.userId = userInfo.user.uid))
       .catch((err) => {
         console.log(err.code);
-        if (err.code === "auth/email-already-in-use")
-          emailHasError = "email is already in use";
+        if (err.code === 'auth/email-already-in-use')
+          emailHasError = 'email is already in use';
       });
     if (emailHasError) return setEmailErr(emailHasError);
-    setEmailErr("");
+    setEmailErr('');
     // add user details to db
     await firebase
       .firestore()
-      .collection(selectedUserType.value === "driver" ? "drivers" : "customers")
+      .collection(selectedUserType.value === 'driver' ? 'drivers' : 'customers')
       .add(newCustomer)
       .then((data) => {
         data.update({ docId: data.id });
@@ -120,7 +132,7 @@ const CustomerDriver = ({
       {width <= 360 ? null : (
         <Image
           className="self-center"
-          source={require("../../../assets/logo_1_blue.png")}
+          source={require('../../../assets/logo_1_blue.png')}
           style={{
             width: width <= 360 ? 140 : 180,
             height: width <= 360 ? 140 : 180,
@@ -133,7 +145,7 @@ const CustomerDriver = ({
         className=""
         style={{
           fontSize: width >= 500 ? width * 0.018 : width * 0.04,
-          fontFamily: "Alexandria-Regular",
+          fontFamily: 'Alexandria-Regular',
         }}
       >
         Create an account
@@ -145,12 +157,24 @@ const CustomerDriver = ({
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        <AppFormField
-          name="name"
-          iconName="account"
-          placeholder="name"
-          customError={nameErr}
-        />
+        <View className="flex-row space-x-1">
+          <View className="flex-1">
+            <AppFormField
+              name="firstName"
+              iconName="account"
+              placeholder="first name"
+              customError={nameErr}
+            />
+          </View>
+          <View className="flex-1">
+            <AppFormField
+              name="lastName"
+              iconName="account"
+              placeholder="last name"
+              customError={nameErr}
+            />
+          </View>
+        </View>
         <AppFormField
           name="email"
           iconName="email"
@@ -185,7 +209,7 @@ const CustomerDriver = ({
         />
         <SubmitButton
           textStyle={{
-            color: "white",
+            color: 'white',
             fontSize: width >= 500 ? width * 0.025 : width * 0.035,
           }}
           textClass="font-bold"

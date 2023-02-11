@@ -1,12 +1,14 @@
 import { View, Text, TouchableWithoutFeedback, Alert } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
+import { AppContext } from '../../../../context/AppContext';
 
 const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
   const { customerDetails, laundryShopDetails, docId } = bookingDetails;
   const { customerDocId } = customerDetails;
   const { laundry_id } = laundryShopDetails;
+  const { setUser } = useContext(AppContext);
 
   const handleDelivered = () => {
     Alert.alert(
@@ -46,6 +48,7 @@ const Delivered = ({ bookingDetails, user, setLoading, method, status }) => {
                 1
               );
             }
+            setUser(currentLaundryProv);
             // chat
             firebase
               .firestore()

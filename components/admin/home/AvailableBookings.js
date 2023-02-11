@@ -122,7 +122,7 @@ const AvailableBookings = ({
                       >
                         Customer Name
                       </Text>
-                      <Text>{item.customerName}</Text>
+                      <Text>{item.customerDetails.customerName}</Text>
                     </View>
                   </View>
                   <View
