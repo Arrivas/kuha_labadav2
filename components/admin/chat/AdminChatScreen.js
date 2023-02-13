@@ -10,7 +10,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useContext } from 'react';
 import { expoNotificationApi } from '../../../api/sendNotification';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
@@ -20,8 +20,10 @@ import colors from '../../../config/colors';
 import ActivityIndicator from '../../ActivityIndicator';
 import AddPaymentButton from './AddPaymentButton';
 import CreatePayment from './CreatePayment';
+import { AppContext } from '../../../context/AppContext';
 
 const AdminChatScreen = ({ navigation, route }) => {
+  const { user } = useContext(AppContext);
   const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [chatDetails, setChatDetails] = useState({});
@@ -36,7 +38,6 @@ const AdminChatScreen = ({ navigation, route }) => {
     fabcons,
   } = route.params;
   const [now, setNow] = useState(new Date());
-
   const getCustomerPushToken = () =>
     firebase
       .firestore()

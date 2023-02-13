@@ -31,8 +31,9 @@ const AdminChatList = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  const fetchMessage = () => {
-    firebase
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = firebase
       .firestore()
       .collection('customers')
       .doc(ongoing[0]?.customerDetails?.customerDocId)
@@ -40,24 +41,20 @@ const AdminChatList = ({ navigation }) => {
       .doc(ongoing[0]?.docId)
       .collection('messages')
       .orderBy('timeStamp', 'desc')
-      .get()
-      .then((data) => {
-        if (data.empty) return console.log('cannot get messages');
+      .onSnapshot((data) => {
+        if (data.empty) {
+          console.log('cannot get messages');
+          return setMessages([]);
+        }
         const currentMessages = [];
         data.forEach((doc) => {
           currentMessages.push(doc.data());
         });
         setMessages(currentMessages);
-      })
-      .catch((err) => console.log(err));
-  };
+      });
 
-  useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      fetchMessage();
-    }
     return () => {
+      unsubscribe();
       mounted = false;
     };
   }, []);
