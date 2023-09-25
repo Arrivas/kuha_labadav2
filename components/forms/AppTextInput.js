@@ -27,10 +27,11 @@ const InputText = ({
     <View
       className={`items-center flex-row p-2 ${
         payment ? "py-1 pt-4" : "py-3"
-      } rounded-xl mb-3 bg-gray-100 bgred-400`}
+      } rounded-xl mb-3 `}
       style={{
         borderWidth: 1,
         borderColor: applyBorder ? colors.primary : "transparent",
+        backgroundColor: "black",
       }}
     >
       {iconName ? (
@@ -69,7 +70,7 @@ const InputText = ({
       {isPassword ? (
         <TouchableNativeFeedback onPress={() => onShowPassword(!showPassword)}>
           <View
-            className="absolute "
+            className="absolute"
             style={{
               right: width >= 500 ? width * 0.015 : width * 0.03,
             }}
